@@ -48,7 +48,7 @@ class NomActividad(BaseModel):
 
 
 class NomMovilidad(BaseModel):
-    evaluacion = models.CharField("Evaluación", max_length=10, null=False, blank=False)
+    evaluacion = models.CharField("Evaluación", max_length=15, null=False, blank=False)
     puntuacion = models.PositiveSmallIntegerField("Puntuación", null=False, blank=False)
 
     class Meta:
@@ -61,7 +61,7 @@ class NomMovilidad(BaseModel):
 
 
 class NomIncontinencia(BaseModel):
-    evaluacion = models.CharField("Evaluación", max_length=10, null=False, blank=False)
+    evaluacion = models.CharField("Evaluación", max_length=20, null=False, blank=False)
     puntuacion = models.PositiveSmallIntegerField("Puntuación", null=False, blank=False)
 
     class Meta:

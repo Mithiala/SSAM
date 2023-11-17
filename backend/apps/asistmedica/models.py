@@ -175,14 +175,14 @@ class IndiceValue(BaseModel):
     )
 
     estado_mental = models.ForeignKey(
-        NomEstadoGeneral,
+        NomEstadoMental,
         on_delete=models.CASCADE,
         verbose_name="Estado Mental",
         related_name="estado_mental",
     )
 
     estado_general = models.ForeignKey(
-        Paciente,
+        NomEstadoGeneral,
         on_delete=models.CASCADE,
         verbose_name="Estado General",
         related_name="estado_general",
@@ -191,7 +191,7 @@ class IndiceValue(BaseModel):
     ind_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Evaluación Índice",
+        verbose_name="Paciente",
         related_name="ind_paciente",
     )
 
