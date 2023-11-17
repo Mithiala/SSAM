@@ -90,7 +90,7 @@ class EncuestaInicial(BaseModel):
         "direc_person_responsable", max_length=50, blank=False, null=False
     )
     persona_cobra_chequera = models.CharField(
-        "persona_cobra_chequera", max_length=50, blank=False, null=False
+        "persona_cobra_chequera", max_length=50, blank=True, null=True
     )
     ingresado = models.BooleanField("ingresado", default=False)
     motivo = models.TextField("Motivo", blank=False, null=False)

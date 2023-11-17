@@ -16,6 +16,13 @@ from .models import (
     Traslado,
     Vacunacion,
 )
+from .models_nomenclador import (
+    NomActividad,
+    NomEstadoGeneral,
+    NomEstadoMental,
+    NomIncontinencia,
+    NomMovilidad,
+)
 
 # Register your models here.
 admin.site.register(DatoEnfermeria)
@@ -32,3 +39,8 @@ admin.site.register(Termometria)
 admin.site.register(Vacunacion)
 admin.site.register(Sindrome)
 admin.site.register(SolicitudPedido)
+admin.site.register(NomMovilidad)
+admin.site.register(NomIncontinencia)
+admin.site.register(NomEstadoGeneral)
+admin.site.register(NomEstadoMental)
+admin.site.register(NomActividad)

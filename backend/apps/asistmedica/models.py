@@ -150,9 +150,7 @@ class MaterialGastable(BaseModel):
 
 
 class IndiceValue(BaseModel):
-    resultado = models.CharField(
-        "Incontinencia", max_length=15, blank=False, null=False
-    )
+    resultado = models.CharField("Resultado", max_length=15, blank=True, null=True)
     fecha = models.DateField("Fecha evaluación", blank=True, null=True)
 
     incontinencia = models.ForeignKey(
