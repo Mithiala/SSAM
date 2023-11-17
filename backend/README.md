@@ -7,6 +7,9 @@ python -m virtualenv env
 # Intalar requerimientos de python - django rest framework
 pip install django djangorestframework django-filter django-cors-headers psycopg2 django-environ drf-spectacular drf-spectacular-sidecar django-import-export Pillow django-dbbackup dj-rest-auth djangorestframework-simplejwt
 
+# Intalar requerimientos de python - Machine Learning
+pip install pandas numpy scikit-learn tensorflow-intel
+
 # Crear Proyecto
 django-admin startproject core .
 
