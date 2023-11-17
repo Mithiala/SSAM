@@ -12,7 +12,6 @@ export const useDatosenferStore = defineStore("Datosenfer", {
       id: 0,
       peso: "",
       talla: "",
-      imc: "",
       clasif_imc: "",
       app: "",
       patologia: "",
@@ -73,7 +72,6 @@ export const useDatosenferStore = defineStore("Datosenfer", {
       this.tempDatos = {
         peso: "",
       talla: "",
-      imc: "",
       clasif_imc: "",
       app: "",
       patologia: "",
@@ -224,7 +222,6 @@ export const useDatosenferStore = defineStore("Datosenfer", {
         const request = {
           peso: this.tempDatos.peso,
           talla: this.tempDatos.talla,
-          imc: this.tempDatos.imc,
           clasif_imc: this.tempDatos.clasif_imc,
           app: this.tempDatos.app,
           patologia: this.tempDatos.patologia,

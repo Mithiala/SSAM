@@ -6,25 +6,22 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..records.serializers import RegistryPredictionSerializer
-from ..records.models import Condition,
-
 
 class TrainModelView(APIView):
     def post(self, request, format=None):
         import numpy as np
         import pandas as pd
         import tensorflow as tf
+        from sklearn.metrics import accuracy_score, confusion_matrix
         from sklearn.model_selection import train_test_split
         from sklearn.preprocessing import StandardScaler
-        from sklearn.metrics import confusion_matrix, accuracy_score
 
         # Establecer una semilla aleatoria para numpy y tensorflow
         np.random.seed(42)
         tf.random.set_seed(42)
 
         # Cargar los datos desde un archivo CSV
-        dataset = pd.read_csv("salud mental.csv")
+        dataset = pd.read_csv("salud_mental.csv")
 
         # Separar las variables predictoras y la variable objetivo
         X = dataset.iloc[:, :-1].values
@@ -67,10 +64,10 @@ class TrainModelView(APIView):
             epochs=100,
             validation_data=(X_test, y_test),
         )
-                    # Guardar el modelo en un archivo
+        # Guardar el modelo en un archivo
         model_dir = "apps/clasificador/modelo"
         if not os.path.exists(model_dir):
-                os.makedirs(model_dir)
+            os.makedirs(model_dir)
 
         model_path = os.path.join(model_dir, f"model.keras")
         model.save(model_path)

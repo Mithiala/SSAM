@@ -7,7 +7,7 @@
       color="green"
       :rows="datosenfer"
       :columns="columns"
-      row-key="id_date"
+      row-key="id"
       :visible-columns="visibleColumns"
       :loading="loading"
       :filter="filter"
@@ -100,17 +100,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -127,7 +116,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyDatose(props.row.id_cant)"
+            @click="destroyDatose(props.row.id)"
           />
         </q-td>
       </template>
@@ -183,13 +172,8 @@
                 dense
                 readonly
                 type="text"
-                label="IMC"
+                label="Clasificación IMC"
                 v-model="tempDatos.clasif_imc"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese la talla del paciente',
-                ]"
               />
 
               <q-space class="col-2" />
@@ -229,6 +213,42 @@
                 v-model="tempDatos.operaciones"
               />
 
+              <!-- TODO:  "Fecha estomatologia" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempDatos.fecha_e"
+                mask="date"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de consulta',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="tempDatos.fecha_e" color="green-5" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
               <!-- TODO:  "Atención estomatológica" -->
               <q-input
                 class="col-5"
@@ -238,6 +258,42 @@
                 label="Atención estomatológica"
                 v-model="tempDatos.atencion_estomatologia"
               />
+
+              <!-- TODO:  "Fecha auditivo" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempDatos.fecha_a"
+                mask="date"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de consulta',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="tempDatos.fecha_a" color="green-5" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
 
               <!-- TODO:  "Programa auditivo" -->
               <q-input
@@ -249,6 +305,42 @@
                 v-model="tempDatos.programa_auditivo"
               />
 
+              <!-- TODO:  "Fecha oftalmologia" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempDatos.fecha_o"
+                mask="date"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de consulta',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="tempDatos.fecha_o" color="green-5" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
               <!-- TODO:  "Atención oftalmológica" -->
               <q-input
                 class="col-5"
@@ -258,6 +350,42 @@
                 label="Atención oftalmológica"
                 v-model="tempDatos.atencion_oftalmologia"
               />
+
+              <!-- TODO:  "Fecha geriatria" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempDatos.fecha_ge"
+                mask="date"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de consulta',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="tempDatos.fecha_ge" color="green-5" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
 
               <!-- TODO:  "Diagnóstico de geriatría" -->
               <q-input
@@ -269,6 +397,42 @@
                 label="Diagnóstico de geriatría"
               />
 
+              <!-- TODO:  "Fecha oncologia" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempDatos.fecha_on"
+                mask="date"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de consulta',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="tempDatos.fecha_on" color="green-5" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
               <!-- TODO:  "Diagnóstico de oncología" -->
               <q-input
                 class="col-5"
@@ -279,6 +443,42 @@
                 label="Diagnóstico de oncología"
               />
 
+              <!-- TODO:  "Fecha angiologia" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempDatos.fecha_an"
+                mask="date"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de consulta',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="tempDatos.fecha_an" color="green-5" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
               <!-- TODO:  "Diagnóstico de angiología" -->
               <q-input
                 class="col-5"
@@ -288,6 +488,42 @@
                 v-model="tempDatos.diagnostico_angiologia"
                 label="Diagnóstico de angiología"
               />
+
+              <!-- TODO:  "Fecha cardiologia" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempDatos.fecha_car"
+                mask="date"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de consulta',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="tempDatos.fecha_car" color="green-5" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
 
               <!-- TODO:  "Diagnóstico de cardiología" -->
               <q-input
@@ -468,7 +704,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDG"
-                @click="updateDatose(tempDatos.id_date)"
+                @click="updateDatose(tempDatos.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
@@ -518,15 +754,15 @@ const {
 const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPaciente } =
   storeToRefs(useDatosenferStore());
 
-  const baseurl = "http://127.0.0.1:3333";
+  const baseurl = "http://127.0.0.1:8000";
 
   const columns = [
   {
-    name: 'id_date',
+    name: 'id',
     required: true,
     label: 'Id',
     align: 'left',
-    field: row => row.id_date,
+    field: row => row.id,
     format: val => `${val}`,
     sortable: true,
     align: "center",
@@ -560,6 +796,18 @@ const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPacient
     align: "center",
   },
 
+  {
+    name: 'num_cama',
+    align: 'center',
+    label: 'No. Cama',
+    field: 'num_cama'
+  },
+  {
+    name: 'sala',
+    align: 'center',
+    label: 'Sala',
+    field: 'sala'
+  },
   {
     name: "peso",
     align: "center",
@@ -599,10 +847,22 @@ const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPacient
     field: 'operaciones',
   },
   {
+    name: 'fecha_e',
+    align: 'center',
+    label: 'Fecha',
+    field: 'fecha_e',
+  },
+  {
     name: 'atencion_estomatologia',
     align: 'center',
     label: 'Atención estomatología',
     field: 'atencion_estomatologia'
+  },
+  {
+    name: 'fecha_a',
+    align: 'center',
+    label: 'Fecha',
+    field: 'fecha_a',
   },
   {
     name: 'programa_auditivo',
@@ -611,10 +871,22 @@ const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPacient
     field: 'programa_auditivo',
   },
   {
+    name: 'fecha_o',
+    align: 'center',
+    label: 'Fecha',
+    field: 'fecha_o',
+  },
+  {
     name: 'atencion_oftalmologia',
     align: 'center',
     label: 'Atención oftalmología',
     field: 'atencion_oftalmologia'
+  },
+  {
+    name: 'fecha_ge',
+    align: 'center',
+    label: 'Fecha',
+    field: 'fecha_ge',
   },
   {
     name: 'diagnostico_geriatria',
@@ -623,10 +895,22 @@ const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPacient
     field: 'diagnostico_geriatria'
   },
   {
+    name: 'fecha_on',
+    align: 'center',
+    label: 'Fecha',
+    field: 'fecha_on',
+  },
+  {
     name: 'diagnostico_oncologia',
     align: 'center',
     label: 'Diagnóstico de oncología',
     field: 'diagnostico_oncologia'
+  },
+  {
+    name: 'fecha_car',
+    align: 'center',
+    label: 'Fecha',
+    field: 'fecha_car',
   },
   {
     name: 'diagnostico_cardiologia',
@@ -635,10 +919,22 @@ const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPacient
     field: 'diagnostico_cardiologia'
   },
   {
+    name: 'fecha_cir',
+    align: 'center',
+    label: 'Fecha',
+    field: 'fecha_cir',
+  },
+  {
     name: 'diagnostico_cirugia',
     align: 'center',
     label: 'Diagnóstico de cirugía',
     field: 'diagnostico_cirugia'
+  },
+  {
+    name: 'fecha_der',
+    align: 'center',
+    label: 'Fecha',
+    field: 'fecha_der',
   },
   {
     name: 'diagnostico_dermatologia',
@@ -647,10 +943,22 @@ const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPacient
     field: 'diagnostico_dermatologia'
   },
   {
+    name: 'fecha_fi',
+    align: 'center',
+    label: 'Fecha',
+    field: 'fecha_fi',
+  },
+  {
     name: 'diagnostico_fisiatria',
     align: 'center',
     label: 'Diagnóstico del fisiatría',
     field: 'diagnostico_fisiatria'
+  },
+  {
+    name: 'fecha',
+    align: 'center',
+    label: 'Fecha',
+    field: 'fecha',
   },
   {
     name: 'otros_diagnosticos',
@@ -712,18 +1020,6 @@ const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPacient
     label: 'Clasificacion de validismo',
     field: 'clasificacion_validismo'
   },
-  {
-    name: 'num_cama',
-    align: 'center',
-    label: 'No. Cama',
-    field: 'num_cama'
-  },
-  {
-    name: 'sala',
-    align: 'center',
-    label: 'Sala',
-    field: 'sala'
-  },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
 ]
 
@@ -755,16 +1051,27 @@ const visibleColumns = ref([
   'app',
   'patologia',
   'operaciones',
+  'fecha_e',
   'atencion_estomatologia',
+  'fecha_a',
   'programa_auditivo',
+  'fecha_o',
   'atencion_oftalmologia',
+  'fecha_ge',
   'diagnostico_geriatria',
+  'fecha_on',
   'diagnostico_oncologia',
+  'fecha_an',
   'diagnostico_angiologia',
+  'fecha_car',
   'diagnostico_cardiologia',
+  'fecha_cir',
   'diagnostico_cirugia',
+  'fecha_der',
   'diagnostico_dermatologia',
+  'fecha_fi',
   'diagnostico_fisiatria',
+  'fecha',
   'otros_diagnosticos',
   'local_ulcerapres',
   'sindrome_respiratorio',
