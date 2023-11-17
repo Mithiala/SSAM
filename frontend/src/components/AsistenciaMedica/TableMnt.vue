@@ -1,0 +1,332 @@
+<template>
+  <div class="q-pa-md">
+    <q-table
+      class="table"
+      flat
+      bordered
+      color="green"
+      :rows="mnt"
+      :columns="columns"
+      row-key="id_mnt"
+      :loading="loading"
+      :filter="filter"
+      :rows-per-page-options="[10, 20, 30]"
+      separator="cell"
+    >
+      <template v-slot:top="props">
+        <div class="row col-12">
+          <q-input
+            class="col-3"
+            rounded
+            standout="bg-teal-4 text-white"
+            dark
+            dense
+            input-class="text-right"
+            debounce="300"
+            color="teal-3"
+            v-model="filter"
+          >
+            <template v-slot:append>
+              <q-icon v-if="filter === ''" name="search" />
+              <q-icon
+                v-else
+                name="clear"
+                class="cursor-pointer"
+                @click="filter = ''"
+              />
+            </template>
+          </q-input>
+          <q-space class="col-3"/>
+          <q-btn
+            class="q-ml-md"
+            flat
+            unelevated
+            fab-mini
+            color="white"
+            icon="add"
+            type="submit"
+            label="Agregar"
+            @click="openAddDialog()"
+          />
+          <q-btn
+            flat
+            unelevated
+            fab-mini
+            class="q-ml-sm"
+            color="white"
+            icon-right="archive"
+            label="Exportar"
+            no-caps
+            @click="exportFile"
+          >
+            <q-tooltip
+              anchor="top middle"
+              self="center middle"
+              class="bg-info text-black shadow-4"
+              :offset="[10, 10]"
+            >
+              Exportar Tabla a Excel
+            </q-tooltip>
+          </q-btn>
+
+          <q-btn
+            class="q-ml-xs"
+            flat
+            round
+            dense
+            :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+            @click="props.toggleFullscreen"
+          />
+        </div>
+      </template>
+
+      <!-- TODO:  "Método para image" -->
+      <template v-slot:body-cell-image="props">
+        <q-td :props="props">
+          <q-avatar size="xl">
+            <template v-if="props.row.image">
+              <q-img :src="baseurl + props.row.image.url" />
+            </template>
+          </q-avatar>
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-actions="props">
+        <q-td :props="props">
+          <q-btn
+            flat
+            round
+            dense
+            color="accent"
+            icon="edit"
+            @click="openEditDialog(props.row)"
+          />
+          <q-btn
+            flat
+            round
+            dense
+            color="warning"
+            icon="delete"
+            @click="destroyMntp(props.row.id_mnt)"
+          />
+        </q-td>
+      </template>
+    </q-table>
+
+    <!-- TODO: Añadir - Editar -->
+    <q-dialog v-model="showDialogDG" persistent full-width >
+      <q-card class="column medium">
+        <q-card-section>
+          <q-form>
+            <div class="row justify-around q-gutter-md">
+
+              <!-- TODO: "Tratamiento" -->
+              <q-input
+                class="col-5"
+                dense
+                outlined
+                type="text"
+                label="Tratamiento"
+                v-model="tempMntprog.otorg_mnt"
+              />
+
+              <!-- TODO: "Frecuencia" -->
+              <q-input
+                class="col-5"
+                dense
+                outlined
+                type="text"
+                label="Frecuencia"
+                v-model="tempMntprog.frec_mnt"
+              />
+
+              <!-- TODO: "Diagnóstico" -->
+              <q-input
+              class="col-8"
+                type="textarea"
+                dense
+                outlined
+                label="Diagnóstico"
+                v-model="tempMntprog.diag_mnt"
+              />
+
+            </div>
+            <div class="q-mt-sm row justify-center">
+              <q-btn
+                class="col-2 q-mx-sm"
+                type="submit"
+                label="Actualizar"
+                color="light-blue-8"
+                v-if="EditDG"
+                @click="updateMntp(tempMntprog.id_mnt)"
+              />
+              <q-btn
+                class="col-2 q-mx-sm"
+                type="submit"
+                label="Añadir"
+                color="light-blue-8"
+                v-if="AddDG"
+                @click="createMntp(tempMntprog)"
+              />
+              <q-btn
+                class="col-2 q-mx-sm"
+                color="purple-9"
+                label="Salir"
+                @click="showDialogDG = false"
+              />
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+  </div>
+</template>
+
+<script setup>
+import { PDFDocument, StandardFonts } from "pdf-lib";
+import { utils, writeFileXLSX } from "xlsx";
+import { ref, onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import { useMntStore } from "src/stores/Mnt-Store";
+
+onMounted(async () => {
+  // if (isAuthenticated) {
+  await listMntp();
+  await listPacientes();
+  // }
+});
+
+const {
+  resetTempMntp,
+  listMntp,
+  listPacientes,
+  createMntp,
+  updateMntp,
+  destroyMntp,
+} = useMntStore();
+
+const { mnt, AddDG, EditDG, showDialogDG, loading, tempMntprog, tempPaciente } =
+  storeToRefs(useMntStore());
+
+  const baseurl = "http://127.0.0.1:3333";
+
+  const columns = [
+  {
+    name: 'id_mnt',
+    required: true,
+    label: 'Id',
+    align: 'left',
+    field: row => row.id_mnt,
+    format: val => `${val}`,
+    sortable: true,
+    align: "center",
+  },
+
+  {
+    name: "image",
+    align: "center",
+    label: "Foto",
+    field: "image",
+  },
+  {
+    name: "nombre",
+    align: "center",
+    label: "Nombre y Apellidos",
+    field: "nombre",
+    sortable: true,
+  },
+  {
+    name: "edad",
+    label: "Edad",
+    field: "edad",
+    sortable: true,
+    align: "center",
+    sort: (a, b) => a - b,
+  },
+
+  {
+    name: "otorg_mnt",
+    align: "center",
+    label: "Tratamiento",
+    field: "otorg_mnt",
+  },
+  {
+    name: "diag_mnt",
+    align: "center",
+    label: "Diagnóstico",
+    field: "diag_mnt",
+    sortable: true,
+  },
+  {
+    name: 'frec_mnt',
+    align: 'center',
+    label: 'Frecuencia',
+    field: 'frec_mnt',
+  },
+  { name: "actions", label: "Acciones", align: "center", autoWidth: true },
+]
+
+const filter = ref("");
+const persistent = ref(false);
+
+const openEditDialog = (row) => {
+  AddDG.value = false;
+  EditDG.value = true;
+  tempMntprog.value = { ...row };
+  showDialogDG.value = true;
+};
+const openAddDialog = () => {
+  AddDG.value = true;
+  EditDG.value = false;
+  resetTempMntp();
+  showDialogDG.value = true;
+};
+
+const date = ref("");
+
+const imagenFile = ref(null);
+const imagenURL = ref("");
+function generarURL() {
+  if (tempPaciente.value.image) {
+    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
+  } else {
+    imagenURL.value = "";
+  }
+}
+
+// TODO: Export To Excel:
+async function exportFile() {
+  const ws = utils.json_to_sheet(mnt.value);
+  const wb = utils.book_new();
+  utils.book_append_sheet(wb, ws, "Mnt");
+  writeFileXLSX(wb, "Mnt.xlsx");
+}
+</script>
+
+<style lang="sass">
+.table
+  /* height or max-height is important */
+  height: 410px
+
+  .q-table__top,
+  .q-table__bottom,
+  thead tr:first-child th
+    /* bg color is important for th; just specify one */
+    background-color: #338a67
+
+  thead tr th
+    position: sticky
+    z-index: 1
+  thead tr:first-child th
+    top: 0
+
+  /* this is when the loading indicator appears */
+  &.q-table--loading thead tr:last-child th
+    /* height of all previous header rows */
+    top: 48px
+
+  /* prevent scrolling behind sticky top row on focus */
+  tbody
+    /* height of all previous header rows */
+    scroll-margin-top: 48px
+</style>
