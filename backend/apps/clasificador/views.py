@@ -67,6 +67,14 @@ class TrainModelView(APIView):
             epochs=100,
             validation_data=(X_test, y_test),
         )
+                    # Guardar el modelo en un archivo
+        model_dir = "apps/clasificador/modelo"
+        if not os.path.exists(model_dir):
+                os.makedirs(model_dir)
+
+        model_path = os.path.join(model_dir, f"model.keras")
+        model.save(model_path)
+
         train_loss = history.history["loss"]
         val_loss = history.history["val_loss"]
 
