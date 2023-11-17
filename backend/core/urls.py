@@ -8,6 +8,8 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
+from apps.clasificador.views import TrainModelView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("dj_rest_auth.urls")),
@@ -16,6 +18,7 @@ urlpatterns = [
     path("psicologia/", include("apps.psicologia.routers")),
     path("asistmedica/", include("apps.asistmedica.routers")),
     path("farmacia/", include("apps.farmacia.routers")),
+    path("train/", TrainModelView.as_view(), name="Clasificación"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += [
