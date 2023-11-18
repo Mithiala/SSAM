@@ -121,7 +121,7 @@
         <q-td :props="props">
           <q-avatar size="xl">
             <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
+              <q-img :src="props.row.image" />
             </template>
           </q-avatar>
         </q-td>
@@ -426,7 +426,7 @@
                 outlined
                 label="Fecha de inscripción"
                 v-model="tempPaciente.fecha_inscripcion"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
@@ -441,7 +441,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempPaciente.fecha_inscripcion" color="green-5" mask="YYYY-MM-DD">
+                      <q-date
+                        v-model="tempPaciente.fecha_inscripcion"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -576,7 +580,6 @@
                 label="Problema social"
                 v-model="tempPaciente.problema_social"
               />
-
             </div>
             <div class="q-mt-sm row justify-center">
               <q-btn
@@ -637,7 +640,7 @@ const {
 const { pacientes, tempPaciente, AddDG, EditDG, showDialogDG, loading } =
   storeToRefs(usePacientesStore());
 
-  const pacientesStore = usePacientesStore();
+const pacientesStore = usePacientesStore();
 
 const baseurl = "http://127.0.0.1:8000";
 
@@ -862,15 +865,17 @@ const EconOptions = [
   "Reciben mesada del exterior de forma estable",
 ];
 
-const CasaOptions = [
-  "Buena",
-  "Mala",
-  "Regular",
-];
+const CasaOptions = ["Buena", "Mala", "Regular"];
 
 const CentroOptions = [
-  "Andrés Cueva Heredia",
-  "Francisaca Navia Cuadrado",
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
 ];
 
 const CasasOptions = [
@@ -955,8 +960,13 @@ const calcularTiempoEstadia = () => {
 
     if (diferenciaDias < 0) {
       mesesEstadia--;
-      const ultimoDiaMesAnterior = new Date(anioActual, mesActual - 1, 0).getDate();
-      diasEstadiaTexto = ultimoDiaMesAnterior - Math.abs(diferenciaDias) + " días";
+      const ultimoDiaMesAnterior = new Date(
+        anioActual,
+        mesActual - 1,
+        0
+      ).getDate();
+      diasEstadiaTexto =
+        ultimoDiaMesAnterior - Math.abs(diferenciaDias) + " días";
     } else if (diferenciaDias === 0) {
       diasEstadiaTexto = "0 días";
     } else {
@@ -973,12 +983,14 @@ const calcularTiempoEstadia = () => {
       tiempoEstadiaTexto += `${anosEstadia} año${anosEstadia > 1 ? "s" : ""}`;
     }
     if (mesesEstadia > 0) {
-      tiempoEstadiaTexto += `${tiempoEstadiaTexto ? ", " : ""}${mesesEstadia} mes${
-        mesesEstadia > 1 ? "es" : ""
-      }`;
+      tiempoEstadiaTexto += `${
+        tiempoEstadiaTexto ? ", " : ""
+      }${mesesEstadia} mes${mesesEstadia > 1 ? "es" : ""}`;
     }
     if (diasEstadiaTexto) {
-      tiempoEstadiaTexto += `${tiempoEstadiaTexto ? ", " : ""}${diasEstadiaTexto}`;
+      tiempoEstadiaTexto += `${
+        tiempoEstadiaTexto ? ", " : ""
+      }${diasEstadiaTexto}`;
     }
 
     tempPaciente.value.tiempo_estadia = tiempoEstadiaTexto;

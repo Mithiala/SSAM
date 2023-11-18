@@ -66,6 +66,10 @@ class Paciente(BaseModel):
         verbose_name = "Paciente"
         verbose_name_plural = "Pacientes"
 
+    # def save(self, *args, **kwargs) -> :
+
+    #     return super().save(*args, **kwargs)
+
     def __str__(self):
         return f" {self.p_centros.nombre_inst} - {self.nombre}"
 

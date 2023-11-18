@@ -247,7 +247,7 @@
                 outlined
                 label="Fecha"
                 v-model="tempDatos.fecha_e"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||

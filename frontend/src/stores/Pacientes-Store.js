@@ -8,12 +8,6 @@ export const usePacientesStore = defineStore("Pacientes", {
     loading: false,
     edad: 0,
 
-    mutations: {
-      setEdad(edad) {
-        this.edad = edad;
-      }
-    },
-
     tempPaciente: {
       id: 0,
       image: "",
@@ -28,11 +22,11 @@ export const usePacientesStore = defineStore("Pacientes", {
       creencias_religiosas: "",
       escolaridad: "",
       hijo_de: "",
-      fecha_nacimiento: "",
+      fecha_nacimiento: new Date().toISOString().substring(0,10),
       num_hc: 0,
       num_hs: 0,
       num_cmf: 0,
-      fecha_inscripcion: "",
+      fecha_inscripcion: new Date().toISOString().substring(0,10),
       antecedentes: "",
       recibevisita: false,
       clasificacion_economica: "",
@@ -44,7 +38,7 @@ export const usePacientesStore = defineStore("Pacientes", {
       reportado_por: "",
       motivo_reporte: "",
       problema_social: "",
-      centro: "",
+      centro: 0,
     },
 
     showDialogDG: false,
@@ -52,14 +46,15 @@ export const usePacientesStore = defineStore("Pacientes", {
     AddDG: false,
   }),
 
-  getters: {},
+  getters: {
+  },
 
   actions: {
     //TODO: Resetear Variable Temporal
     resetTempPacientes() {
       console.log("aqui receteo");
       this.tempPaciente = {
-        image: "",
+        image: null,
         nombre: "",
         edad: 0,
         sexo: "",
@@ -88,7 +83,7 @@ export const usePacientesStore = defineStore("Pacientes", {
         reportado_por: "",
         motivo_reporte: "",
         problema_social: "",
-        centro: "",
+        centro: 0,
         this: this.pacientes,
       }
     },
@@ -142,13 +137,9 @@ export const usePacientesStore = defineStore("Pacientes", {
       try {
         const url = "/tsocial/pacientes/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempPaciente, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
+
         const formData = new FormData();
-        if (this.tempPaciente.image.size > 0) {
+        if (this.tempPaciente.image > 0) {
           formData.append("image", this.tempPaciente.image);
         }
         formData.append("nombre", this.tempPaciente.nombre);
@@ -178,7 +169,14 @@ export const usePacientesStore = defineStore("Pacientes", {
         formData.append("reportado_por", this.tempPaciente.reportado_por);
         formData.append("problema_social", this.tempPaciente.problema_social);
         formData.append("motivo_reporte", this.tempPaciente.motivo_reporte);
-        formData.append("centro", this.tempPaciente.centro);
+        formData.append("p_centros", this.tempPaciente.centro.value);
+
+        const response = await api.post(url, formData, {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+        });
+
         if (response) {
           Notify.create({
             color: "positive",
@@ -268,7 +266,7 @@ export const usePacientesStore = defineStore("Pacientes", {
           centro: this.tempPaciente.centro,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -296,7 +294,7 @@ export const usePacientesStore = defineStore("Pacientes", {
         await this.listPacientes();
         this.showDialogDG = false;
       } catch (error) {
-        console.log("Code: ", error);
+        console.log("Code: ", error.response);
 
         let errorMessage = "";
 
@@ -321,13 +319,14 @@ export const usePacientesStore = defineStore("Pacientes", {
     //TODO: Accion para modificar un Registro desde un ID
     async updatePhoto(id) {
       try {
+        console.log(" entré ...");
         const url = `/tsocial/pacientes/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const formData = new FormData();
         formData.append("image", this.tempPaciente.image);
 
-        const response = await api.put(url, formData);
+        const response = await api.patch(url, formData);
 
         if (response.status === 201) {
           console.log("Status: ", response.statusText);
