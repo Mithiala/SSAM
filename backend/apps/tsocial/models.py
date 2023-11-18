@@ -183,7 +183,7 @@ class ComposicionFamiliar(BaseModel):
         verbose_name_plural = "Composiciones Familiares"
 
     def __str__(self):
-        return f" {self.id} - {self.cf_paciente.nombre}"
+        return f" {self.id} - {self.cf_paciente.nombre} - {self.nombre}"
 
 
 class TrabajoDiario(BaseModel):

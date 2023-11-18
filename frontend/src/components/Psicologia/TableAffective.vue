@@ -260,26 +260,7 @@ const {
 const { afectiva, AddDG, EditDG, showDialogDG, loading, tempAfectivo, tempPaciente } =
   storeToRefs(useAfectivaStore());
 
-  const baseurl = "http://127.0.0.1:8000";
-
   const columns = [
-  {
-    name: 'id',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    align: "center",
-    field: row => row.id,
-    format: val => `${val}`,
-    sortable: true
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",

@@ -311,10 +311,10 @@ const { controlpases, AddDP, EditDP, showDialogDP, loading, tempPase, tempPacien
     field: 'fecha_salida',
   },
   {
-    name: 'direc_part_pase',
+    name: 'direc_part',
     align: 'center',
     label: 'Dirección particular',
-    field: 'direc_part_pase'
+    field: 'direc_part'
   },
   {
     name: 'fecha_regreso',
