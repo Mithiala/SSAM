@@ -135,7 +135,7 @@ export const useDiscapacidadStore = defineStore("Discapacidad", {
         const menssage = ( error.response.data.error)
         Notify.create({
           color: "negative",
-          message: menssage,
+          message: "Error al crear el registro",
           position: "bottom",
           progress: true,
           icon: "report_problem",
@@ -219,7 +219,7 @@ export const useDiscapacidadStore = defineStore("Discapacidad", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al actualizar",
           position: "bottom",
           progress: true,
           icon: "report_problem",
@@ -274,7 +274,7 @@ export const useDiscapacidadStore = defineStore("Discapacidad", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al eliminar",
           position: "top",
           icon: "report_problem",
           position: "bottom",

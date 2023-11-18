@@ -230,17 +230,6 @@
         </q-td>
       </template>
 
-      <!-- TODO: "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -269,6 +258,19 @@
         <q-card-section>
           <q-form class="">
             <div class="row justify-around q-gutter-md">
+
+              <!-- TODO:  "paciente_discapacidad" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempdiscapacidad.disc_paciente"
+                label="Nombre del paciente"
+                :options="DiscapOptions"
+                style="width: 250px"
+                behavior="menu"
+              />
+
 
               <!-- TODO: "Discapacidad motora" -->
               <q-checkbox
@@ -426,26 +428,7 @@ const {
 const { discapacidad, AddDG, EditDG, showDialogDG, loading, tempdiscapacidad, tempPaciente } =
   storeToRefs(useDiscapacidadStore());
 
-  const baseurl = "http://127.0.0.1:8000";
-
   const columns = [
-  {
-    name: 'id',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id,
-    format: val => `${val}`,
-    align: "center",
-    sortable: true
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -528,9 +511,18 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
+const DiscapOptions = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
+
 const visibleColumns = ref([
-  'id_discp',
-  'image',
   'nombre',
   'motora',
   'auditiva',
@@ -546,16 +538,6 @@ const visibleColumns = ref([
 ])
 
 const date = ref("")
-
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
 
 // TODO: Export To Excel:
 async function exportFile() {

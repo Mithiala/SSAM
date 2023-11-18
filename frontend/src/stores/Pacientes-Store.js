@@ -195,7 +195,7 @@ export const usePacientesStore = defineStore("Pacientes", {
         const menssage = error.response.data.error;
         Notify.create({
           color: "negative",
-          message: menssage,
+          message: "Error al crear el registro",
           position: "bottom",
           progress: true,
           icon: "report_problem",
@@ -308,7 +308,7 @@ export const usePacientesStore = defineStore("Pacientes", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al actualizar",
           position: "bottom",
           progress: true,
           icon: "report_problem",
@@ -349,7 +349,7 @@ export const usePacientesStore = defineStore("Pacientes", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al actualizar la imagen",
           position: "bottom",
           progress: true,
           icon: "report_problem",
@@ -400,7 +400,7 @@ export const usePacientesStore = defineStore("Pacientes", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al eliminar",
           position: "top",
           icon: "report_problem",
           position: "bottom",

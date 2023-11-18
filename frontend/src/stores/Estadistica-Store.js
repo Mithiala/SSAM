@@ -20,6 +20,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
       colchon: false,
       camaplana: false,
       camafowler: false,
+      at_paciente: 0,
     },
 
     tempPaciente: {
@@ -49,6 +50,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
         colchon: false,
         camaplana: false,
         camafowler: false,
+        at_paciente: 0,
       };
     },
 
@@ -98,7 +100,19 @@ export const useEstadisticaStore = defineStore("Estadistica", {
       try {
         const url = "/tsocial/atecnica/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempEstadistica, {
+        const formData = new FormData();
+        formData.append("protesisdental", this.tempEstadistica.protesisdental);
+        formData.append("protesisauditiva", this.tempEstadistica.protesisauditiva);
+        formData.append("anteojos", this.tempEstadistica.anteojos);
+        formData.append("protesisortopedica", this.tempEstadistica.protesisortopedica);
+        formData.append("sillaruedas", this.tempEstadistica.sillaruedas);
+        formData.append("baston", this.tempEstadistica.baston);
+        formData.append("andador", this.tempEstadistica.andador);
+        formData.append("colchon", this.tempEstadistica.colchon);
+        formData.append("camaplana", this.tempEstadistica.camaplana);
+        formData.append("camafowler", this.tempEstadistica.camafowler);
+        formData.append("at_paciente", this.tempEstadistica.at_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -121,7 +135,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
         const menssage = ( error.response.data.error)
         Notify.create({
           color: "negative",
-          message: menssage,
+          message: "Error al crear el registro",
           position: "bottom",
           progress: true,
           icon: "report_problem",
@@ -170,9 +184,10 @@ export const useEstadisticaStore = defineStore("Estadistica", {
           colchon: this.tempEstadistica.colchon,
           camaplana: this.tempEstadistica.camaplana,
           camafowler: this.tempEstadistica.camafowler,
+          at_paciente: this.tempEstadistica.at_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -185,7 +200,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
         if (response.status === 201) {
           console.log("Status: ", response.statusText);
           console.log(
-            "🚀 ~ file: Estadistica-Store.js:171 ~ updateEstad ~ response:",
+            "🚀 ~ file: Discapacidad-Store.js:171 ~ updateDiscap ~ response:",
             response.data
           );
 
@@ -204,7 +219,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al actualizar",
           position: "bottom",
           progress: true,
           icon: "report_problem",
@@ -222,7 +237,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/estadisticaasistmedicas/${id}/`;
+          const url = `/tsocial/atecnica/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {
@@ -259,7 +274,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al eliminar",
           position: "top",
           icon: "report_problem",
           position: "bottom",

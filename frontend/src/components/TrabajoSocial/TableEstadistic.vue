@@ -230,17 +230,6 @@
         </q-td>
       </template>
 
-      <!-- TODO: "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -257,7 +246,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyEstad(props.row.id_estadistic)"
+            @click="destroyEstad(props.row.id)"
           />
         </q-td>
       </template>
@@ -269,6 +258,19 @@
         <q-card-section>
           <q-form>
             <div class="row justify-around q-gutter-md">
+
+              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempEstadistica.at_paciente"
+                label="Nombre del paciente"
+                :options="AyudaOption"
+                style="width: 250px"
+                behavior="menu"
+              />
+
 
               <!-- TODO: "Usa prótesis dental" -->
               <q-checkbox
@@ -437,26 +439,7 @@ const {
 const { estadistica, AddDG, EditDG, showDialogDG, loading, tempEstadistica, tempPaciente } =
   storeToRefs(useEstadisticaStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
   const columns = [
-  {
-    name: 'id_estadistic',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_estadistic,
-    format: val => `${val}`,
-    align: "center",
-    sortable: true
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -544,9 +527,18 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
+const AyudaOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
+
 const visibleColumns = ref([
-  'id_estadistic',
-  'image',
   'nombre',
   'protesisdental',
   'protesisauditiva',
@@ -562,16 +554,6 @@ const visibleColumns = ref([
 ])
 
 const date = ref("")
-
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
 
 // TODO: Export To Excel:
 async function exportFile() {

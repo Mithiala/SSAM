@@ -217,7 +217,7 @@ export const useComposicionFamiliarStore = defineStore("ComposicionFamiliar", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al actualizar",
           position: "bottom",
           progress: true,
           icon: "report_problem",
