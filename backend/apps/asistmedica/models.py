@@ -221,7 +221,7 @@ class IndiceValue(BaseModel):
         verbose_name_plural = "Evaluaciones Índices"
 
     def save(self, **kwargs):
-        self.resultado = self.calcular_resultado()
+        self.resultado = calcular_resultado()
         super().save(**kwargs)
 
     def __str__(self):
