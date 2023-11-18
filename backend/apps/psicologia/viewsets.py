@@ -1,29 +1,43 @@
+from apps.base.viewsets import BaseViewSets
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 
-from apps.base.viewsets import BaseViewSets
-
-from .models import Afectiva, Cognitivo, Defectologia
+from .models import Defectologia, Resultado
 from .serializers import (
-    AfectivaSerializer,
-    CognitivoSerializer,
     DefectologiaSerializer,
+    EnarsSerializer,
+    ResultadoSerializer,
+    SaludMentalSerializer,
+    YasevageSerializer,
 )
 
-class AfectivaViewSet(viewsets.ModelViewSet):
-    queryset = Afectiva.objects.all()
-    serializer_class = AfectivaSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["depresion", "anciedad", "intentosuicida"]
 
-class CognitivoViewSet(viewsets.ModelViewSet):
-    queryset = Cognitivo.objects.all()
-    serializer_class = CognitivoSerializer
+class EnarsViewSet(BaseViewSets):
+    serializer_class = EnarsSerializer
+
+
+class SaludMentalViewSet(BaseViewSets):
+    serializer_class = SaludMentalSerializer
+
+
+class YasevageViewSet(BaseViewSets):
+    serializer_class = YasevageSerializer
+
+
+class ResultadoViewSet(viewsets.ModelViewSet):
+    queryset = Resultado.objects.all()
+    serializer_class = ResultadoSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["esquizofrenia", "fumador", "alcoholico", "demencia", "parkinson"]
+    filterset_fields = [
+        "depresion",
+        "intentosuicida",
+        "demencia",
+        "normales",
+    ]
+
 
 class DefectologiaViewSet(viewsets.ModelViewSet):
     queryset = Defectologia.objects.all()
     serializer_class = DefectologiaSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["auditivo", "visual", "ecv", "fisicomotora"]
+    filterset_fields = ["auditivo", "visual", "ecv", "fisicomotora, fuma, alcoholico"]

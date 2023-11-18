@@ -1,25 +1,33 @@
 from rest_framework import serializers
 
-from .models import (
-    Afectiva,
-    Cognitivo,
-    Defectologia,
-)
+from .models import Defectologia, Enars, Resultado, SaludMental, Yasevage
 
 
-class AfectivaSerializer(serializers.ModelSerializer):
+class YasevageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Afectiva
+        model = Yasevage
         fields = "__all__"
 
 
-class CognitivoSerializer(serializers.ModelSerializer):
+class EnarsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Cognitivo
+        model = Enars
         fields = "__all__"
 
 
 class DefectologiaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Defectologia
+        fields = "__all__"
+
+
+class SaludMentalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SaludMental
+        fields = "__all__"
+
+
+class ResultadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Resultado
         fields = "__all__"

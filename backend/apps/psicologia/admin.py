@@ -1,8 +1,10 @@
 from django.contrib import admin
 
-from .models import Afectiva, Cognitivo, Defectologia
+from .models import Defectologia, Enars, Resultado, SaludMental, Yasevage
 
 # Register your models here.
 admin.site.register(Defectologia)
-admin.site.register(Afectiva)
-admin.site.register(Cognitivo)
+admin.site.register(SaludMental)
+admin.site.register(Yasevage)
+admin.site.register(Enars)
+admin.site.register(Resultado)
