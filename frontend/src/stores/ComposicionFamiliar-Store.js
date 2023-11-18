@@ -19,6 +19,7 @@ export const useComposicionFamiliarStore = defineStore("ComposicionFamiliar", {
       escolaridad: "",
       ocupacion: "",
       ingreso_economico: "",
+      cf_paciente: 0,
     },
 
     tempPaciente: {
@@ -48,6 +49,7 @@ export const useComposicionFamiliarStore = defineStore("ComposicionFamiliar", {
         escolaridad: "",
         ocupacion: "",
         ingreso_economico: "",
+        cf_paciente: 0,
       };
     },
 
@@ -93,42 +95,49 @@ export const useComposicionFamiliarStore = defineStore("ComposicionFamiliar", {
     },
 
     //TODO: Accion para crear Registros
-    async createFamiliares(token) {
+    async createFamiliares() {
       try {
         const url = "/tsocial/cfamiliar/";
-        const token = this.$q.localStorage.getItem("access_token");
-
-        const response = await axios.post(url, this.tempFamiliar, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        // const token = LocalStorage.getItem("access_token");
+        const formData = new FormData();
+        formData.append("nombre", this.tempFamiliar.nombre);
+        formData.append("edad", this.tempFamiliar.edad);
+        formData.append("telefono", this.tempFamiliar.telefono);
+        formData.append("parentesco", this.tempFamiliar.parentesco);
+        formData.append("direc_part", this.tempFamiliar.direc_part);
+        formData.append("estado_civil", this.tempFamiliar.estado_civil);
+        formData.append("escolaridad", this.tempFamiliar.escolaridad);
+        formData.append("ocupacion", this.tempFamiliar.ocupacion);
+        formData.append("ingreso_economico", this.tempFamiliar.ingreso_economico);
+        formData.append("cf_paciente", this.tempFamiliar.cf_paciente.value);
+        const response = await api.post(url, formData, {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
         });
-
-        if (response.status === 201) {
-          // Registro exitoso
-          this.$q.notify({
+        if (response) {
+          Notify.create({
             color: "positive",
-            message: "Registro guardado exitosamente",
+            message: `Regitro guardado exitosamente`,
             position: "bottom",
             progress: true,
             icon: "check",
           });
-
-          // Resto del código para actualizar la lista de familiares, etc.
-        } else {
-          // Si la solicitud no devuelve un estado 201, muestra una notificación de error
-          this.$q.notify({
-            color: "negative",
-            message: "Error al guardar el registro",
-            position: "bottom",
-            progress: true,
-            icon: "report_problem",
-          });
+          await this.listFamiliares();
+          this.showDialogDG = false;
+          this.resetTempFamiliares();
         }
       } catch (error) {
-        console.log("Error: ", error);
-
-        // Resto del código para manejar el error, mostrar notificaciones, etc.
+        console.log("FullError: ", error);
+        console.log("error: ", error.response.data);
+        const menssage = ( error.response.data.error)
+        Notify.create({
+          color: "negative",
+          message: menssage,
+          position: "bottom",
+          progress: true,
+          icon: "report_problem",
+        });
       }
     },
   
@@ -173,9 +182,10 @@ export const useComposicionFamiliarStore = defineStore("ComposicionFamiliar", {
           escolaridad: this.tempFamiliar.escolaridad,
           ocupacion: this.tempFamiliar.escolaridad,
           ingreso_economico: this.tempFamiliar.ingreso_economico,
+          cf_paciente: this.tempFamiliar.cf_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {

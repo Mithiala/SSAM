@@ -101,17 +101,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -140,6 +129,18 @@
         <q-card-section>
           <q-form class="">
             <div class="row justify-around q-gutter-md">
+
+              <!-- TODO:  "encuesta_cf_paciente" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempFamiliar.cf_paciente"
+                label="Nombre del paciente"
+                :options="FamiliaOption"
+                style="width: 250px"
+                behavior="menu"
+              />
 
               <!-- TODO:  "Nombre y Apellidos" -->
               <q-input
@@ -324,26 +325,7 @@ const {
 const { composicionfamiliar, AddDG, EditDG, showDialogDG, loading, tempFamiliar, tempPaciente } =
   storeToRefs(useComposicionFamiliarStore());
 
-  const baseurl = "http://127.0.0.1:8000";
-
   const columns = [
-  {
-    name: 'id',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id,
-    format: val => `${val}`,
-    sortable: true,
-    align: 'center',
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -434,6 +416,17 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
+const FamiliaOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
+
 const CivilOptions = [
   "Casado",
   "Soltero",
@@ -460,8 +453,6 @@ const ParentOptions = [
 ]
 
 const visibleColumns = ref([
-'id',
-'image',
 'nombre',
 'recibevisita',
 'nombre',
@@ -477,16 +468,6 @@ const visibleColumns = ref([
 ])
 
 const date = ref("");
-
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
 
 // TODO: Export To Excel:
 async function exportFile() {

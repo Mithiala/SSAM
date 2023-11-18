@@ -80,17 +80,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -120,14 +109,38 @@
           <q-form class="">
             <div class="row justify-center q-gutter-md">
 
-              <!-- TODO: "Fecha de salida" -->
+              <!-- TODO:  "familiar_pase" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempPase.cp_familiar"
+                label="Nombre del familiar"
+                :options="PasefOptions"
+                style="width: 250px"
+                behavior="menu"
+              />
+
+              <!-- TODO:  "paciente_pase" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempPase.cp_paciente"
+                label="Nombre del paciente"
+                :options="PacienteOptions"
+                style="width: 250px"
+                behavior="menu"
+              />
+
+              <!-- TODO:  "Fecha" -->
               <q-input
                 class="col-4"
-                outlined
                 dense
+                outlined
                 label="Fecha de salida"
                 v-model="tempPase.fecha_salida"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
@@ -141,7 +154,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempPase.fecha_salida" color="green-5" mask="YYYY-MM-DD">
+                      <q-date
+                        v-model="tempPase.fecha_salida"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -156,14 +173,14 @@
                 </template>
               </q-input>
 
-              <!-- TODO: "Fecha de regreso" -->
+              <!-- TODO:  "Fecha de regreso" -->
               <q-input
                 class="col-4"
-                outlined
                 dense
+                outlined
                 label="Fecha de regreso"
                 v-model="tempPase.fecha_regreso"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
@@ -177,7 +194,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempPase.fecha_regreso" color="green-5" mask="YYYY-MM-DD">
+                      <q-date
+                        v-model="tempPase.fecha_regreso"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -199,7 +220,7 @@
                 dense
                 type="text"
                 label="Dirección particular"
-                v-model="tempPase.direc_part_pase"
+                v-model="tempPase.direc_part"
               />
             </div>
 
@@ -210,7 +231,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDP"
-                @click="updatePases(tempPase.id_pase)"
+                @click="updatePases(tempPase.id)"
               />
               <q-btn
                 class="col-3 q-mx-sm"
@@ -260,26 +281,7 @@ const {
 const { controlpases, AddDP, EditDP, showDialogDP, loading, tempPase, tempPaciente } =
   storeToRefs(useControlPasesStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
   const columns = [
-  {
-    name: 'id_pase',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_pase,
-    format: val => `${val}`,
-    align: "center",
-    sortable: true
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -339,17 +341,29 @@ const openAddDialog = () => {
   showDialogDP.value = true;
 };
 
-const date = ref("");
+const PasefOptions = [
+  {
+    label: "José Ramírez",
+    value: "1",
+  },
+  {
+    label: "José Pérezo",
+    value: "2",
+  },
+];
 
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
+const PacienteOptions = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisca Navia Cuadrado",
+    value: "2",
+  },
+];
+
+const date = ref("");
 
 // TODO: Export To Excel:
 async function exportFile() {

@@ -219,7 +219,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          fecha: this.this.tempEncuesta.fecha,
+          fecha: this.tempEncuesta.fecha,
           lectura: this.tempEncuesta.lectura,
           tv: this.tempEncuesta.tv,
           juegomesa: this.tempEncuesta.juegomesa,
@@ -246,7 +246,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
           enc_paciente: this.tempEncuesta.enc_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {

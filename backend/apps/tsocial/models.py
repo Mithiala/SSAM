@@ -141,7 +141,7 @@ class EncuestaInicial(BaseModel):
         Paciente,
         on_delete=models.CASCADE,
         verbose_name="Paciente",
-        related_name="encuesta_paciente",
+        related_name="enc_paciente",
     )
 
     class Meta:
@@ -232,14 +232,14 @@ class ControlPase(BaseModel):
     cp_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Control Pase",
+        verbose_name="Paciente",
         related_name="cp_paciente",
     )
 
     cp_familiar = models.ForeignKey(
-        Paciente,
+        ComposicionFamiliar,
         on_delete=models.CASCADE,
-        verbose_name="Paciente",
+        verbose_name="Familiar",
         related_name="cp_familiar",
     )
 

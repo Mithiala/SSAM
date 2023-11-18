@@ -13,6 +13,8 @@ export const useControlPasesStore = defineStore("ControlPases", {
       fecha_salida: "",
       direc_part: "",
       fecha_regreso: "",
+      cp_paciente: 0,
+      cp_familiar: 0,
     },
 
     tempPaciente: {
@@ -37,6 +39,8 @@ export const useControlPasesStore = defineStore("ControlPases", {
         fecha_salida: "",
         direc_part: "",
         fecha_regreso: "",
+        cp_paciente: 0,
+        cp_familiar: 0,
       };
     },
 
@@ -86,6 +90,13 @@ export const useControlPasesStore = defineStore("ControlPases", {
       try {
         const url = "/tsocial/pases/";
         // const token = LocalStorage.getItem("access_token");
+        const formData = new FormData();
+        formData.append("fecha_salida", this.tempPase.fecha_salida);
+        formData.append("direc_part", this.tempPase.direc_part);
+        formData.append("fecha_regreso", this.tempPase.fecha_regreso);
+        formData.append("cp_paciente", this.tempPase.cp_familiar.value);
+        formData.append("cp_familiar", this.tempPase.cp_paciente.value);
+
         const response = await api.post(url, this.tempPase, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
@@ -151,9 +162,11 @@ export const useControlPasesStore = defineStore("ControlPases", {
           fecha_salida: this.tempPase.fecha_salida,
           direc_part: this.tempPase.direc_part,
           fecha_regreso: this.tempPase.fecha_regreso,
+          cp_familiar: this.tempPase.cp_familiar,
+          cp_paciente: this.tempPase.cp_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
