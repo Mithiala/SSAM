@@ -22,12 +22,12 @@ def calcular_resultado(self):
     puntuacion_estado_general = self.estado_general.puntuacion
 
     # Calculamos el resultado general
-
-    # Realizar condiciones y calcular el resultado
-    if puntuacion_estado_general >= 5:
+    if puntuacion_incontinencia == 3 and puntuacion_movilidad > 3:
         resultado_calculado = "Alto"
-    else:
+    elif puntuacion_incontinencia == 1 and puntuacion_movilidad > 2:
         resultado_calculado = "Bajo"
+    else:
+        resultado_calculado = "Bajo2"
 
     return resultado_calculado
 
