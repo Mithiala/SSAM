@@ -29,6 +29,16 @@ class DatoEnfermeriaSerializer(serializers.ModelSerializer):
         model = DatoEnfermeria
         fields = "__all__"
 
+    # def to_representation(self, instance):
+    #     return {
+    #         "id": instance.id,
+    #         "state": instance.state,
+    #         "receiver": instance.receiver.name if instance.receiver is not None else "",
+    #         "content": instance.content,
+    #         "timestamp": instance.timestamp,
+    #         "lecturatime": instance.lecturatime,
+    #     }
+
 
 class MaterialGastableSerializer(serializers.ModelSerializer):
     class Meta:
