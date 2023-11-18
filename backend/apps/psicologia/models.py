@@ -13,7 +13,7 @@ class Afectiva(BaseModel):
     a_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Afectiva",
+        verbose_name="Paciente",
         related_name="a_paciente",
     )
 

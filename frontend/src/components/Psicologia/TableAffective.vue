@@ -328,16 +328,6 @@ const openAddDialog = () => {
 
 const date = ref("");
 
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
-
 // TODO: Export To Excel:
 async function exportFile() {
   const ws = utils.json_to_sheet(afectiva.value);

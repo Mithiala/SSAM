@@ -14,6 +14,7 @@ export const useAfectivaStore = defineStore("Afectiva", {
       anciedad: false,
       intentosuicida: false,
       observaciones: "",
+      a_paciente: 0,
     },
 
     tempPaciente: {
@@ -39,6 +40,7 @@ export const useAfectivaStore = defineStore("Afectiva", {
         anciedad: false,
         intentosuicida: false,
         observaciones: "",
+        a_paciente: 0,
       };
     },
 
@@ -88,6 +90,12 @@ export const useAfectivaStore = defineStore("Afectiva", {
       try {
         const url = "/psicologia/afectivo/";
         // const token = LocalStorage.getItem("access_token");
+        const formData = new FormData();
+        formData.append("depresion", this.tempAfectivo.depresion);
+        formData.append("anciedad", this.tempAfectivo.anciedad);
+        formData.append("intentosuicida", this.tempAfectivo.intentosuicida);
+        formData.append("observaciones", this.tempAfectivo.observaciones);
+        formData.append("a_paciente", this.tempAfectivo.a_paciente.value);
         const response = await api.post(url, this.tempAfectivo, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
@@ -111,7 +119,7 @@ export const useAfectivaStore = defineStore("Afectiva", {
         const menssage = ( error.response.data.error)
         Notify.create({
           color: "negative",
-          message: menssage,
+          message: "Error al crear el registro",
           position: "bottom",
           progress: true,
           icon: "report_problem",
@@ -154,9 +162,10 @@ export const useAfectivaStore = defineStore("Afectiva", {
           anciedad: this.tempAfectivo.anciedad,
           intentosuicida: this.tempAfectivo.intentosuicida,
           observaciones_a: this.tempAfectivo.observaciones,
+          a_paciente: this.tempAfectivo.a_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -188,7 +197,7 @@ export const useAfectivaStore = defineStore("Afectiva", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al actualizar",
           position: "bottom",
           progress: true,
           icon: "report_problem",
@@ -243,7 +252,7 @@ export const useAfectivaStore = defineStore("Afectiva", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al eliminar",
           position: "top",
           icon: "report_problem",
           position: "bottom",
