@@ -12,6 +12,26 @@ from .models_nomenclador import (
 )
 
 
+def calcular_resultado(self):
+    """Calcula el resultado general del índice."""
+
+    puntuacion_incontinencia = self.incontinencia.puntuacion
+    puntuacion_movilidad = self.movilidad.puntuacion
+    puntuacion_actividad = self.actividad.puntuacion
+    puntuacion_estado_mental = self.estado_mental.puntuacion
+    puntuacion_estado_general = self.estado_general.puntuacion
+
+    # Calculamos el resultado general
+
+    # Realizar condiciones y calcular el resultado
+    if puntuacion_estado_general >= 5:
+        resultado_calculado = "Alto"
+    else:
+        resultado_calculado = "Bajo"
+
+    return resultado_calculado
+
+
 class DatoEnfermeria(BaseModel):
     num_cama = models.PositiveSmallIntegerField("# Cama", blank=True, null=True)
     sala = models.CharField("Sala", max_length=10, blank=True, null=True)
@@ -199,6 +219,10 @@ class IndiceValue(BaseModel):
         db_table = "indicevalue"
         verbose_name = "Evaluación Índice"
         verbose_name_plural = "Evaluaciones Índices"
+
+    def save(self, **kwargs):
+        self.resultado = self.calcular_resultado()
+        super().save(**kwargs)
 
     def __str__(self):
         return f" {self.id} - {self.ind_paciente.nombre} "
