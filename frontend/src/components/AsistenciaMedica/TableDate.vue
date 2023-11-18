@@ -131,6 +131,37 @@
 
               <q-space class="col-2" />
 
+              <!-- TODO:  "Sala" -->
+              <q-input
+                class="col-1"
+                dense
+                outlined
+                type="text"
+                label="Sala"
+                v-model="tempDatos.sala"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la sala al que pertence el paciente',
+                ]"
+              />
+
+              <!-- TODO:  "No. Cama" -->
+              <q-input
+                class="col-1"
+                dense
+                outlined
+                type="number"
+                label="No. Cama"
+                lazy-rules
+                v-model="tempDatos.num_cama"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la cama del paciente',
+                ]"
+              />
+
               <!-- TODO:  "Peso" -->
               <q-input
                 class="col-1"
@@ -145,8 +176,6 @@
                     'Por favor ingrese el peso del paciente',
                 ]"
               />
-
-              <q-space class="col-1" />
 
               <!-- TODO:  "Talla" -->
               <q-input
@@ -163,8 +192,6 @@
                 ]"
               />
 
-              <q-space class="col-1" />
-
               <!-- TODO:  "Clasificación IMC" -->
               <q-input
               class="col-2"
@@ -180,7 +207,7 @@
 
               <!-- TODO:  "APP" -->
               <q-input
-                class="col-5"
+                class="col-4"
                 type="textarea"
                 dense
                 outlined
@@ -190,7 +217,7 @@
 
               <!-- TODO:  "Patología" -->
               <q-input
-                class="col-5"
+                class="col-4"
                 type="textarea"
                 dense
                 outlined
@@ -535,6 +562,42 @@
                 label="Diagnóstico de cardiología"
               />
 
+              <!-- TODO:  "Fecha cirugia" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempDatos.fecha_cir"
+                mask="date"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de consulta',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="tempDatos.fecha_cir" color="green-5" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
               <!-- TODO:  "Diagnóstico de cirugía" -->
               <q-input
                 class="col-5"
@@ -544,6 +607,42 @@
                 v-model="tempDatos.diagnostico_cirugia"
                 label="Diagnóstico de cirugía"
               />
+
+              <!-- TODO:  "Fecha dermatología" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempDatos.fecha_der"
+                mask="date"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de consulta',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="tempDatos.fecha_der" color="green-5" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
 
               <!-- TODO:  "Diagnóstico de dermatología" -->
               <q-input
@@ -555,6 +654,42 @@
                 label="Diagnóstico de dermatología"
               />
 
+              <!-- TODO:  "Fecha fisiatra" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempDatos.fecha_fi"
+                mask="date"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de consulta',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="tempDatos.fecha_fi" color="green-5" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
               <!-- TODO:  "Diagnóstico de fisiatría" -->
               <q-input
                 class="col-5"
@@ -564,6 +699,42 @@
                 v-model="tempDatos.diagnostico_fisiatria"
                 label="Diagnóstico de fisiatría"
               />
+
+              <!-- TODO:  "Fecha" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempDatos.fecha"
+                mask="date"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de consulta',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="tempDatos.fecha" color="green-5" mask="YYYY-MM-DD">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
 
               <!-- TODO:  "Otros diagnóstico" -->
               <q-input
@@ -663,37 +834,6 @@
                 outlined
                 label="Clasificación de validismo"
                 v-model="tempDatos.clasificacion_validismo"
-              />
-
-              <!-- TODO:  "No. Cama" -->
-              <q-input
-                class="col-1"
-                dense
-                outlined
-                type="number"
-                label="No. Cama"
-                lazy-rules
-                v-model="tempDatos.num_cama"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese la cama del paciente',
-                ]"
-              />
-
-              <!-- TODO:  "Sala" -->
-              <q-input
-                class="col-1"
-                dense
-                outlined
-                type="text"
-                label="Sala"
-                v-model="tempDatos.sala"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese la sala al que pertence el paciente',
-                ]"
               />
 
             </div>

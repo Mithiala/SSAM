@@ -71,44 +71,44 @@ export const useDatosenferStore = defineStore("Datosenfer", {
       console.log("aqui receteo");
       this.tempDatos = {
         peso: "",
-      talla: "",
-      clasif_imc: "",
-      app: "",
-      patologia: "",
-      operaciones: "",
-      fecha_e: "",
-      atencion_estomatologia: "",
-      fecha_a: "",
-      programa_auditivo: "",
-      fecha_o: "",
-      atencion_oftalmologia: "",
-      fecha_ge: "",
-      diagnostico_geriatria: "",
-      fecha_on: "",
-      diagnostico_oncologia: "",
-      fecha_an: "",
-      diagnostico_angiologia: "",
-      fecha_car: "",
-      diagnostico_cardiologia: "",
-      fecha_cir: "",
-      diagnostico_cirugia: "",
-      fecha_der: "",
-      diagnostico_dermatologia: "",
-      fecha_fi: "",
-      diagnostico_fisiatria: "",
-      fecha: "",
-      otros_diagnosticos: "",
-      ulcerapres: "",
-      sindrome_respiratorio: "",
-      programa_tb: "",
-      morbilidad: "",
-      transfuciones: "",
-      habitos_toxicos: "",
-      alergia_medicamentos: "",
-      accidentes: "",
-      clasificacion_validismo: "",
-      num_cama: 0,
-      sala: "",
+        talla: "",
+        clasif_imc: "",
+        app: "",
+        patologia: "",
+        operaciones: "",
+        fecha_e: "",
+        atencion_estomatologia: "",
+        fecha_a: "",
+        programa_auditivo: "",
+        fecha_o: "",
+        atencion_oftalmologia: "",
+        fecha_ge: "",
+        diagnostico_geriatria: "",
+        fecha_on: "",
+        diagnostico_oncologia: "",
+        fecha_an: "",
+        diagnostico_angiologia: "",
+        fecha_car: "",
+        diagnostico_cardiologia: "",
+        fecha_cir: "",
+        diagnostico_cirugia: "",
+        fecha_der: "",
+        diagnostico_dermatologia: "",
+        fecha_fi: "",
+        diagnostico_fisiatria: "",
+        fecha: "",
+        otros_diagnosticos: "",
+        ulcerapres: "",
+        sindrome_respiratorio: "",
+        programa_tb: "",
+        morbilidad: "",
+        transfuciones: "",
+        habitos_toxicos: "",
+        alergia_medicamentos: "",
+        accidentes: "",
+        clasificacion_validismo: "",
+        num_cama: 0,
+        sala: "",
       };
     },
 
@@ -178,7 +178,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
       } catch (error) {
         console.log("FullError: ", error);
         console.log("error: ", error.response.data);
-        const menssage = ( error.response.data.error)
+        const menssage = error.response.data.error;
         Notify.create({
           color: "negative",
           message: menssage,
@@ -197,7 +197,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
-           // Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
           //},
         });
         console.log(
@@ -211,7 +211,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
           error.response.data
         );
       }
-      },
+    },
 
     //TODO: Accion para modificar un Registro desde un ID
     async updateDatose(id) {
@@ -248,7 +248,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
           diagnostico_fisiatria: this.tempDatos.diagnostico_fisiatria,
           fecha: this.tempDatos.fecha,
           otros_diagnosticos: this.tempDatos.otros_diagnosticos,
-          local_ulcerapres: this.tempDatos.local_ulcerapres,
+          ulcerapres: this.tempDatos.ulcerapres,
           sindrome_respiratorio: this.tempDatos.sindrome_respiratorio,
           programa_tb: this.tempDatos.programa_tb,
           morbilidad: this.tempDatos.morbilidad,
@@ -314,9 +314,9 @@ export const useDatosenferStore = defineStore("Datosenfer", {
           const url = `/asistmedica/enfermeria/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
-             //headers: {
-             // Authorization: `Bearer ${token}`,
-            });
+            //headers: {
+            // Authorization: `Bearer ${token}`,
+          });
 
           if (response.status === 204) {
             console.log(
@@ -355,6 +355,6 @@ export const useDatosenferStore = defineStore("Datosenfer", {
           progress: true,
         });
       }
-    }
-  }
-})
+    },
+  },
+});
