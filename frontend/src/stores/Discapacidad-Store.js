@@ -20,6 +20,7 @@ export const useDiscapacidadStore = defineStore("Discapacidad", {
       inconturinaria: false,
       incontfecal: false,
       incontmixta: false,
+      disc_paciente: 0,
     },
 
     tempPaciente: {
@@ -49,6 +50,7 @@ export const useDiscapacidadStore = defineStore("Discapacidad", {
         inconturinaria: false,
         incontfecal: false,
         incontmixta: false,
+        disc_paciente: 0,
       };
     },
 
@@ -98,7 +100,19 @@ export const useDiscapacidadStore = defineStore("Discapacidad", {
       try {
         const url = "/tsocial/discapacidades/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempdiscapacidad, {
+        const formData = new FormData();
+        formData.append("motora", this.tempdiscapacidad.motora);
+        formData.append("auditiva", this.tempdiscapacidad.auditiva);
+        formData.append("visual", this.tempdiscapacidad.visual);
+        formData.append("intelectual", this.tempdiscapacidad.intelectual);
+        formData.append("sensorial", this.tempdiscapacidad.sensorial);
+        formData.append("mixta", this.tempdiscapacidad.mixta);
+        formData.append("psicopatia", this.tempdiscapacidad.psicopatia);
+        formData.append("inconturinaria", this.tempdiscapacidad.inconturinaria);
+        formData.append("incontfecal", this.tempdiscapacidad.incontfecal);
+        formData.append("incontmixta", this.tempdiscapacidad.incontmixta);
+        formData.append("disc_paciente", this.tempdiscapacidad.disc_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -170,9 +184,10 @@ export const useDiscapacidadStore = defineStore("Discapacidad", {
           inconturinaria: this.tempdiscapacidad.inconturinaria,
           incontfecal: this.tempdiscapacidad.incontfecal,
           incontmixta: this.tempdiscapacidad.incontmixta,
+          disc_paciente: this.tempdiscapacidad.disc_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {

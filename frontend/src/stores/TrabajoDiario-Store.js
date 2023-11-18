@@ -114,7 +114,7 @@ export const useTrabajoDiarioStore = defineStore("TrabajoDiario", {
         formData.append("td_paciente", this.tempDiario.td_familiar.value);
         formData.append("td_familiar", this.tempDiario.td_paciente.value);
 
-        const response = await api.post(url, this.tempDiario, {
+        const response = await api.post(url, formData, {
           //headers: {
             //Authorization: `Bearer ${token}`,
             //},
