@@ -181,20 +181,43 @@
           <q-form class="">
             <div class="row justify-around q-gutter-md">
 
-              <!-- TODO:  "Fecha de entrevista" -->
-              <q-input
-                class="col-2 q-gutter-md"
+              <!-- TODO:  "familiar_diario" -->
+              <q-select
+                class="col-3"
                 dense
                 outlined
-                label="Fecha"
+                v-model="tempDiario.td_familiar"
+                label="Nombre del familiar"
+                :options="FamilyOptions"
+                style="width: 250px"
+                behavior="menu"
+              />
+
+              <!-- TODO:  "paciente_diario" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempDiario.td_paciente"
+                label="Nombre del paciente"
+                :options="PacOptions"
+                style="width: 250px"
+                behavior="menu"
+              />
+
+              <!-- TODO:  "Fecha de entrevista" -->
+              <q-input
+                class="col-3"
+                dense
+                outlined
+                label="Fecha de entrevista"
                 v-model="tempDiario.fecha_ent"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
                     'Por favor ingrese la fecha de la entrevista',
                 ]"
-                @input="calcularTiempoEstadia"
               >
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
@@ -203,7 +226,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempDiario.fecha_ent" color="green-5" mask="YYYY-MM-DD">
+                      <q-date
+                        v-model="tempDiario.fecha_ent"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -220,7 +247,7 @@
 
               <!-- TODO: "Entrevista en" -->
               <q-select
-                class="col-2 q-gutter-md"
+                class="col-3"
                 outlined
                 dense
                 v-model="tempDiario.lugar_entrevista"
@@ -265,7 +292,7 @@
                 dense
                 type="textarea"
                 label="Medicamentos Autorizados"
-                v-model="tempDiario.targeton_medicamento"
+                v-model="tempDiario.tarjeton_medicamento"
               />
 
               <!-- TODO: "Observaciones" -->
@@ -366,26 +393,7 @@ const {
 const { trabajodiario, AddDG, EditDG, showDialogDG, loading, tempDiario, tempPaciente } =
   storeToRefs(useTrabajoDiarioStore());
 
-  const baseurl = "http://127.0.0.1:8000";
-
   const columns = [
-  {
-    name: 'id',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    align: "center",
-    field: row => row.id,
-    format: val => `${val}`,
-    sortable: true
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -408,10 +416,10 @@ const { trabajodiario, AddDG, EditDG, showDialogDG, loading, tempDiario, tempPac
     field: 'lugar_entrevista',
   },
   {
-    name: 'targeton_medicamento',
+    name: 'tarjeton_medicamento',
     align: 'center',
     label: 'Medicamentos autorizados',
-    field: 'targeton_medicamento',
+    field: 'tarjeton_medicamento',
   },
   {
     name: 'recibidos',
@@ -471,14 +479,34 @@ const EntrevistaOptions = [
   "Otros"
 ];
 
+const FamilyOptions = [
+  {
+    label: "Juan",
+    value: "1",
+  },
+  {
+    label: "Pedro",
+    value: "2",
+  },
+];
+
+const PacOptions = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisca Navia Cuadrado",
+    value: "2",
+  },
+];
+
 const visibleColumns = ref([
-'id',
 'fecha_ent',
-'image',
 'nombre',
 'num_hs',
 'lugar_entrevista',
-'targeton_medicamento',
+'tarjeton_medicamento',
 'recibidos',
 'enviados',
 'observaciones',
@@ -489,16 +517,6 @@ const visibleColumns = ref([
 ])
 
 const date = ref("");
-
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
 
 // TODO: Export To Excel:
 async function exportFile() {

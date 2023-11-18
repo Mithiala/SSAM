@@ -343,11 +343,11 @@ const openAddDialog = () => {
 
 const PasefOptions = [
   {
-    label: "José Ramírez",
+    label: "Juan",
     value: "1",
   },
   {
-    label: "José Pérezo",
+    label: "Pedro",
     value: "2",
   },
 ];

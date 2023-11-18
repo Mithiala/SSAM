@@ -12,13 +12,15 @@ export const useTrabajoDiarioStore = defineStore("TrabajoDiario", {
       id: 0,
       fecha_ent: "",
       lugar_entrevista: "",
-      targeton_medicamento: "",
+      tarjeton_medicamento: "",
       recibidos: false,
       enviados: false,
       observaciones: "",
       mot_invest: "",
       efectuada: false,
       conclusiones: "",
+      td_paciente: 0,
+      td_familiar: 0,
     },
 
     tempPaciente: {
@@ -41,13 +43,15 @@ export const useTrabajoDiarioStore = defineStore("TrabajoDiario", {
       this.tempDiario = {
       fecha_ent: "",
       lugar_entrevista: "",
-      targeton_medicamento: "",
+      tarjeton_medicamento: "",
       recibidos: false,
       enviados: false,
       observaciones: "",
       mot_invest: "",
       efectuada: false,
       conclusiones: "",
+      td_paciente: 0,
+      td_familiar: 0,
       };
     },
 
@@ -97,6 +101,19 @@ export const useTrabajoDiarioStore = defineStore("TrabajoDiario", {
       try {
         const url = "/tsocial/tdiario/";
         //const token = LocalStorage.getItem("access_token");
+        const formData = new FormData();
+        formData.append("fecha_ent", this.tempDiario.fecha_ent);
+        formData.append("lugar_entrevista", this.tempDiario.lugar_entrevista);
+        formData.append("tarjeton_medicamento", this.tempDiario.tarjeton_medicamento);
+        formData.append("recibidos", this.tempDiario.recibidos);
+        formData.append("enviados", this.tempDiario.enviados);
+        formData.append("observaciones", this.tempDiario.observaciones);
+        formData.append("mot_invest", this.tempDiario.mot_invest);
+        formData.append("efectuada", this.tempDiario.efectuada);
+        formData.append("conclusiones", this.tempDiario.conclusiones);
+        formData.append("td_paciente", this.tempDiario.td_familiar.value);
+        formData.append("td_familiar", this.tempDiario.td_paciente.value);
+
         const response = await api.post(url, this.tempDiario, {
           //headers: {
             //Authorization: `Bearer ${token}`,
@@ -167,9 +184,12 @@ export const useTrabajoDiarioStore = defineStore("TrabajoDiario", {
           mot_invest: this.tempDiario.mot_invest,
           efectuada: this.tempDiario.efectuada,
           conclusiones: this.tempDiario.conclusiones,
+          td_familiar: this.tempDiario.td_familiar,
+          td_paciente: this.tempDiario.td_paciente,
+          tarjeton_medicamento: this.tempDiario.tarjeton_medicamento,
         };
 
-        const response = await api.put( url, request, {
+        const response = await api.patch( url, request, {
             //headers: {
               //Authorization: `Bearer ${token}`,
             //},
