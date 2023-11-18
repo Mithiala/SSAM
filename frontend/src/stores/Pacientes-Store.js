@@ -102,7 +102,7 @@ export const usePacientesStore = defineStore("Pacientes", {
         const esFemenino = sexo % 2 !== 0;
 
         // Generar automáticamente la fecha de nacimiento
-        const fechaNacimientoGenerada = `20${anio}-${mes}-${dia}`;
+        const fechaNacimientoGenerada = `19${anio}-${mes}-${dia}`;
 
         // Actualizar el valor de fecha_nacimiento en el objeto tempPaciente
         this.tempPaciente.fecha_nacimiento = fechaNacimientoGenerada;

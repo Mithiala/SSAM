@@ -652,23 +652,6 @@ const columns = [
     field: "image",
   },
   {
-    name: "id",
-    required: true,
-    label: "Id",
-    align: "left",
-    align: "center",
-    field: (row) => row.id,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: "centro",
-    align: "center",
-    label: "Centro al que pertenece",
-    field: "centro",
-    sortable: true,
-  },
-  {
     name: "nombre",
     align: "center",
     label: "Nombre y Apellidos",
@@ -889,8 +872,6 @@ const CasasOptions = [
 
 const visibleColumns = ref([
   "image",
-  "id",
-  "centro",
   "nombre",
   "edad",
   "sexo",

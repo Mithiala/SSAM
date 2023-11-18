@@ -309,17 +309,6 @@
         </q-td>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -349,14 +338,26 @@
           <q-form class="">
             <div class="row justify-around q-gutter-md">
 
+              <!-- TODO:  "encuesta_paciente" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempEncuesta.enc_paciente"
+                label="Nombre del paciente"
+                :options="EncuestaOptions"
+                style="width: 250px"
+                behavior="menu"
+              />
+
               <!-- TODO:  "Fecha" -->
               <q-input
-                class="col-2 q-gutter-md"
+                class="col-2"
                 dense
                 outlined
                 label="Fecha"
                 v-model="tempEncuesta.fecha"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
@@ -370,7 +371,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempEncuesta.fecha" color="green-5" mask="YYYY-MM-DD">
+                      <q-date
+                        v-model="tempEncuesta.fecha"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -683,23 +688,7 @@ const { encuestainicial, AddDG, EditDG, showDialogDG, loading, tempEncuesta, tem
   const baseurl = "http://127.0.0.1:8000";
 
   const columns = [
-  {
-    name: 'id',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    align: "center",
-    field: row => row.id,
-    format: val => `${val}`,
-    sortable: true
-  },
 
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -900,9 +889,18 @@ const ParentOptions = [
   'Otros(hijastros)',
 ]
 
+const EncuestaOptions = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
+
 const visibleColumns = ref([
-  'id_encuesta',
-  'image',
   'nombre',
   'ci',
   'num_hs',

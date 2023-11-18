@@ -33,7 +33,10 @@ class DatoEnfermeriaSerializer(serializers.ModelSerializer):
     #     return {
     #         "id": instance.id,
     #         "state": instance.state,
-    #         "receiver": instance.receiver.name if instance.receiver is not None else "",
+    #         "receiver": instance.receiver.nombre if instance.receiver is not None else "",
+    #         "receiver": instance.receiver.ci if instance.receiver is not None else "",
+    #         "receiver": instance.receiver.hs if instance.receiver is not None else "",
+    #         "receiver": instance.receiver.fecha_inscripcion if instance.receiver is not None else "",
     #         "content": instance.content,
     #         "timestamp": instance.timestamp,
     #         "lecturatime": instance.lecturatime,

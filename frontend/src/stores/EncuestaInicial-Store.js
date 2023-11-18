@@ -10,7 +10,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
     loading: false,
 
     tempEncuesta: {
-      id_encuesta: 0,
+      id: 0,
       fecha: "",
       lectura: false,
       tv: false,
@@ -35,6 +35,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
       visitaamistades: false,
       avisarleingreso: false,
       antecedentes_patologicos: "",
+      enc_paciente: 0,
     },
 
     tempPaciente: {
@@ -57,7 +58,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
     resetTempEncuestas() {
       console.log("aqui receteo");
       this.tempEncuesta = {
-        fecha: "",
+        fecha: new Date().toISOString().substring(0,10),
         lectura: false,
         tv: false,
         juegomesa: false,
@@ -81,6 +82,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
         visitaamistades: false,
         avisarleingreso: false,
         antecedentes_patologicos: "",
+        enc_paciente: 0,
       };
     },
 
@@ -129,7 +131,33 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
       try {
         const url = "/tsocial/encuestainicial/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempEncuesta, {
+        const formData = new FormData();
+        formData.append("fecha", this.tempEncuesta.fecha);
+        formData.append("lectura", this.tempEncuesta.lectura);
+        formData.append("tv", this.tempEncuesta.tv);
+        formData.append("juegomesa", this.tempEncuesta.juegomesa);
+        formData.append("cine", this.tempEncuesta.cine);
+        formData.append("radio", this.tempEncuesta.radio);
+        formData.append("pelota", this.tempEncuesta.pelota);
+        formData.append("otras", this.tempEncuesta.otras);
+        formData.append("procedencia_at_asist_social", this.tempEncuesta.procedencia_at_asist_social);
+        formData.append("persona_cobra_chequera", this.tempEncuesta.persona_cobra_chequera);
+        formData.append("grado_parentesco", this.tempEncuesta.grado_parentesco);
+        formData.append("direc_person_responsable", this.tempEncuesta.direc_person_responsable);
+        formData.append("ingresado", this.tempEncuesta.ingresado);
+        formData.append("motivo", this.tempEncuesta.motivo);
+        formData.append("antes_donde_residia", this.tempEncuesta.antes_donde_residia);
+        formData.append("jefenucleo", this.tempEncuesta.jefenucleo);
+        formData.append("impfisico", this.tempEncuesta.impfisico);
+        formData.append("protesis", this.tempEncuesta.protesis);
+        formData.append("calsadoortop", this.tempEncuesta.calsadoortop);
+        formData.append("espejuelos", this.tempEncuesta.espejuelos);
+        formData.append("visitafamiliares", this.tempEncuesta.visitafamiliares);
+        formData.append("visitaamistades", this.tempEncuesta.visitaamistades);
+        formData.append("avisarleingreso", this.tempEncuesta.avisarleingreso);
+        formData.append("antecedentes_patologicos", this.tempEncuesta.antecedentes_patologicos);
+        formData.append("enc_paciente", this.tempEncuesta.enc_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -215,6 +243,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
           visitaamistades: this.tempEncuesta.visitaamistades,
           avisarleingreso: this.tempEncuesta.avisarleingreso,
           antecedentes_patologicos: this.tempEncuesta.antecedentes_patologicos,
+          enc_paciente: this.tempEncuesta.enc_paciente,
         };
 
         const response = await api.put(

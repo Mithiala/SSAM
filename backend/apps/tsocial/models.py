@@ -1,5 +1,9 @@
+import datetime
+
 from apps.base.models import BaseModel
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 from ..centro.models import Centro
 
@@ -61,14 +65,34 @@ class Paciente(BaseModel):
         related_name="pacientecentro",
     )
 
+    def calcular_edad(self):
+        if self.fecha_nacimiento:
+            fecha_actual = datetime.date.today()
+            edad = fecha_actual.year - self.fecha_nacimiento.year
+
+            # Ajustar la edad si el mes actual es anterior al mes de nacimiento
+            if fecha_actual.month < self.fecha_nacimiento.month:
+                edad -= 1
+            # Ajustar la edad si el mes actual es igual al mes de nacimiento, pero el día actual es anterior al día de nacimiento
+            elif (
+                fecha_actual.month == self.fecha_nacimiento.month
+                and fecha_actual.day < self.fecha_nacimiento.day
+            ):
+                edad -= 1
+
+            return edad
+        else:
+            return None
+
+    @staticmethod
+    @receiver(pre_save, sender="tsocial.Paciente")
+    def actualizar_edad(sender, instance, **kwargs):
+        instance.edad = instance.calcular_edad()
+
     class Meta:
         db_table = "pacientes"
         verbose_name = "Paciente"
         verbose_name_plural = "Pacientes"
-
-    # def save(self, *args, **kwargs) -> :
-
-    #     return super().save(*args, **kwargs)
 
     def __str__(self):
         return f" {self.p_centros.nombre_inst} - {self.nombre}"
@@ -116,7 +140,7 @@ class EncuestaInicial(BaseModel):
     enc_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Encuesta Paciente",
+        verbose_name="Paciente",
         related_name="encuesta_paciente",
     )
 
@@ -149,7 +173,7 @@ class ComposicionFamiliar(BaseModel):
     cf_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="ComposiciónF Paciente",
+        verbose_name="Paciente",
         related_name="cf_paciente",
     )
 
@@ -159,7 +183,7 @@ class ComposicionFamiliar(BaseModel):
         verbose_name_plural = "Composiciones Familiares"
 
     def __str__(self):
-        return f" {self.id} - {self.cf_paciente.nombre} - {self.nombre}"
+        return f" {self.id} - {self.cf_paciente.nombre}"
 
 
 class TrabajoDiario(BaseModel):
@@ -180,14 +204,14 @@ class TrabajoDiario(BaseModel):
     td_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Tabajo Diario",
+        verbose_name="Paciente",
         related_name="td_paciente",
     )
 
     td_familiar = models.ForeignKey(
-        Paciente,
+        ComposicionFamiliar,
         on_delete=models.CASCADE,
-        verbose_name="Tabajo Diario",
+        verbose_name="Familiar",
         related_name="td_familiar",
     )
 
@@ -197,7 +221,7 @@ class TrabajoDiario(BaseModel):
         verbose_name_plural = "Trabajos Diarios"
 
     def __str__(self):
-        return f" {self.id} - {self.td_paciente.nombre} - {self.td_familiar.nombre} - {self.lugar_entrevista}"
+        return f" {self.id} - {self.td_paciente.nombre} - {self.td_familiar.nombre}"
 
 
 class ControlPase(BaseModel):
@@ -215,7 +239,7 @@ class ControlPase(BaseModel):
     cp_familiar = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Control Pase",
+        verbose_name="Paciente",
         related_name="cp_familiar",
     )
 
@@ -225,7 +249,7 @@ class ControlPase(BaseModel):
         verbose_name_plural = "Controles Pases"
 
     def __str__(self):
-        return f" {self.id} - {self.cp_paciente.nombre} - {self.cp_familiar.nombre} - {self.direc_part}"
+        return f" {self.id} - {self.cp_paciente.nombre} - {self.cp_familiar.nombre}"
 
 
 class Discapacidad(BaseModel):
@@ -243,7 +267,7 @@ class Discapacidad(BaseModel):
     disc_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Discapacidad",
+        verbose_name="Paciente",
         related_name="disc_paciente",
     )
 
@@ -271,7 +295,7 @@ class AyudaTecnica(BaseModel):
     at_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Ayuda Técnica",
+        verbose_name="Paciente",
         related_name="at_paciente",
     )
 
