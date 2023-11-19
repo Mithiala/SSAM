@@ -2,13 +2,13 @@
   <q-page padding>
     <div class="q-gutter-md row justify-center">
       <h5 class="col-6 text-center text-weight-medium">
-        Área Afectiva
+        Escala Enars
       </h5>
       </div>
-    <TableAffective />
+    <TableEnars />
   </q-page>
 </template>
 
 <script setup>
-import TableAffective from "src/components/Psicologia/TableAffective.vue"
+import TableEnars from "src/components/Psicologia/TableEnars.vue"
 </script>

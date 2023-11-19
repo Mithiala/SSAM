@@ -40,4 +40,11 @@ class DefectologiaViewSet(viewsets.ModelViewSet):
     queryset = Defectologia.objects.all()
     serializer_class = DefectologiaSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["auditivo", "visual", "ecv", "fisicomotora, fuma, alcoholico"]
+    filterset_fields = [
+        "auditivo",
+        "visual",
+        "ecv",
+        "fisicomotora",
+        "fuma",
+        "alcoholico",
+    ]

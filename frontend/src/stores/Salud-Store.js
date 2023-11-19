@@ -2,25 +2,22 @@ import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
 import { Notify, Dialog } from "quasar";
 
-export const useEstadisticaStore = defineStore("Estadistica", {
+export const useSaludStore = defineStore("Salud", {
   state: () => ({
-    estadistica: [],
+    salud: [],
     pacientes: [],
     loading: false,
 
-    tempEstadistica: {
+    tempSalud: {
       id: 0,
-      protesisdental: false,
-      protesisauditiva: false,
-      anteojos: false,
-      protesisortopedica: false,
-      sillaruedas: false,
-      baston: false,
-      andador: false,
-      colchon: false,
-      camaplana: false,
-      camafowler: false,
-      at_paciente: 0,
+      orientemporal: 0,
+      orientespacial: 0,
+      fijacion: 0,
+      atcalculo: 0,
+      memoria: 0,
+      lenguaje: 0,
+      normal: 0,
+      sm_paciente: 0,
     },
 
     tempPaciente: {
@@ -28,48 +25,45 @@ export const useEstadisticaStore = defineStore("Estadistica", {
       nombre: "",
     },
 
-    showDialogDG: false,
-    EditDG: false,
-    AddDG: false,
+    showDialogSM: false,
+    EditSM: false,
+    AddSM: false,
   }),
 
   getters: {},
 
   actions: {
     //TODO: Resetear Variable Temporal
-    resetTempEstad() {
+    resetTempSaludm() {
       console.log("aqui receteo");
-      this.tempEstadistica = {
-        protesisdental: false,
-        protesisauditiva: false,
-        anteojos: false,
-        protesisortopedica: false,
-        sillaruedas: false,
-        baston: false,
-        andador: false,
-        colchon: false,
-        camaplana: false,
-        camafowler: false,
-        at_paciente: 0,
+      this.tempSalud = {
+        orientemporal: 0,
+        orientespacial: 0,
+        fijacion: 0,
+        atcalculo: 0,
+        memoria: 0,
+        lenguaje: 0,
+        normal: 0,
+        sm_paciente: 0,
       };
     },
 
     //TODO: Accion para Obtener todos Registros
-    async listEstad() {
+    async listSaludm() {
       this.loading = true;
       try {
-        const url = "/tsocial/atecnica/";
+        const url = "/psicologia/escsaludmental/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.estadistica = response.data.results;
+        this.salud = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
-          "🚀 ~ file: Estadistica-Store.js:99 ~ listEstad ~ error:",
+          "🚀 ~ file: Salud-Store.js:99 ~ listSaludm ~ error:",
           error
         );
       }
@@ -96,22 +90,19 @@ export const useEstadisticaStore = defineStore("Estadistica", {
     },
 
     //TODO: Accion para crear Registros
-    async createEstad() {
+    async createSaludm() {
       try {
-        const url = "/tsocial/atecnica/";
+        const url = "/psicologia/escsaludmental/";
         // const token = LocalStorage.getItem("access_token");
         const formData = new FormData();
-        formData.append("protesisdental", this.tempEstadistica.protesisdental);
-        formData.append("protesisauditiva", this.tempEstadistica.protesisauditiva);
-        formData.append("anteojos", this.tempEstadistica.anteojos);
-        formData.append("protesisortopedica", this.tempEstadistica.protesisortopedica);
-        formData.append("sillaruedas", this.tempEstadistica.sillaruedas);
-        formData.append("baston", this.tempEstadistica.baston);
-        formData.append("andador", this.tempEstadistica.andador);
-        formData.append("colchon", this.tempEstadistica.colchon);
-        formData.append("camaplana", this.tempEstadistica.camaplana);
-        formData.append("camafowler", this.tempEstadistica.camafowler);
-        formData.append("at_paciente", this.tempEstadistica.at_paciente.value);
+        formData.append("orientemporal", this.tempSalud.orientemporal);
+        formData.append("orientespacial", this.tempSalud.orientespacial);
+        formData.append("fijacion", this.tempSalud.fijacion);
+        formData.append("atcalculo", this.tempSalud.atcalculo);
+        formData.append("memoria", this.tempSalud.memoria);
+        formData.append("lenguaje", this.tempSalud.lenguaje);
+        formData.append("normal", this.tempSalud.normal);
+        formData.append("sm_paciente", this.tempSalud.sm_paciente.value);
         const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
@@ -125,7 +116,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
             progress: true,
             icon: "check",
           });
-          await this.listEstad();
+          await this.listSaludm();
           this.showDialogDG = false;
           this.resetTempEstad();
         }
@@ -144,10 +135,10 @@ export const useEstadisticaStore = defineStore("Estadistica", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveEstad(id) {
+    async retrieveSaludm(id) {
       try {
         this.loading = true;
-        const url = `/tsocial/atecnica/${id}/`;
+        const url = `/psicologia/escsaludmental/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -155,36 +146,33 @@ export const useEstadisticaStore = defineStore("Estadistica", {
           //},
         });
         console.log(
-          "🚀 ~ file: Estadistica-Store.js:130 ~ retrieveEstad ~ response:",
+          "🚀 ~ file: Salud-Store.js:130 ~ retrieveSaludm ~ response:",
           response.statusText
         );
         this.loading = false;
       } catch (error) {
         console.log(
-          "🚀 ~ file: Estadistica-Store.js:132 ~ retrieveEstad ~ error:",
+          "🚀 ~ file: Salud-Store.js:132 ~ retrieveSaludm ~ error:",
           error.response.data
         );
       }
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateEstad(id) {
+    async updateSaludm(id) {
       try {
-        const url = `/tsocial/atecnica/${id}/`;
+        const url = `/psicologia/escsaludmental/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          protesisdental: this.tempEstadistica.protesisdental,
-          protesisauditiva: this.tempEstadistica.protesisauditiva,
-          anteojos: this.tempEstadistica.anteojos,
-          protesisortopedica: this.tempEstadistica.protesisortopedica,
-          sillaruedas: this.tempEstadistica.sillaruedas,
-          baston: this.tempEstadistica.baston,
-          andador: this.tempEstadistica.andador,
-          colchon: this.tempEstadistica.colchon,
-          camaplana: this.tempEstadistica.camaplana,
-          camafowler: this.tempEstadistica.camafowler,
-          at_paciente: this.tempEstadistica.at_paciente,
+          orientemporal: this.tempSalud.orientemporal,
+          orientespacial: this.tempSalud.orientespacial,
+          fijacion: this.tempSalud.fijacion,
+          atcalculo: this.tempSalud.atcalculo,
+          memoria: this.tempSalud.memoria,
+          lenguaje: this.tempSalud.lenguaje,
+          normal: this.tempSalud.normal,
+          sm_paciente: this.tempSalud.sm_paciente,
         };
 
         const response = await api.patch(
@@ -200,7 +188,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
         if (response.status === 201) {
           console.log("Status: ", response.statusText);
           console.log(
-            "🚀 ~ file: Estadistica-Store.js:171 ~ updateEstad ~ response:",
+            "🚀 ~ file: Salud-Store.js:171 ~ updateSaludm ~ response:",
             response.data
           );
 
@@ -212,7 +200,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
             icon: "check",
           });
         }
-        await this.listEstad();
+        await this.listSaludm();
         this.showDialogDG = false;
       } catch (error) {
         console.log("Code: ", error);
@@ -227,7 +215,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
       }
     },
 
-    async destroyEstad(id) {
+    async destroySaludm(id) {
       try {
         Dialog.create({
           html: true,
@@ -237,7 +225,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/tsocial/atecnica/${id}/`;
+          const url = `/psicologia/escsaludmental/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {
@@ -246,7 +234,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
 
           if (response.status === 204) {
             console.log(
-              "🚀 ~ file: Estadistica-Store.js:214 ~ destroyEstad ~ response:",
+              "🚀 ~ file: Salud-Store.js:214 ~ destroySaludm ~ response:",
               response.statusText
             );
 
@@ -258,7 +246,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
               progress: true,
             });
           }
-          await this.listEstad();
+          await this.listSaludm();
         });
       } catch (error) {
         console.log("Code: ", error.code);

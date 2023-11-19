@@ -131,7 +131,7 @@ class Defectologia(BaseModel):
     d_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Defectología",
+        verbose_name="Paciente",
         related_name="d_paciente",
     )
 

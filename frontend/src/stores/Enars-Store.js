@@ -2,64 +2,62 @@ import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
 import { Notify, Dialog } from "quasar";
 
-export const useAfectivaStore = defineStore("Afectiva", {
+export const useEnarsStore = defineStore("Enars", {
   state: () => ({
-    afectiva: [],
+    enars: [],
     pacientes: [],
     loading: false,
 
-    tempAfectivo: {
+    tempEna: {
       id: 0,
-      depresion: false,
-      anciedad: false,
-      intentosuicida: false,
-      observaciones: "",
-      a_paciente: 0,
+      algveces: 0,
+      frecuente: 0,
+      siempre: 0,
+      nunca: 0,
+      en_paciente: 0,
     },
 
     tempPaciente: {
       image: "",
       nombre: "",
-      edad: 0,
-      sexo: "",
     },
 
-    showDialogDG: false,
-    EditDG: false,
-    AddDG: false,
+    showDialogSM: false,
+    EditSM: false,
+    AddSM: false,
   }),
 
   getters: {},
 
   actions: {
     //TODO: Resetear Variable Temporal
-    resetTempAfectiva() {
+    resetTempEnars() {
       console.log("aqui receteo");
-      this.tempAfectivo = {
-        depresion: false,
-        anciedad: false,
-        intentosuicida: false,
-        observaciones: "",
-        a_paciente: 0,
+      this.tempEna = {
+        algveces: 0,
+        frecuente: 0,
+        siempre: 0,
+        nunca: 0,
+        en_paciente: 0,
       };
     },
 
     //TODO: Accion para Obtener todos Registros
-    async listAfectiva() {
+    async listEnars() {
       this.loading = true;
       try {
-        const url = "/psicologia/afectivo/";
+        const url = "/psicologia/escenars/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.afectiva = response.data.results;
+        this.salud = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
-          "🚀 ~ file: Afectiva-Store.js:99 ~ listAfectiva ~ error:",
+          "🚀 ~ file: Salud-Store.js:99 ~ listEnars ~ error:",
           error
         );
       }
@@ -86,17 +84,20 @@ export const useAfectivaStore = defineStore("Afectiva", {
     },
 
     //TODO: Accion para crear Registros
-    async createAfectiva() {
+    async createSaludm() {
       try {
-        const url = "/psicologia/afectivo/";
+        const url = "/psicologia/escsaludmental/";
         // const token = LocalStorage.getItem("access_token");
         const formData = new FormData();
-        formData.append("depresion", this.tempAfectivo.depresion);
-        formData.append("anciedad", this.tempAfectivo.anciedad);
-        formData.append("intentosuicida", this.tempAfectivo.intentosuicida);
-        formData.append("observaciones", this.tempAfectivo.observaciones);
-        formData.append("a_paciente", this.tempAfectivo.a_paciente.value);
-        const response = await api.post(url, this.tempAfectivo, {
+        formData.append("orientemporal", this.tempSalud.orientemporal);
+        formData.append("orientespacial", this.tempSalud.orientespacial);
+        formData.append("fijacion", this.tempSalud.fijacion);
+        formData.append("atcalculo", this.tempSalud.atcalculo);
+        formData.append("memoria", this.tempSalud.memoria);
+        formData.append("lenguaje", this.tempSalud.lenguaje);
+        formData.append("normal", this.tempSalud.normal);
+        formData.append("sm_paciente", this.tempSalud.sm_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -109,9 +110,9 @@ export const useAfectivaStore = defineStore("Afectiva", {
             progress: true,
             icon: "check",
           });
-          await this.listAfectiva();
+          await this.listSaludm();
           this.showDialogDG = false;
-          this.resetTempAfectiva();
+          this.resetTempEstad();
         }
       } catch (error) {
         console.log("FullError: ", error);
@@ -128,10 +129,10 @@ export const useAfectivaStore = defineStore("Afectiva", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveAfectiva(id) {
+    async retrieveSaludm(id) {
       try {
         this.loading = true;
-        const url = `/psicologia/afectivo/${id}/`;
+        const url = `/psicologia/escsaludmental/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -139,30 +140,33 @@ export const useAfectivaStore = defineStore("Afectiva", {
           //},
         });
         console.log(
-          "🚀 ~ file: Afectiva-Store.js:130 ~ retrieveAfectiva ~ response:",
+          "🚀 ~ file: Salud-Store.js:130 ~ retrieveSaludm ~ response:",
           response.statusText
         );
         this.loading = false;
       } catch (error) {
         console.log(
-          "🚀 ~ file: Afectiva-Store.js:132 ~ retrieveAfectiva ~ error:",
+          "🚀 ~ file: Salud-Store.js:132 ~ retrieveSaludm ~ error:",
           error.response.data
         );
       }
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateAfectiva(id) {
+    async updateSaludm(id) {
       try {
-        const url = `/psicologia/afectivo/${id}/`;
+        const url = `/psicologia/escsaludmental/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          depresion: this.tempAfectivo.depresion,
-          anciedad: this.tempAfectivo.anciedad,
-          intentosuicida: this.tempAfectivo.intentosuicida,
-          observaciones_a: this.tempAfectivo.observaciones,
-          a_paciente: this.tempAfectivo.a_paciente,
+          orientemporal: this.tempSalud.orientemporal,
+          orientespacial: this.tempSalud.orientespacial,
+          fijacion: this.tempSalud.fijacion,
+          atcalculo: this.tempSalud.atcalculo,
+          memoria: this.tempSalud.memoria,
+          lenguaje: this.tempSalud.lenguaje,
+          normal: this.tempSalud.normal,
+          sm_paciente: this.tempSalud.sm_paciente,
         };
 
         const response = await api.patch(
@@ -178,7 +182,7 @@ export const useAfectivaStore = defineStore("Afectiva", {
         if (response.status === 201) {
           console.log("Status: ", response.statusText);
           console.log(
-            "🚀 ~ file: Afectiva-Store.js:171 ~ updateAfectiva ~ response:",
+            "🚀 ~ file: Salud-Store.js:171 ~ updateSaludm ~ response:",
             response.data
           );
 
@@ -190,7 +194,7 @@ export const useAfectivaStore = defineStore("Afectiva", {
             icon: "check",
           });
         }
-        await this.listAfectiva();
+        await this.listSaludm();
         this.showDialogDG = false;
       } catch (error) {
         console.log("Code: ", error);
@@ -205,7 +209,7 @@ export const useAfectivaStore = defineStore("Afectiva", {
       }
     },
 
-    async destroyAfectiva(id) {
+    async destroySaludm(id) {
       try {
         Dialog.create({
           html: true,
@@ -215,7 +219,7 @@ export const useAfectivaStore = defineStore("Afectiva", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/psicologia/afectivo/${id}/`;
+          const url = `/psicologia/escsaludmental/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {
@@ -224,7 +228,7 @@ export const useAfectivaStore = defineStore("Afectiva", {
 
           if (response.status === 204) {
             console.log(
-              "🚀 ~ file: Afectiva-Store.js:214 ~ destroyAfectiva ~ response:",
+              "🚀 ~ file: Salud-Store.js:214 ~ destroySaludm ~ response:",
               response.statusText
             );
 
@@ -236,7 +240,7 @@ export const useAfectivaStore = defineStore("Afectiva", {
               progress: true,
             });
           }
-          await this.listAfectiva();
+          await this.listSaludm();
         });
       } catch (error) {
         console.log("Code: ", error.code);

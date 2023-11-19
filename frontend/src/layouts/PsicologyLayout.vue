@@ -122,20 +122,6 @@
       <q-item
         clickable
         v-ripple
-        :active="link === 'Pacientes'"
-        @click="link = 'Pacientes'"
-        active-class="border text-green-10"
-        to="afectivops"
-      >
-        <q-item-section avatar class="flex flex-center column">
-          <q-icon name="las la-balance-scale" size="33px"/>
-        </q-item-section>
-        <q-item-section>ÁREA AFECTIVA</q-item-section>
-      </q-item>
-
-      <q-item
-        clickable
-        v-ripple
         :active="link === 'Encuesta'"
         @click="link = 'Encuesta'"
         active-class="border text-green-10"
@@ -145,6 +131,20 @@
           <q-icon name="las la-brain" />
         </q-item-section>
         <q-item-section>ÁREA COGNITIVA</q-item-section>
+      </q-item>
+
+      <q-item
+        clickable
+        v-ripple
+        :active="link === 'Salud'"
+        @click="link = 'Salud'"
+        active-class="border text-green-10"
+        to="saludps"
+      >
+        <q-item-section avatar class="flex flex-center column">
+          <q-icon name="las la-brain" />
+        </q-item-section>
+        <q-item-section>EVALUACIONES</q-item-section>
       </q-item>
 
       <q-item

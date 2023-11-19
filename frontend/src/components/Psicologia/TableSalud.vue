@@ -1,11 +1,16 @@
 <template>
   <div class="q-pa-md">
+    <div class="q-gutter-md row justify-center">
+      <h5 class="col-6 text-center text-weight-medium">
+        Escala Salud Mental
+      </h5>
+    </div>
     <q-table
       class="table"
       flat
       bordered
       color="green"
-      :rows="defectologia"
+      :rows="salud"
       :columns="columns"
       row-key="id"
       :visible-columns="visibleColumns"
@@ -100,58 +105,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para auditivo" -->
-      <template v-slot:body-cell-auditivo="props">
-        <q-td :props="props">
-          <q-icon
-            name="check_circle"
-            color="positive"
-            size="sm"
-            v-if="props.row.auditivo"
-          />
-          <q-icon name="cancel" color="negative" size="sm" v-else />
-        </q-td>
-      </template>
-
-      <!-- TODO:  "Método para visual" -->
-      <template v-slot:body-cell-visual="props">
-        <q-td :props="props">
-          <q-icon
-            name="check_circle"
-            color="positive"
-            size="sm"
-            v-if="props.row.visual"
-          />
-          <q-icon name="cancel" color="negative" size="sm" v-else />
-        </q-td>
-      </template>
-
-      <!-- TODO:  "Método para ecv" -->
-      <template v-slot:body-cell-ecv="props">
-        <q-td :props="props">
-          <q-icon
-            name="check_circle"
-            color="positive"
-            size="sm"
-            v-if="props.row.ecv"
-          />
-          <q-icon name="cancel" color="negative" size="sm" v-else />
-        </q-td>
-      </template>
-
-      <!-- TODO:  "Método para físico motora" -->
-      <template v-slot:body-cell-fisicomotora="props">
-        <q-td :props="props">
-          <q-icon
-            name="check_circle"
-            color="positive"
-            size="sm"
-            v-if="props.row.fisicomotora"
-          />
-          <q-icon name="cancel" color="negative" size="sm" v-else />
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -175,7 +128,7 @@
     </q-table>
 
     <!-- TODO: Añadir - Editar -->
-    <q-dialog v-model="showDialogDG" persistent full-width >
+    <q-dialog v-model="showDialogSM" persistent full-width >
       <q-card class="column medium">
         <q-card-section>
           <q-form class="">
@@ -183,87 +136,132 @@
 
               <q-space class="col-1" />
 
-              <!-- TODO: "Defectología auditivo" -->
-              <q-checkbox
-                style="max-width: 200px"
+              <!-- TODO:  "salud_paciente" -->
+              <q-select
                 class="col-3"
-                rigth-label
                 dense
                 outlined
-                v-model="tempDefect.auditivo"
-                label="Defectología auditivo"
+                v-model="tempSalud.sm_paciente"
+                label="Nombre del paciente"
+                :options="SaludOption"
+                style="width: 250px"
+                behavior="menu"
               />
 
-              <!-- TODO: "Defectología visual" -->
-              <q-checkbox
-                style="max-width: 200px"
+              <!-- TODO:  "Orientación Temporal" -->
+              <q-input
                 class="col-2"
-                rigth-label
-                dense
                 outlined
-                v-model="tempDefect.visual"
-                label="Defectología visual"
+                dense
+                type="number"
+                label="Orientación Temporal"
+                lazy-rules
+                v-model="tempSalud.orientemporal"
+                :rules="[
+                  (val) =>
+                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
+                ]"
+                mask="#"
               />
 
-              <!-- TODO: "Secuela por ECV" -->
-              <q-checkbox
-                style="max-width: 200px"
+              <!-- TODO:  "Orientación Espacial" -->
+              <q-input
                 class="col-2"
-                rigth-label
-                dense
                 outlined
-                v-model="tempDefect.ecv"
-                label="Secuela por ECV"
+                dense
+                type="number"
+                label="Orientación Espacial"
+                lazy-rules
+                v-model="tempSalud.orientespacial"
+                :rules="[
+                  (val) =>
+                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
+                ]"
+                mask="#"
               />
 
-              <!-- TODO: "Discapacidad físico motora" -->
-              <q-checkbox
-                style="max-width: 200px"
-                class="col-3"
-                rigth-label
-                dense
+              <!-- TODO:  "Fijación" -->
+              <q-input
+                class="col-2"
                 outlined
-                v-model="tempDefect.fisicomotora"
-                label="Discapacidad físico motora"
+                dense
+                type="number"
+                label="Fijación"
+                lazy-rules
+                v-model="tempSalud.fijacion"
+                :rules="[
+                  (val) =>
+                    (val > 0 && val < 5) || 'Por favor ingrese la evaluación correcta',
+                ]"
+                mask="#"
               />
 
               <q-space class="col-1" />
 
-              <!-- TODO: "Trastorno mental" -->
-              <q-select
+              <!-- TODO:  "Fijación" -->
+              <q-input
                 class="col-2"
                 outlined
                 dense
-                v-model="tempDefect.retrazomental"
-                label="Trastorno mental"
-                :options="MentalOptions"
-                style="width: 200px"
-                behavior="menu"
+                type="number"
+                label="Atención y Cálculo"
+                lazy-rules
+                v-model="tempSalud.atcalculo"
+                :rules="[
+                  (val) =>
+                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
+                ]"
+                mask="#"
               />
 
-              <!-- TODO: "Trastorno del lenguaje" -->
-              <q-select
+              <!-- TODO:  "Memoria" -->
+              <q-input
                 class="col-2"
                 outlined
                 dense
-                v-model="tempDefect.trastornolenguaje"
-                label="Trastorno del lenguaje"
-                :options="LenguajeOptions"
-                style="width: 200px"
-                behavior="menu"
+                type="number"
+                label="Memoria"
+                lazy-rules
+                v-model="tempSalud.memoria"
+                :rules="[
+                  (val) =>
+                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
+                ]"
+                mask="#"
               />
 
-              <!-- TODO: "Trastorno del pensamiento" -->
-              <q-select
+              <!-- TODO:  "Lenguaje" -->
+              <q-input
                 class="col-2"
                 outlined
                 dense
-                v-model="tempDefect.trastornopensamiento"
-                label="Trastorno del pensamiento"
-                :options="PensaOptions"
-                style="width: 200px"
-                behavior="menu"
+                type="number"
+                label="Lenguaje"
+                lazy-rules
+                v-model="tempSalud.lenguaje"
+                :rules="[
+                  (val) =>
+                    (val > 0 && val < 5) || 'Por favor ingrese la evaluación correcta',
+                ]"
+                mask="#"
               />
+
+              <!-- TODO:  "Normal" -->
+              <q-input
+                class="col-2"
+                outlined
+                dense
+                type="number"
+                label="Normal"
+                lazy-rules
+                v-model="tempSalud.normal"
+                :rules="[
+                  (val) =>
+                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
+                ]"
+                mask="#"
+              />
+
             </div>
             <div class="q-mt-lg row q-gutter-md justify-center">
               <q-btn
@@ -271,22 +269,22 @@
                 type="submit"
                 label="Actualizar"
                 color="light-blue-8"
-                v-if="EditDG"
-                @click="updateDef(tempDefect.id)"
+                v-if="EditSM"
+                @click="updateSaludm(tempSalud.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
                 type="submit"
                 label="Añadir"
                 color="light-blue-8"
-                v-if="AddDG"
-                @click="createDef(tempDefect)"
+                v-if="AddSM"
+                @click="createSaludm(tempSalud)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
                 color="purple-9"
                 label="Salir"
-                @click="showDialogDG = false"
+                @click="showDialogSM = false"
               />
             </div>
           </q-form>
@@ -301,47 +299,28 @@ import { PDFDocument, StandardFonts } from "pdf-lib";
 import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
-import { useDefectologiaStore } from "src/stores/Defectologia-Store";
+import { useSaludStore } from "src/stores/Salud-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
-  await listDef();
+  await listSaludm();
   await listPacientes();
   // }
 });
 
 const {
-  resetTempDef,
-  listDef,
+  resetTempSaludm,
+  listSaludm,
   listPacientes,
-  createDef,
-  updateDef,
-  destroyDef,
-} = useDefectologiaStore();
+  createSaludm,
+  updateSaludm,
+  destroySaludm,
+} = useSaludStore();
 
-const { defectologia, AddDG, EditDG, showDialogDG, loading, tempDefect, tempPaciente } =
-  storeToRefs(useDefectologiaStore());
-
-  const baseurl = "http://127.0.0.1:8000";
+const { salud, AddSM, EditSM, showDialogSM, loading, tempSalud, tempPaciente } =
+  storeToRefs(useSaludStore());
 
   const columns = [
-  {
-    name: 'id',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    align: "center",
-    field: row => row.id,
-    format: val => `${val}`,
-    sortable: true
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -365,46 +344,46 @@ const { defectologia, AddDG, EditDG, showDialogDG, loading, tempDefect, tempPaci
   },
 
   {
-    name: 'auditivo',
+    name: 'orientemporal',
     align: 'center',
-    label: 'Defectología auditiva',
-    field: 'auditivo',
+    label: 'Orientación Temporal',
+    field: 'orientemporal',
   },
   {
-    name: 'visual',
+    name: 'orientespacial',
     align: 'center',
-    label: 'Defectología visual',
-    field: 'visual',
+    label: 'Orientación Espacial',
+    field: 'orientespacial',
   },
   {
-    name: 'ecv',
+    name: 'fijacion',
     align: 'center',
-    label: 'Secuela por ECV',
-    field: 'ecv'
+    label: 'Fijacion',
+    field: 'fijacion'
   },
   {
-    name: 'fisicomotora',
+    name: 'atcalculo',
     align: 'center',
-    label: 'Discapacidad físico motora',
-    field: 'fisicomotora'
+    label: 'Atención y Cálculo',
+    field: 'atcalculo'
   },
   {
-    name: 'retrazomental',
+    name: 'memoria',
     align: 'center',
-    label: 'Retrazo mental',
-    field: 'retrazomental'
+    label: 'Memoria',
+    field: 'memoria'
   },
   {
-    name: 'trastornolenguaje',
+    name: 'lenguaje',
     align: 'center',
-    label: 'Trastorno del lenguaje',
-    field: 'trastornolenguaje'
+    label: 'Lenguaje',
+    field: 'lenguaje'
   },
   {
-    name: 'trastornopensamiento',
+    name: 'normal',
     align: 'center',
-    label: 'Trastorno del pensamiento',
-    field: 'trastornopensamiento'
+    label: 'Normalo',
+    field: 'normal'
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
 ]
@@ -413,71 +392,51 @@ const filter = ref("");
 const persistent = ref(false);
 
 const openEditDialog = (row) => {
-  AddDG.value = false;
-  EditDG.value = true;
-  tempDefect.value = { ...row };
-  showDialogDG.value = true;
+  AddSM.value = false;
+  EditSM.value = true;
+  tempSalud.value = { ...row };
+  showDialogSM.value = true;
 };
 const openAddDialog = () => {
-  AddDG.value = true;
-  EditDG.value = false;
-  resetTempDef();
-  showDialogDG.value = true;
+  AddSM.value = true;
+  EditSM.value = false;
+  resetTempSaludm();
+  showDialogSM.value = true;
 };
 
-const MentalOptions = [
-  "Grave",
-  "Leve",
-  "Moderado",
-  "Normal",
-];
-
-const PensaOptions = [
-  "Grave",
-  "Leve",
-  "Moderado",
-  "Normal",
-];
-
-const LenguajeOptions = [
-  "Grave",
-  "Leve",
-  "Moderado",
-  "Normal",
+const SaludOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
 ];
 
 const visibleColumns = ref([
   'nombre',
   'edad',
   'sexo',
-  'auditivo',
-  'visual',
-  'ecv',
-  'fisicomotora',
-  'retrazomental',
-  'trastornolenguaje',
-  'trastornopensamiento',
+  'orientemporal',
+  'orientespacial',
+  'fijacion',
+  'atcalculo',
+  'memoria',
+  'lenguaje',
+  'normal',
   'actions',
 ])
 
 const date = ref("");
 
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
-
 // TODO: Export To Excel:
 async function exportFile() {
-  const ws = utils.json_to_sheet(defectologia.value);
+  const ws = utils.json_to_sheet(salud.value);
   const wb = utils.book_new();
-  utils.book_append_sheet(wb, ws, "Defectologia");
-  writeFileXLSX(wb, "Defectologia.xlsx");
+  utils.book_append_sheet(wb, ws, "Salud");
+  writeFileXLSX(wb, "SaludMental.xlsx");
 }
 </script>
 
