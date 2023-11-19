@@ -256,20 +256,6 @@ const { enars, AddEE, EditEE, showDialogEE, loading, tempEna, tempPaciente } =
     field: "nombre",
     sortable: true,
   },
-  {
-    name: "edad",
-    label: "Edad",
-    field: "edad",
-    align: "center",
-    sortable: true,
-    sort: (a, b) => a - b,
-  },
-  {
-    name: "sexo",
-    label: "Sexo",
-    field: "sexo",
-    align: "center",
-  },
 
   {
     name: 'algveces',

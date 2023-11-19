@@ -328,20 +328,6 @@ const { salud, AddSM, EditSM, showDialogSM, loading, tempSalud, tempPaciente } =
     field: "nombre",
     sortable: true,
   },
-  {
-    name: "edad",
-    label: "Edad",
-    field: "edad",
-    align: "center",
-    sortable: true,
-    sort: (a, b) => a - b,
-  },
-  {
-    name: "sexo",
-    label: "Sexo",
-    field: "sexo",
-    align: "center",
-  },
 
   {
     name: 'orientemporal',

@@ -122,20 +122,6 @@
       <q-item
         clickable
         v-ripple
-        :active="link === 'Encuesta'"
-        @click="link = 'Encuesta'"
-        active-class="border text-green-10"
-        to="cognitivops"
-      >
-        <q-item-section avatar class="flex flex-center column">
-          <q-icon name="las la-brain" />
-        </q-item-section>
-        <q-item-section>ÁREA COGNITIVA</q-item-section>
-      </q-item>
-
-      <q-item
-        clickable
-        v-ripple
         :active="link === 'Salud'"
         @click="link = 'Salud'"
         active-class="border text-green-10"

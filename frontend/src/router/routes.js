@@ -69,11 +69,6 @@ const routes = [
         component: () => import("src/pages/Psicologia/IndexPsicologyPage.vue"),
       },
       {
-        path: "cognitivops",
-        name: "cognitivops",
-        component: () => import("src/pages/Psicologia/CognitivePage.vue"),
-      },
-      {
         path: "defectologiaps",
         name: "defectologiaps",
         component: () => import("src/pages/Psicologia/DefectologyPage.vue"),
@@ -92,6 +87,11 @@ const routes = [
         path: "yasevageps",
         name: "yasevageps",
         component: () => import("src/pages/Psicologia/YasevagePage.vue"),
+      },
+      {
+        path: "resultadops",
+        name: "resultadops",
+        component: () => import("src/pages/Psicologia/ResultadoPage.vue"),
       },
     ],
   },

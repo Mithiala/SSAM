@@ -389,7 +389,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDG"
-                @click="updateEstad(tempEstadistica.id_estadistic)"
+                @click="updateEstad(tempEstadistica.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"

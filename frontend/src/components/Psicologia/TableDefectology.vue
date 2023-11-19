@@ -152,6 +152,71 @@
         </q-td>
       </template>
 
+      <!-- TODO:  "Método para anciedad" -->
+      <template v-slot:body-cell-anciedad="props">
+        <q-td :props="props">
+          <q-icon
+            name="check_circle"
+            color="positive"
+            size="sm"
+            v-if="props.row.anciedad"
+          />
+          <q-icon name="cancel" color="negative" size="sm" v-else />
+        </q-td>
+      </template>
+
+      <!-- TODO:  "Método para esquizofrenia" -->
+      <template v-slot:body-cell-esquizofrenia="props">
+        <q-td :props="props">
+          <q-icon
+            name="check_circle"
+            color="positive"
+            size="sm"
+            v-if="props.row.esquizofrenia"
+          />
+          <q-icon name="cancel" color="negative" size="sm" v-else />
+        </q-td>
+      </template>
+
+      <!-- TODO:  "Método para fuma" -->
+        <template v-slot:body-cell-fuma="props">
+          <q-td :props="props">
+          <q-icon
+            name="check_circle"
+            color="positive"
+            size="sm"
+            v-if="props.row.fuma"
+          />
+          <q-icon name="cancel" color="negative" size="sm" v-else />
+        </q-td>
+      </template>
+
+      <!-- TODO:  "Método para alcoholico" -->
+      <template v-slot:body-cell-alcoholico="props">
+        <q-td :props="props">
+          <q-icon
+            name="check_circle"
+            color="positive"
+            size="sm"
+            v-if="props.row.alcoholico"
+          />
+          <q-icon name="cancel" color="negative" size="sm" v-else />
+        </q-td>
+      </template>
+
+      <!-- TODO:  "Método para parkinson" -->
+      <template v-slot:body-cell-parkinson="props">
+        <q-td :props="props">
+          <q-icon
+            name="check_circle"
+            color="positive"
+            size="sm"
+            v-if="props.row.parkinson"
+          />
+          <q-icon name="cancel" color="negative" size="sm" v-else />
+        </q-td>
+      </template>
+
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -181,7 +246,17 @@
           <q-form class="">
             <div class="row justify-around q-gutter-md">
 
-              <q-space class="col-1" />
+              <!-- TODO:  "salud_paciente" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempDefect.d_paciente"
+                label="Nombre del paciente"
+                :options="DefectOption"
+                style="width: 250px"
+                behavior="menu"
+              />
 
               <!-- TODO: "Defectología auditivo" -->
               <q-checkbox
@@ -227,6 +302,61 @@
                 label="Discapacidad físico motora"
               />
 
+              <!-- TODO: "Anciedad" -->
+              <q-checkbox
+                style="max-width: 200px"
+                class="col-3"
+                rigth-label
+                dense
+                outlined
+                v-model="tempDefect.anciedad"
+                label="Anciedad"
+              />
+
+              <!-- TODO: "Esquizofrenia" -->
+              <q-checkbox
+                style="max-width: 200px"
+                class="col-3"
+                rigth-label
+                dense
+                outlined
+                v-model="tempDefect.esquizofrenia"
+                label="Esquizofrenia"
+              />
+
+              <!-- TODO: "Fumador" -->
+              <q-checkbox
+                style="max-width: 200px"
+                class="col-3"
+                rigth-label
+                dense
+                outlined
+                v-model="tempDefect.fuma"
+                label="Fumador"
+              />
+
+              <!-- TODO: "Alcohólico" -->
+              <q-checkbox
+                style="max-width: 200px"
+                class="col-3"
+                rigth-label
+                dense
+                outlined
+                v-model="tempDefect.alcoholico"
+                label="Alcohólico"
+              />
+
+              <!-- TODO: "Parkinson" -->
+              <q-checkbox
+                style="max-width: 200px"
+                class="col-3"
+                rigth-label
+                dense
+                outlined
+                v-model="tempDefect.parkinson"
+                label="Parkinson"
+              />
+
               <q-space class="col-1" />
 
               <!-- TODO: "Trastorno mental" -->
@@ -264,6 +394,7 @@
                 style="width: 200px"
                 behavior="menu"
               />
+
             </div>
             <div class="q-mt-lg row q-gutter-md justify-center">
               <q-btn
@@ -322,26 +453,7 @@ const {
 const { defectologia, AddDG, EditDG, showDialogDG, loading, tempDefect, tempPaciente } =
   storeToRefs(useDefectologiaStore());
 
-  const baseurl = "http://127.0.0.1:8000";
-
   const columns = [
-  {
-    name: 'id',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    align: "center",
-    field: row => row.id,
-    format: val => `${val}`,
-    sortable: true
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -406,6 +518,36 @@ const { defectologia, AddDG, EditDG, showDialogDG, loading, tempDefect, tempPaci
     label: 'Trastorno del pensamiento',
     field: 'trastornopensamiento'
   },
+  {
+    name: 'anciedad',
+    align: 'center',
+    label: 'Anciedad',
+    field: 'anciedad'
+  },
+  {
+    name: 'esquizofrenia',
+    align: 'center',
+    label: 'Esquizofrenia',
+    field: 'esquizofrenia'
+  },
+  {
+    name: 'fuma',
+    align: 'center',
+    label: 'Fumador',
+    field: 'fuma'
+  },
+  {
+    name: 'alcoholico',
+    align: 'center',
+    label: 'Alcohólico',
+    field: 'alcoholico'
+  },
+  {
+    name: 'parkinson',
+    align: 'center',
+    label: 'Parkinson',
+    field: 'parkinson'
+  },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
 ]
 
@@ -446,6 +588,17 @@ const LenguajeOptions = [
   "Normal",
 ];
 
+const DefectOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
+
 const visibleColumns = ref([
   'nombre',
   'edad',
@@ -457,20 +610,15 @@ const visibleColumns = ref([
   'retrazomental',
   'trastornolenguaje',
   'trastornopensamiento',
+  'anciedad',
+  'esquizofrenia',
+  'fuma',
+  'alcoholico',
+  'parkinson',
   'actions',
 ])
 
 const date = ref("");
-
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
 
 // TODO: Export To Excel:
 async function exportFile() {

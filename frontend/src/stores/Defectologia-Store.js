@@ -17,6 +17,12 @@ export const useDefectologiaStore = defineStore("Defectologia", {
       retrazomental: "",
       trastornolenguaje: "",
       trastornopensamiento: "",
+      d_paciente: 0,
+      anciedad: false,
+      esquizofrenia: false,
+      fuma: false,
+      alcoholico: false,
+      parkinson: false,
     },
 
     tempPaciente: {
@@ -45,6 +51,12 @@ export const useDefectologiaStore = defineStore("Defectologia", {
         retrazomental: "",
         trastornolenguaje: "",
         trastornopensamiento: "",
+        d_paciente: 0,
+        anciedad: false,
+        esquizofrenia: false,
+        fuma: false,
+        alcoholico: false,
+        parkinson: false,
       };
     },
 
@@ -94,6 +106,20 @@ export const useDefectologiaStore = defineStore("Defectologia", {
       try {
         const url = "/psicologia/defectoligia/";
         // const token = LocalStorage.getItem("access_token");
+        const formData = new FormData();
+        formData.append("auditivo", this.tempDefect.auditivo);
+        formData.append("visual", this.tempDefect.visual);
+        formData.append("ecv", this.tempDefect.ecv);
+        formData.append("fisicomotora", this.tempDefect.fisicomotora);
+        formData.append("retrazomental", this.tempDefect.retrazomental);
+        formData.append("trastornolenguaje", this.tempDefect.trastornolenguaje);
+        formData.append("trastornopensamiento", this.tempDefect.trastornopensamiento);
+        formData.append("anciedad", this.tempDefect.anciedad);
+        formData.append("esquizofrenia", this.tempDefect.esquizofrenia);
+        formData.append("fuma", this.tempDefect.fuma);
+        formData.append("alcoholico", this.tempDefect.alcoholico);
+        formData.append("parkinson", this.tempDefect.parkinson);
+        formData.append("d_paciente", this.tempDefect.d_paciente.value);
         const response = await api.post(url, this.tempDefect, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
@@ -163,6 +189,12 @@ export const useDefectologiaStore = defineStore("Defectologia", {
           retrazomental: this.tempDefect.retrazomental,
           trastornolenguaje: this.tempDefect.trastornolenguaje,
           trastornopensamiento: this.tempDefect.trastornopensamiento,
+          d_paciente: this.tempDefect.d_paciente,
+          anciedad: this.tempDefect.anciedad,
+          esquizofrenia: this.tempDefect.esquizofrenia,
+          fuma: this.tempDefect.fuma,
+          alcoholico: this.tempDefect.alcoholico,
+          parkinson: this.tempDefect.parkinson,
         };
 
         const response = await api.put(

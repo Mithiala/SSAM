@@ -2,27 +2,24 @@ import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
 import { Notify, Dialog } from "quasar";
 
-export const useCognitivoStore = defineStore("Cognitivo", {
+export const useResultadoStore = defineStore("Resultado", {
   state: () => ({
-    cognitivo: [],
+    resultado: [],
     pacientes: [],
     loading: false,
 
-    tempCognitivos: {
+    tempResultado: {
       id: 0,
-      esquizofrenia: false,
-      fumador: false,
-      alcoholico: false,
-      demencia: false,
-      parkinson: false,
-      observaciones: "",
+      depresion: 0,
+      intentosuicida: 0,
+      demencia: 0,
+      normales: 0,
+      resul_paciente: 0,
     },
 
     tempPaciente: {
       image: "",
       nombre: "",
-      edad: 0,
-      sexo: "",
     },
 
     showDialogDG: false,
@@ -34,34 +31,33 @@ export const useCognitivoStore = defineStore("Cognitivo", {
 
   actions: {
     //TODO: Resetear Variable Temporal
-    resetTempCog() {
+    resetTempResult() {
       console.log("aqui receteo");
-      this.tempCognitivos = {
-      esquizofrenia: false,
-      fumador: false,
-      alcoholico: false,
-      demencia: false,
-      parkinson: false,
-      observaciones: "",
+      this.tempResultado = {
+        depresion: 0,
+        intentosuicida: 0,
+        demencia: 0,
+        normales: 0,
+        resul_paciente: 0,
       };
     },
 
     //TODO: Accion para Obtener todos Registros
-    async listCog() {
+    async listResult() {
       this.loading = true;
       try {
-        const url = "/psicologia/cognitivo/";
+        const url = "/psicologia/resultado/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.cognitivo = response.data.results;
+        this.resultado = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
-          "🚀 ~ file: Cognitivo-Store.js:99 ~ listCog ~ error:",
+          "🚀 ~ file: Resultado-Store.js:99 ~ listResult ~ error:",
           error
         );
       }
@@ -88,11 +84,17 @@ export const useCognitivoStore = defineStore("Cognitivo", {
     },
 
     //TODO: Accion para crear Registros
-    async createCog() {
+    async createResult() {
       try {
-        const url = "/psicologia/cognitivo/";
+        const url = "/psicologia/resultado/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempCognitivos, {
+        const formData = new FormData();
+        formData.append("depresion", this.tempResultado.depresion);
+        formData.append("intentosuicida", this.tempResultado.intentosuicida);
+        formData.append("demencia", this.tempResultado.demencia);
+        formData.append("normales", this.tempResultado.normales);
+        formData.append("resul_paciente", this.tempResultado.resul_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -105,9 +107,9 @@ export const useCognitivoStore = defineStore("Cognitivo", {
             progress: true,
             icon: "check",
           });
-          await this.listCog();
+          await this.listResult();
           this.showDialogDG = false;
-          this.resetTempAfectiva();
+          this.resetTempResult();
         }
       } catch (error) {
         console.log("FullError: ", error);
@@ -115,7 +117,7 @@ export const useCognitivoStore = defineStore("Cognitivo", {
         const menssage = ( error.response.data.error)
         Notify.create({
           color: "negative",
-          message: menssage,
+          message: "Error al crear el registro",
           position: "bottom",
           progress: true,
           icon: "report_problem",
@@ -124,10 +126,10 @@ export const useCognitivoStore = defineStore("Cognitivo", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveCog(id) {
+    async retrieveResult(id) {
       try {
         this.loading = true;
-        const url = `/psicologia/cognitivo/${id}/`;
+        const url = `/psicologia/resultado/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -135,34 +137,32 @@ export const useCognitivoStore = defineStore("Cognitivo", {
           //},
         });
         console.log(
-          "🚀 ~ file: Cognitivo-Store.js:130 ~ retrieveCog ~ response:",
+          "🚀 ~ file: Resultado-Store.js:130 ~ retrieveResult ~ response:",
           response.statusText
         );
         this.loading = false;
       } catch (error) {
         console.log(
-          "🚀 ~ file: Cognitivo-Store.js:132 ~ retrieveCog ~ error:",
+          "🚀 ~ file: Resultado-Store.js:132 ~ retrieveResult ~ error:",
           error.response.data
         );
       }
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateCog(id) {
+    async updateResult(id) {
       try {
-        const url = `/psicologia/cognitivo/${id}/`;
+        const url = `/psicologia/resultado/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          esquizofrenia: this.tempCognitivos.esquizofrenia,
-          fumador: this.tempCognitivos.fumador,
-          alcoholico: this.tempCognitivos.alcoholico,
-          demencia: this.tempCognitivos.demencia,
-          parkinson: this.tempCognitivos.parkinson,
-          observaciones: this.tempCognitivos.observaciones,
+          depresion: this.tempResultado.depresion,
+          intentosuicida: this.tempResultado.intentosuicida,
+          demencia: this.tempResultado.demencia,
+          normales: this.tempResultado.normales,
+          resul_paciente: this.tempResultado.resul_paciente,
         };
-
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -175,7 +175,7 @@ export const useCognitivoStore = defineStore("Cognitivo", {
         if (response.status === 201) {
           console.log("Status: ", response.statusText);
           console.log(
-            "🚀 ~ file: Cognitivo-Store.js:171 ~ updateCog ~ response:",
+            "🚀 ~ file: Resultado-Store.js:171 ~ updateResult ~ response:",
             response.data
           );
 
@@ -187,14 +187,14 @@ export const useCognitivoStore = defineStore("Cognitivo", {
             icon: "check",
           });
         }
-        await this.listCog();
+        await this.listResult();
         this.showDialogDG = false;
       } catch (error) {
         console.log("Code: ", error);
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al actualizar",
           position: "bottom",
           progress: true,
           icon: "report_problem",
@@ -202,7 +202,7 @@ export const useCognitivoStore = defineStore("Cognitivo", {
       }
     },
 
-    async destroyCog(id_cognitivo) {
+    async destroyResult(id) {
       try {
         Dialog.create({
           html: true,
@@ -212,7 +212,7 @@ export const useCognitivoStore = defineStore("Cognitivo", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/valuecognitivos/${id_cognitivo}/`;
+          const url = `/psicologia/resultado/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {
@@ -221,7 +221,7 @@ export const useCognitivoStore = defineStore("Cognitivo", {
 
           if (response.status === 204) {
             console.log(
-              "🚀 ~ file: Cognitivo-Store.js:214 ~ destroyCog ~ response:",
+              "🚀 ~ file: Resultado-Store.js:214 ~ destroyResult ~ response:",
               response.statusText
             );
 
@@ -233,7 +233,7 @@ export const useCognitivoStore = defineStore("Cognitivo", {
               progress: true,
             });
           }
-          await this.listCog();
+          await this.listResult();
         });
       } catch (error) {
         console.log("Code: ", error.code);
@@ -249,7 +249,7 @@ export const useCognitivoStore = defineStore("Cognitivo", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al eliminar",
           position: "top",
           icon: "report_problem",
           position: "bottom",

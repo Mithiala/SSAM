@@ -240,20 +240,6 @@ const { yesavage, AddYP, EditYP, showDialogYP, loading, tempYasevage, tempPacien
     field: "nombre",
     sortable: true,
   },
-  {
-    name: "edad",
-    label: "Edad",
-    field: "edad",
-    align: "center",
-    sortable: true,
-    sort: (a, b) => a - b,
-  },
-  {
-    name: "sexo",
-    label: "Sexo",
-    field: "sexo",
-    align: "center",
-  },
 
   {
     name: 'depmoderada',
