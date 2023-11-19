@@ -2,17 +2,13 @@
   <q-page padding>
     <div class="q-gutter-md row justify-center">
       <h5 class="col-6 text-center text-weight-medium">
-        Control de Escalas
+        Escala Yasevage
       </h5>
       </div>
-    <TableSalud />
-    <TableEnars />
     <TableYasevage />
   </q-page>
 </template>
 
 <script setup>
-import TableSalud from "src/components/Psicologia/TableSalud.vue"
-import TableEnars from "src/components/Psicologia/TableEnars.vue"
 import TableYasevage from "src/components/Psicologia/TableYasevage.vue"
 </script>

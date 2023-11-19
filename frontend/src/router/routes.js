@@ -88,6 +88,11 @@ const routes = [
         name: "enarsps",
         component: () => import("src/pages/Psicologia/EnarsPage.vue"),
       },
+      {
+        path: "yasevageps",
+        name: "yasevageps",
+        component: () => import("src/pages/Psicologia/YasevagePage.vue"),
+      },
     ],
   },
   {

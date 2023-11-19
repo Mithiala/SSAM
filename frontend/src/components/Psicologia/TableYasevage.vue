@@ -198,7 +198,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditEE"
-                @click="updateEnars(tempEna.id)"
+                @click="updateYase(tempYasevage.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
@@ -206,13 +206,13 @@
                 label="Añadir"
                 color="light-blue-8"
                 v-if="AddEE"
-                @click="createEnars(tempEna)"
+                @click="createYase(tempYasevage)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
                 color="purple-9"
                 label="Salir"
-                @click="showDialogEE = false"
+                @click="showDialogYP = false"
               />
             </div>
           </q-form>
@@ -227,7 +227,7 @@ import { PDFDocument, StandardFonts } from "pdf-lib";
 import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
-import { useEnarsStore } from "src/stores/Enars-Store";
+import { useYesavageStore } from "src/stores/Yesavage-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
@@ -237,16 +237,16 @@ onMounted(async () => {
 });
 
 const {
-  resetTempEnars,
-  listEnars,
+  resetTempYase,
+  listYase,
   listPacientes,
-  createEnars,
-  updateEnars,
-  destroyEnars,
-} = useEnarsStore();
+  createYase,
+  updateYase,
+  destroyYase,
+} = useYesavageStore();
 
-const { enars, AddEE, EditEE, showDialogEE, loading, tempEna, tempPaciente } =
-  storeToRefs(useEnarsStore());
+const { yesavage, AddYP, EditYP, showDialogYP, loading, tempYasevage, tempPaciente } =
+  storeToRefs(useYesavageStore());
 
   const columns = [
   {

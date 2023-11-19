@@ -2,19 +2,17 @@ import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
 import { Notify, Dialog } from "quasar";
 
-export const useEnarsStore = defineStore("Enars", {
+export const useYesavageStore = defineStore("Yesavage", {
   state: () => ({
-    enars: [],
+    yesavage: [],
     pacientes: [],
     loading: false,
 
-    tempEna: {
+    tempYasevage: {
       id: 0,
-      algveces: 0,
-      frecuente: 0,
-      siempre: 0,
-      nunca: 0,
-      en_paciente: 0,
+      depmoderada: 0,
+      depsevera: 0,
+      y_paciente: 0,
     },
 
     tempPaciente: {
@@ -23,42 +21,40 @@ export const useEnarsStore = defineStore("Enars", {
       sexo: "",
     },
 
-    showDialogEE: false,
-    EditEE: false,
-    AddEE: false,
+    showDialogYP: false,
+    EditYP: false,
+    AddYP: false,
   }),
 
   getters: {},
 
   actions: {
     //TODO: Resetear Variable Temporal
-    resetTempEnars() {
+    resetTempYase() {
       console.log("aqui receteo");
-      this.tempEna = {
-        algveces: 0,
-        frecuente: 0,
-        siempre: 0,
-        nunca: 0,
-        en_paciente: 0,
+      this.tempYasevage = {
+        depmoderada: 0,
+        depsevera: 0,
+        y_paciente: 0,
       };
     },
 
-    //TODO: Accion para Obtener todos Registros
-    async listEnars() {
+    //TODO: Accion para Obtener todos 
+    async listYase() {
       this.loading = true;
       try {
-        const url = "/psicologia/escenars/";
+        const url = "/psicologia/escyasevage/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.salud = response.data.results;
+        this.yesavage = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
-          "🚀 ~ file: Enars-Store.js:99 ~ listEnars ~ error:",
+          "🚀 ~ file: Yesavage-Store.js:99 ~ listYase ~ error:",
           error
         );
       }
@@ -85,16 +81,14 @@ export const useEnarsStore = defineStore("Enars", {
     },
 
     //TODO: Accion para crear Registros
-    async createEnars() {
+    async createYase() {
       try {
-        const url = "/psicologia/escenars/";
+        const url = "/psicologia/escyasevage/";
         // const token = LocalStorage.getItem("access_token");
         const formData = new FormData();
-        formData.append("algveces", this.tempEna.algveces);
-        formData.append("frecuente", this.tempEna.frecuente);
-        formData.append("siempre", this.tempEna.siempre);
-        formData.append("nunca", this.tempEna.nunca);
-        formData.append("en_paciente", this.tempEna.en_paciente.value);
+        formData.append("depmoderada", this.tempYasevage.depmoderada);
+        formData.append("depsevera", this.tempYasevage.depsevera);
+        formData.append("y_paciente", this.tempYasevage.y_paciente.value);
         const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
@@ -108,9 +102,9 @@ export const useEnarsStore = defineStore("Enars", {
             progress: true,
             icon: "check",
           });
-          await this.listEnars();
-          this.showDialogEE = false;
-          this.resetTempEnars();
+          await this.listYase();
+          this.showDialogYP = false;
+          this.resetTempYase();
         }
       } catch (error) {
         console.log("FullError: ", error);
@@ -127,10 +121,10 @@ export const useEnarsStore = defineStore("Enars", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveEnars(id) {
+    async retrieveYase(id) {
       try {
         this.loading = true;
-        const url = `/psicologia/escenars/${id}/`;
+        const url = `/psicologia/escyasevage/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -138,32 +132,29 @@ export const useEnarsStore = defineStore("Enars", {
           //},
         });
         console.log(
-          "🚀 ~ file: Enars-Store.js:130 ~ retrieveEnars ~ response:",
+          "🚀 ~ file: Yasevage-Store.js:130 ~ retrieveYase ~ response:",
           response.statusText
         );
         this.loading = false;
       } catch (error) {
         console.log(
-          "🚀 ~ file: Enars-Store.js:132 ~ retrieveEnars ~ error:",
+          "🚀 ~ file: Yasevage-Store.js:132 ~ retrieveYase ~ error:",
           error.response.data
         );
       }
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateEnars(id) {
+    async updateYase(id) {
       try {
-        const url = `/psicologia/escenars/${id}/`;
+        const url = `/psicologia/escyasevage/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          algveces: this.tempEna.enars,
-          frecuente: this.tempEna.frecuente,
-          siempre: this.tempEna.siempre,
-          nunca: this.tempEna.nunca,
-          en_paciente: this.tempEna.en_paciente,
+          depmoderada: this.tempYasevage.depmoderada,
+          depsevera: this.tempYasevage.depsevera,
+          y_paciente: this.tempYasevage.y_paciente,
         };
-
         const response = await api.patch(
           url,
           request
@@ -177,7 +168,7 @@ export const useEnarsStore = defineStore("Enars", {
         if (response.status === 201) {
           console.log("Status: ", response.statusText);
           console.log(
-            "🚀 ~ file: Enars-Store.js:171 ~ updateEnars ~ response:",
+            "🚀 ~ file: Yasevage-Store.js:171 ~ updateYase ~ response:",
             response.data
           );
 
@@ -189,8 +180,8 @@ export const useEnarsStore = defineStore("Enars", {
             icon: "check",
           });
         }
-        await this.listEnars();
-        this.showDialogEE = false;
+        await this.listYase();
+        this.showDialogYP = false;
       } catch (error) {
         console.log("Code: ", error);
 
@@ -204,7 +195,7 @@ export const useEnarsStore = defineStore("Enars", {
       }
     },
 
-    async destroyEnars(id) {
+    async destroyYase(id) {
       try {
         Dialog.create({
           html: true,
@@ -214,7 +205,7 @@ export const useEnarsStore = defineStore("Enars", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/psicologia/escenars/${id}/`;
+          const url = `/psicologia/escyasevage/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {
@@ -223,7 +214,7 @@ export const useEnarsStore = defineStore("Enars", {
 
           if (response.status === 204) {
             console.log(
-              "🚀 ~ file: Enars-Store.js:214 ~ destroyEnars ~ response:",
+              "🚀 ~ file: Yasevage-Store.js:214 ~ destroyYase ~ response:",
               response.statusText
             );
 
@@ -235,7 +226,7 @@ export const useEnarsStore = defineStore("Enars", {
               progress: true,
             });
           }
-          await this.listEnars();
+          await this.listYase();
         });
       } catch (error) {
         console.log("Code: ", error.code);
