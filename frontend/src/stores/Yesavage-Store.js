@@ -12,6 +12,7 @@ export const useYesavageStore = defineStore("Yesavage", {
       id: 0,
       depmoderada: 0,
       depsevera: 0,
+      normal: 0,
       y_paciente: 0,
     },
 
@@ -35,6 +36,7 @@ export const useYesavageStore = defineStore("Yesavage", {
       this.tempYasevage = {
         depmoderada: 0,
         depsevera: 0,
+        normal: 0,
         y_paciente: 0,
       };
     },
@@ -88,6 +90,7 @@ export const useYesavageStore = defineStore("Yesavage", {
         const formData = new FormData();
         formData.append("depmoderada", this.tempYasevage.depmoderada);
         formData.append("depsevera", this.tempYasevage.depsevera);
+        formData.append("normal", this.tempYasevage.normal);
         formData.append("y_paciente", this.tempYasevage.y_paciente.value);
         const response = await api.post(url, formData, {
           // headers: {
@@ -153,6 +156,7 @@ export const useYesavageStore = defineStore("Yesavage", {
         const request = {
           depmoderada: this.tempYasevage.depmoderada,
           depsevera: this.tempYasevage.depsevera,
+          normal: this.tempYasevage.normal,
           y_paciente: this.tempYasevage.y_paciente,
         };
         const response = await api.patch(

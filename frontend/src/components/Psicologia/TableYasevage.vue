@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <div class="q-gutter-md row justify-center">
       <h5 class="col-6 text-center text-weight-medium">
-        Escala Enars
+        Escala Yasevage
       </h5>
     </div>
     <q-table
@@ -10,7 +10,7 @@
       flat
       bordered
       color="green"
-      :rows="enars"
+      :rows="yasevage"
       :columns="columns"
       row-key="id"
       :loading="loading"
@@ -101,40 +101,40 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyEnars(props.row.id)"
+            @click="destroyYase(props.row.id)"
           />
         </q-td>
       </template>
     </q-table>
 
     <!-- TODO: Añadir - Editar -->
-    <q-dialog v-model="showDialogEE" persistent full-medium >
+    <q-dialog v-model="showDialogYP" persistent full-medium >
       <q-card class="column medium">
         <q-card-section>
           <q-form class="">
             <div class="row justify-around q-gutter-md">
 
-              <!-- TODO:  "salud_paciente" -->
+              <!-- TODO:  "yasevage_paciente" -->
               <q-select
                 class="col-3"
                 dense
                 outlined
-                v-model="tempEna.en_paciente"
+                v-model="tempYasevage.y_paciente"
                 label="Nombre del paciente"
-                :options="EnarsOption"
+                :options="YaseOption"
                 style="width: 250px"
                 behavior="menu"
               />
 
-              <!-- TODO:  "Nunca" -->
+              <!-- TODO:  "Normal" -->
               <q-input
                 class="col-3"
                 outlined
                 dense
                 type="number"
-                label="Nunca"
+                label="Normal"
                 lazy-rules
-                v-model="tempEna.nunca"
+                v-model="tempYasevage.normal"
                 :rules="[
                   (val) =>
                     (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
@@ -142,15 +142,15 @@
                 mask="#"
               />
 
-              <!-- TODO:  "Algunas Veces" -->
+              <!-- TODO:  "Depresión Moderada" -->
               <q-input
                 class="col-3"
                 outlined
                 dense
                 type="number"
-                label="Algunas Veces"
+                label="Depresión Moderada"
                 lazy-rules
-                v-model="tempEna.algveces"
+                v-model="tempYasevage.depmoderada"
                 :rules="[
                   (val) =>
                     (val > 5 && val < 11) || 'Por favor ingrese la evaluación correcta',
@@ -158,34 +158,18 @@
                 mask="#"
               />
 
-              <!-- TODO:  "Frecuentemente" -->
+              <!-- TODO:  "Depresión Severa" -->
               <q-input
                 class="col-3"
                 outlined
                 dense
                 type="number"
-                label="Frecuentemente"
+                label="Depresión Severa"
                 lazy-rules
-                v-model="tempEna.frecuente"
+                v-model="tempYasevage.depsevera"
                 :rules="[
                   (val) =>
                     (val > 10 && val < 16) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
-              />
-
-              <!-- TODO:  "Fijación" -->
-              <q-input
-                class="col-3"
-                outlined
-                dense
-                type="number"
-                label="Siempre"
-                lazy-rules
-                v-model="tempEna.siempre"
-                :rules="[
-                  (val) =>
-                    (val > 15 && val < 21) || 'Por favor ingrese la evaluación correcta',
                 ]"
                 mask="#"
               />
@@ -197,7 +181,7 @@
                 type="submit"
                 label="Actualizar"
                 color="light-blue-8"
-                v-if="EditEE"
+                v-if="EditYP"
                 @click="updateYase(tempYasevage.id)"
               />
               <q-btn
@@ -205,7 +189,7 @@
                 type="submit"
                 label="Añadir"
                 color="light-blue-8"
-                v-if="AddEE"
+                v-if="AddYP"
                 @click="createYase(tempYasevage)"
               />
               <q-btn
@@ -231,7 +215,7 @@ import { useYesavageStore } from "src/stores/Yesavage-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
-  await listEnars();
+  await listYase();
   await listPacientes();
   // }
 });
@@ -272,34 +256,22 @@ const { yesavage, AddYP, EditYP, showDialogYP, loading, tempYasevage, tempPacien
   },
 
   {
-    name: 'algveces',
+    name: 'depmoderada',
     align: 'center',
-    label: 'Algunas Veces',
-    field: 'algveces',
+    label: 'Depresión Moderada',
+    field: 'depmoderada',
   },
   {
-    name: 'frecuente',
+    name: 'depsevera',
     align: 'center',
-    label: 'Frecuentemente',
-    field: 'frecuente',
+    label: 'Depresión Severa',
+    field: 'depsevera',
   },
   {
-    name: 'siempre',
+    name: 'normal',
     align: 'center',
-    label: 'Siempre',
-    field: 'siempre'
-  },
-  {
-    name: 'atcalculo',
-    align: 'center',
-    label: 'Atención y Cálculo',
-    field: 'atcalculo'
-  },
-  {
-    name: 'nunca',
-    align: 'center',
-    label: 'Nunca',
-    field: 'nunca'
+    label: 'Normal',
+    field: 'normal'
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
 ]
@@ -308,19 +280,19 @@ const filter = ref("");
 const persistent = ref(false);
 
 const openEditDialog = (row) => {
-  AddEE.value = false;
-  EditEE.value = true;
-  tempEna.value = { ...row };
-  showDialogEE.value = true;
+  AddYP.value = false;
+  EditYP.value = true;
+  tempYasevage.value = { ...row };
+  showDialogYP.value = true;
 };
 const openAddDialog = () => {
-  AddEE.value = true;
-  EditEE.value = false;
-  resetTempEnars();
-  showDialogEE.value = true;
+  AddYP.value = true;
+  EditYP.value = false;
+  resetTempYase();
+  showDialogYP.value = true;
 };
 
-const EnarsOption = [
+const YaseOption = [
   {
     label: "Andrés Cueva Heredia",
     value: "1",
@@ -335,10 +307,10 @@ const date = ref("");
 
 // TODO: Export To Excel:
 async function exportFile() {
-  const ws = utils.json_to_sheet(enars.value);
+  const ws = utils.json_to_sheet(yasevage.value);
   const wb = utils.book_new();
-  utils.book_append_sheet(wb, ws, "Enars");
-  writeFileXLSX(wb, "Enars.xlsx");
+  utils.book_append_sheet(wb, ws, "Yasevage");
+  writeFileXLSX(wb, "Yasevage.xlsx");
 }
 </script>
 
