@@ -131,6 +131,18 @@
 
               <q-space class="col-2" />
 
+              <!-- TODO:  "salud_paciente" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempDatos.denf_paciente"
+                label="Nombre del paciente"
+                :options="SaludOption"
+                style="width: 250px"
+                behavior="menu"
+              />
+
               <!-- TODO:  "Sala" -->
               <q-input
                 class="col-1"
@@ -142,7 +154,7 @@
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingrese la sala al que pertence el paciente',
+                    'Por favor ingrese la Sala al que pertence el paciente',
                 ]"
               />
 
@@ -293,7 +305,7 @@
                 outlined
                 label="Fecha"
                 v-model="tempDatos.fecha_a"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
@@ -339,7 +351,7 @@
                 outlined
                 label="Fecha"
                 v-model="tempDatos.fecha_o"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
@@ -378,372 +390,14 @@
                 v-model="tempDatos.atencion_oftalmologia"
               />
 
-              <!-- TODO:  "Fecha geriatria" -->
-              <q-input
-                class="col-2"
-                dense
-                outlined
-                label="Fecha"
-                v-model="tempDatos.fecha_ge"
-                mask="date"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de consulta',
-                ]"
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date v-model="tempDatos.fecha_ge" color="green-5" mask="YYYY-MM-DD">
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Cerrar"
-                            color="green"
-                            flat
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-
-              <!-- TODO:  "Diagnóstico de geriatría" -->
+              <!-- TODO:  "Resumen de consultas externas" -->
               <q-input
                 class="col-5"
                 type="textarea"
                 dense
                 outlined
-                v-model="tempDatos.diagnostico_geriatria"
-                label="Diagnóstico de geriatría"
-              />
-
-              <!-- TODO:  "Fecha oncologia" -->
-              <q-input
-                class="col-2"
-                dense
-                outlined
-                label="Fecha"
-                v-model="tempDatos.fecha_on"
-                mask="date"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de consulta',
-                ]"
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date v-model="tempDatos.fecha_on" color="green-5" mask="YYYY-MM-DD">
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Cerrar"
-                            color="green"
-                            flat
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-
-              <!-- TODO:  "Diagnóstico de oncología" -->
-              <q-input
-                class="col-5"
-                type="textarea"
-                dense
-                outlined
-                v-model="tempDatos.diagnostico_oncologia"
-                label="Diagnóstico de oncología"
-              />
-
-              <!-- TODO:  "Fecha angiologia" -->
-              <q-input
-                class="col-2"
-                dense
-                outlined
-                label="Fecha"
-                v-model="tempDatos.fecha_an"
-                mask="date"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de consulta',
-                ]"
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date v-model="tempDatos.fecha_an" color="green-5" mask="YYYY-MM-DD">
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Cerrar"
-                            color="green"
-                            flat
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-
-              <!-- TODO:  "Diagnóstico de angiología" -->
-              <q-input
-                class="col-5"
-                type="textarea"
-                dense
-                outlined
-                v-model="tempDatos.diagnostico_angiologia"
-                label="Diagnóstico de angiología"
-              />
-
-              <!-- TODO:  "Fecha cardiologia" -->
-              <q-input
-                class="col-2"
-                dense
-                outlined
-                label="Fecha"
-                v-model="tempDatos.fecha_car"
-                mask="date"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de consulta',
-                ]"
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date v-model="tempDatos.fecha_car" color="green-5" mask="YYYY-MM-DD">
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Cerrar"
-                            color="green"
-                            flat
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-
-              <!-- TODO:  "Diagnóstico de cardiología" -->
-              <q-input
-                class="col-5"
-                type="textarea"
-                dense
-                outlined
-                v-model="tempDatos.diagnostico_cardiologia"
-                label="Diagnóstico de cardiología"
-              />
-
-              <!-- TODO:  "Fecha cirugia" -->
-              <q-input
-                class="col-2"
-                dense
-                outlined
-                label="Fecha"
-                v-model="tempDatos.fecha_cir"
-                mask="date"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de consulta',
-                ]"
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date v-model="tempDatos.fecha_cir" color="green-5" mask="YYYY-MM-DD">
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Cerrar"
-                            color="green"
-                            flat
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-
-              <!-- TODO:  "Diagnóstico de cirugía" -->
-              <q-input
-                class="col-5"
-                type="textarea"
-                dense
-                outlined
-                v-model="tempDatos.diagnostico_cirugia"
-                label="Diagnóstico de cirugía"
-              />
-
-              <!-- TODO:  "Fecha dermatología" -->
-              <q-input
-                class="col-2"
-                dense
-                outlined
-                label="Fecha"
-                v-model="tempDatos.fecha_der"
-                mask="date"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de consulta',
-                ]"
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date v-model="tempDatos.fecha_der" color="green-5" mask="YYYY-MM-DD">
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Cerrar"
-                            color="green"
-                            flat
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-
-              <!-- TODO:  "Diagnóstico de dermatología" -->
-              <q-input
-                class="col-5"
-                type="textarea"
-                dense
-                outlined
-                v-model="tempDatos.diagnostico_dermatologia"
-                label="Diagnóstico de dermatología"
-              />
-
-              <!-- TODO:  "Fecha fisiatra" -->
-              <q-input
-                class="col-2"
-                dense
-                outlined
-                label="Fecha"
-                v-model="tempDatos.fecha_fi"
-                mask="date"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de consulta',
-                ]"
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date v-model="tempDatos.fecha_fi" color="green-5" mask="YYYY-MM-DD">
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Cerrar"
-                            color="green"
-                            flat
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-
-              <!-- TODO:  "Diagnóstico de fisiatría" -->
-              <q-input
-                class="col-5"
-                type="textarea"
-                dense
-                outlined
-                v-model="tempDatos.diagnostico_fisiatria"
-                label="Diagnóstico de fisiatría"
-              />
-
-              <!-- TODO:  "Fecha" -->
-              <q-input
-                class="col-2"
-                dense
-                outlined
-                label="Fecha"
-                v-model="tempDatos.fecha"
-                mask="date"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de consulta',
-                ]"
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date v-model="tempDatos.fecha" color="green-5" mask="YYYY-MM-DD">
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Cerrar"
-                            color="green"
-                            flat
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-
-              <!-- TODO:  "Otros diagnóstico" -->
-              <q-input
-                class="col-5"
-                type="textarea"
-                dense
-                outlined
-                v-model="tempDatos.otros_diagnosticos"
-                label="Otros diagnósticos"
+                v-model="tempDatos.resumen"
+                label="Resumen de consultas externas"
               />
 
               <!-- TODO:  "Localización de úlceras por presión" -->
@@ -894,26 +548,7 @@ const {
 const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPaciente } =
   storeToRefs(useDatosenferStore());
 
-  const baseurl = "http://127.0.0.1:8000";
-
   const columns = [
-  {
-    name: 'id',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -1023,88 +658,10 @@ const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPacient
     field: 'atencion_oftalmologia'
   },
   {
-    name: 'fecha_ge',
+    name: 'resumen',
     align: 'center',
-    label: 'Fecha',
-    field: 'fecha_ge',
-  },
-  {
-    name: 'diagnostico_geriatria',
-    align: 'center',
-    label: 'Diagnóstico de geriatría',
-    field: 'diagnostico_geriatria'
-  },
-  {
-    name: 'fecha_on',
-    align: 'center',
-    label: 'Fecha',
-    field: 'fecha_on',
-  },
-  {
-    name: 'diagnostico_oncologia',
-    align: 'center',
-    label: 'Diagnóstico de oncología',
-    field: 'diagnostico_oncologia'
-  },
-  {
-    name: 'fecha_car',
-    align: 'center',
-    label: 'Fecha',
-    field: 'fecha_car',
-  },
-  {
-    name: 'diagnostico_cardiologia',
-    align: 'center',
-    label: 'Diagnóstico de cardiología',
-    field: 'diagnostico_cardiologia'
-  },
-  {
-    name: 'fecha_cir',
-    align: 'center',
-    label: 'Fecha',
-    field: 'fecha_cir',
-  },
-  {
-    name: 'diagnostico_cirugia',
-    align: 'center',
-    label: 'Diagnóstico de cirugía',
-    field: 'diagnostico_cirugia'
-  },
-  {
-    name: 'fecha_der',
-    align: 'center',
-    label: 'Fecha',
-    field: 'fecha_der',
-  },
-  {
-    name: 'diagnostico_dermatologia',
-    align: 'center',
-    label: 'Diagnóstico de dermatología',
-    field: 'diagnostico_dermatologia'
-  },
-  {
-    name: 'fecha_fi',
-    align: 'center',
-    label: 'Fecha',
-    field: 'fecha_fi',
-  },
-  {
-    name: 'diagnostico_fisiatria',
-    align: 'center',
-    label: 'Diagnóstico del fisiatría',
-    field: 'diagnostico_fisiatria'
-  },
-  {
-    name: 'fecha',
-    align: 'center',
-    label: 'Fecha',
-    field: 'fecha',
-  },
-  {
-    name: 'otros_diagnosticos',
-    align: 'center',
-    label: 'Otros diagnósticos',
-    field: 'otros_diagnosticos'
+    label: 'Resumen de consultas externas',
+    field: 'resumen'
   },
   {
     name: 'local_ulcerapres',
@@ -1179,9 +736,18 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
+const SaludOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
+
 const visibleColumns = ref([
-  'id_date',
-  'image',
   'nombre',
   'edad',
   'sexo',
@@ -1197,22 +763,7 @@ const visibleColumns = ref([
   'programa_auditivo',
   'fecha_o',
   'atencion_oftalmologia',
-  'fecha_ge',
-  'diagnostico_geriatria',
-  'fecha_on',
-  'diagnostico_oncologia',
-  'fecha_an',
-  'diagnostico_angiologia',
-  'fecha_car',
-  'diagnostico_cardiologia',
-  'fecha_cir',
-  'diagnostico_cirugia',
-  'fecha_der',
-  'diagnostico_dermatologia',
-  'fecha_fi',
-  'diagnostico_fisiatria',
-  'fecha',
-  'otros_diagnosticos',
+  'resumen',
   'local_ulcerapres',
   'sindrome_respiratorio',
   'programa_tb',
@@ -1254,16 +805,6 @@ watch(
 );
 
 const date = ref("");
-
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
 
 // TODO: Export To Excel:
 async function exportFile() {

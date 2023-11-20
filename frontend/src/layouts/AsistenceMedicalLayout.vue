@@ -124,7 +124,7 @@
         :active="link === 'Encuesta'"
         @click="link = 'Encuesta'"
         active-class="border text-green-10"
-        to="datosas"
+        to="enfermeria"
       >
         <q-item-section avatar class="flex flex-center column">
           <q-icon name="las la-folder" size="33px"/>

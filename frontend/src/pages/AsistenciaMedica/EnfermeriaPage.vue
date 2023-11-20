@@ -5,10 +5,10 @@
         Datos generales
       </h5>
       </div>
-    <TableDate />
+    <TableEnfermeria />
   </q-page>
 </template>
 
 <script setup>
-import TableDate from "src/components/AsistenciaMedica/TableDate.vue";
+import TableEnfermeria from "src/components/AsistenciaMedica/TableEnfermeria.vue";
 </script>

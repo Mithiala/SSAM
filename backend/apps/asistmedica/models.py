@@ -53,36 +53,7 @@ class DatoEnfermeria(BaseModel):
     atencion_oftalmologia = models.TextField(
         "Atención oftalmología", blank=False, null=False
     )
-    fecha_ge = models.DateField("Fecha geriatría", blank=False, null=False)
-    diagnostico_geriatria = models.TextField(
-        "Diagnóstico geriatría", blank=False, null=False
-    )
-    fecha_on = models.DateField("Fecha oncología", blank=False, null=False)
-    diagnostico_oncologia = models.TextField(
-        "Diagnóstico oncología", blank=False, null=False
-    )
-    fecha_an = models.DateField("Fecha angiología", blank=False, null=False)
-    diagnostico_angiologia = models.TextField(
-        "Diagnóstico angiología", blank=False, null=False
-    )
-    fecha_car = models.DateField("Fecha cardiología", blank=False, null=False)
-    diagnostico_cardiologia = models.TextField(
-        "Diagnóstico cardiología", blank=False, null=False
-    )
-    fecha_cir = models.DateField("Fecha cirugía", blank=False, null=False)
-    diagnostico_cirugia = models.TextField(
-        "Diagnóstico cirugía", blank=False, null=False
-    )
-    fecha_der = models.DateField("Fecha dermatología", blank=False, null=False)
-    diagnostico_dermatologia = models.TextField(
-        "Diagnóstico dermatología", blank=False, null=False
-    )
-    fecha_fi = models.DateField("Fecha fisiatría", blank=False, null=False)
-    diagnostico_fisiatria = models.TextField(
-        "Diagnóstico fisiatría", blank=False, null=False
-    )
-    fecha = models.DateField("Fecha", blank=False, null=False)
-    otros_diagnosticos = models.TextField("Otros diagnósticos", blank=False, null=False)
+    resumen = models.TextField("Resumen de consultas externas", blank=True, null=True)
     ulcerapres = models.TextField("Úlcera por presión", blank=False, null=False)
     sindrome_respiratorio = models.TextField(
         "Síndrome respiratorio", blank=False, null=False

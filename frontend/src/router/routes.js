@@ -141,16 +141,16 @@ const routes = [
           import("src/pages/AsistenciaMedica/MedicationRequestPage.vue"),
       },
       {
-        path: "datosas",
-        name: "datosas",
-        component: () =>
-          import("src/pages/AsistenciaMedica/DateEnfermPage.vue"),
-      },
-      {
         path: "valueas",
         name: "valueas",
         component: () =>
           import("src/pages/AsistenciaMedica/EnfValuePage.vue"),
+      },
+      {
+        path: "enfermeria",
+        name: "enfermeria",
+        component: () =>
+          import("src/pages/AsistenciaMedica/EnfermeriaPage.vue"),
       },
       {
         path: "sindromeas",

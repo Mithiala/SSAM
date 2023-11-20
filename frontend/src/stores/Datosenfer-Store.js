@@ -22,22 +22,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
       programa_auditivo: "",
       fecha_o: "",
       atencion_oftalmologia: "",
-      fecha_ge: "",
-      diagnostico_geriatria: "",
-      fecha_on: "",
-      diagnostico_oncologia: "",
-      fecha_an: "",
-      diagnostico_angiologia: "",
-      fecha_car: "",
-      diagnostico_cardiologia: "",
-      fecha_cir: "",
-      diagnostico_cirugia: "",
-      fecha_der: "",
-      diagnostico_dermatologia: "",
-      fecha_fi: "",
-      diagnostico_fisiatria: "",
-      fecha: "",
-      otros_diagnosticos: "",
+      resumen: "",
       ulcerapres: "",
       sindrome_respiratorio: "",
       programa_tb: "",
@@ -49,6 +34,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
       clasificacion_validismo: "",
       num_cama: 0,
       sala: "",
+      denf_paciente: 0,
     },
 
     tempPaciente: {
@@ -82,22 +68,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
         programa_auditivo: "",
         fecha_o: "",
         atencion_oftalmologia: "",
-        fecha_ge: "",
-        diagnostico_geriatria: "",
-        fecha_on: "",
-        diagnostico_oncologia: "",
-        fecha_an: "",
-        diagnostico_angiologia: "",
-        fecha_car: "",
-        diagnostico_cardiologia: "",
-        fecha_cir: "",
-        diagnostico_cirugia: "",
-        fecha_der: "",
-        diagnostico_dermatologia: "",
-        fecha_fi: "",
-        diagnostico_fisiatria: "",
-        fecha: "",
-        otros_diagnosticos: "",
+        resumen: "",
         ulcerapres: "",
         sindrome_respiratorio: "",
         programa_tb: "",
@@ -109,6 +80,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
         clasificacion_validismo: "",
         num_cama: 0,
         sala: "",
+        denf_paciente: 0,
       };
     },
 
@@ -158,7 +130,33 @@ export const useDatosenferStore = defineStore("Datosenfer", {
       try {
         const url = "/asistmedica/enfermeria/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempDatos, {
+        const formData = new FormData();
+        formData.append("peso", this.tempDatos.peso);
+        formData.append("talla", this.tempDatos.talla);
+        formData.append("clasif_imc", this.tempDatos.clasif_imc);
+        formData.append("app", this.tempDatos.app);
+        formData.append("patologia", this.tempDatos.patologia);
+        formData.append("operaciones", this.tempDatos.operaciones);
+        formData.append("fecha_e", this.tempDatos.fecha_e);
+        formData.append("atencion_estomatologia", this.tempDatos.atencion_estomatologia);
+        formData.append("fecha_a", this.tempDatos.fecha_a);
+        formData.append("programa_auditivo", this.tempDatos.programa_auditivo);
+        formData.append("fecha_o", this.tempDatos.fecha_o);
+        formData.append("atencion_oftalmologia", this.tempDatos.atencion_oftalmologia);
+        formData.append("resumen", this.tempDatos.resumen);
+        formData.append("ulcerapres", this.tempDatos.ulcerapres);
+        formData.append("sindrome_respiratorio", this.tempDatos.sindrome_respiratorio);
+        formData.append("programa_tb", this.tempDatos.programa_tb);
+        formData.append("morbilidad", this.tempDatos.morbilidad);
+        formData.append("transfuciones", this.tempDatos.transfuciones);
+        formData.append("habitos_toxicos", this.tempDatos.habitos_toxicos);
+        formData.append("alergia_medicamentos", this.tempDatos.alergia_medicamentos);
+        formData.append("accidentes", this.tempDatos.accidentes);
+        formData.append("clasificacion_validismo", this.tempDatos.clasificacion_validismo);
+        formData.append("sala", this.tempDatos.sala);
+        formData.append("num_cama", this.tempDatos.num_cama);
+        formData.append("denf_paciente", this.tempDatos.denf_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -232,21 +230,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
           programa_auditivo: this.tempDatos.programa_auditivo,
           fetcha_o: this.tempDatos.fecha_o,
           atencion_oftalmologia: this.tempDatos.atencion_oftalmologia,
-          fecha_ge: this.tempDatos.fecha_ge,
-          diagnostico_geriatria: this.tempDatos.diagnostico_geriatria,
-          fecha_on: this.tempDatos.fecha_on,
-          diagnostico_oncologia: this.tempDatos.diagnostico_oncologia,
-          fecha_an: this.tempDatos.fecha_an,
-          diagnostico_angiologia: this.tempDatos.diagnostico_angiologia,
-          fecha_car: this.tempDatos.fecha_an,
-          diagnostico_cardiologia: this.tempDatos.diagnostico_cardiologia,
-          fecha_cir: this.tempDatos.fecha_car,
-          diagnostico_cirugia: this.tempDatos.diagnostico_cirugia,
-          fecha_der: this.tempDatos.fecha_der,
-          diagnostico_dermatologia: this.tempDatos.diagnostico_dermatologia,
-          fecha_fi: this.tempDatos.fecha_fi,
-          diagnostico_fisiatria: this.tempDatos.diagnostico_fisiatria,
-          fecha: this.tempDatos.fecha,
+          resumen: this.tempDatos.resumen,
           otros_diagnosticos: this.tempDatos.otros_diagnosticos,
           ulcerapres: this.tempDatos.ulcerapres,
           sindrome_respiratorio: this.tempDatos.sindrome_respiratorio,
@@ -259,9 +243,10 @@ export const useDatosenferStore = defineStore("Datosenfer", {
           clasificacion_validismo: this.tempDatos.clasificacion_validismo,
           num_cama: this.tempDatos.num_cama,
           sala: this.tempDatos.sala,
+          denf_paciente: this.tempDatos.denf_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -293,7 +278,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
 
         Notify.create({
           color: "negative",
-          message: errorMessage,
+          message: "Hubo un error al actualizar",
           position: "bottom",
           progress: true,
           icon: "report_problem",
