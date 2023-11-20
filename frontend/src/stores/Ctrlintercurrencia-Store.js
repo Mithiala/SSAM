@@ -13,6 +13,7 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
       tratamiento: "",
       fecha_inicio: "",
       fecha_termina: "",
+      mg_paciente: 0,
     },
 
     tempPaciente: {
@@ -36,6 +37,7 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
         tratamiento: "",
         fecha_inicio: "",
         fecha_termina: "",
+        mg_paciente: 0,
       };
     },
 

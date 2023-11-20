@@ -95,7 +95,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.datosenfer = response.data;
+        this.datosenfer = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(

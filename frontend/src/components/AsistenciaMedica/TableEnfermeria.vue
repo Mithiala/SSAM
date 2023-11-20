@@ -129,7 +129,7 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
-              <q-space class="col-2" />
+              <q-space class="col-1" />
 
               <!-- TODO:  "salud_paciente" -->
               <q-select
@@ -174,6 +174,8 @@
                 ]"
               />
 
+              <q-space class="col-1" />
+
               <!-- TODO:  "Peso" -->
               <q-input
                 class="col-1"
@@ -215,11 +217,9 @@
                 v-model="tempDatos.clasif_imc"
               />
 
-              <q-space class="col-2" />
-
               <!-- TODO:  "APP" -->
               <q-input
-                class="col-4"
+                class="col-3"
                 type="textarea"
                 dense
                 outlined
@@ -229,7 +229,7 @@
 
               <!-- TODO:  "Patología" -->
               <q-input
-                class="col-4"
+                class="col-3"
                 type="textarea"
                 dense
                 outlined
@@ -244,7 +244,7 @@
 
               <!-- TODO:  "Operaciones" -->
               <q-input
-                class="col-5"
+                class="col-3"
                 type="textarea"
                 dense
                 outlined
@@ -254,7 +254,7 @@
 
               <!-- TODO:  "Fecha estomatologia" -->
               <q-input
-                class="col-2"
+                class="col-3"
                 dense
                 outlined
                 label="Fecha"
@@ -290,7 +290,7 @@
 
               <!-- TODO:  "Atención estomatológica" -->
               <q-input
-                class="col-5"
+                class="col-6"
                 type="textarea"
                 dense
                 outlined
@@ -300,7 +300,7 @@
 
               <!-- TODO:  "Fecha auditivo" -->
               <q-input
-                class="col-2"
+                class="col-3"
                 dense
                 outlined
                 label="Fecha"
@@ -336,7 +336,7 @@
 
               <!-- TODO:  "Programa auditivo" -->
               <q-input
-                class="col-5"
+                class="col-6"
                 type="textarea"
                 dense
                 outlined
@@ -346,7 +346,7 @@
 
               <!-- TODO:  "Fecha oftalmologia" -->
               <q-input
-                class="col-2"
+                class="col-3"
                 dense
                 outlined
                 label="Fecha"
@@ -382,7 +382,7 @@
 
               <!-- TODO:  "Atención oftalmológica" -->
               <q-input
-                class="col-5"
+                class="col-6"
                 type="textarea"
                 dense
                 outlined
@@ -392,7 +392,7 @@
 
               <!-- TODO:  "Resumen de consultas externas" -->
               <q-input
-                class="col-5"
+                class="col-11"
                 type="textarea"
                 dense
                 outlined
@@ -406,7 +406,7 @@
                 type="textarea"
                 dense
                 outlined
-                v-model="tempDatos.local_ulcerapres"
+                v-model="tempDatos.ulcerapres"
                 label="Localización de úlceras por presión"
               />
 
@@ -664,10 +664,10 @@ const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPacient
     field: 'resumen'
   },
   {
-    name: 'local_ulcerapres',
+    name: 'ulcerapres',
     align: 'center',
     label: 'Localización de úlceras por presión',
-    field: 'local_ulcerapres'
+    field: 'ulcerapres'
   },
   {
     name: 'sindrome_respiratorio',
@@ -764,7 +764,7 @@ const visibleColumns = ref([
   'fecha_o',
   'atencion_oftalmologia',
   'resumen',
-  'local_ulcerapres',
+  'ulcerapres',
   'sindrome_respiratorio',
   'programa_tb',
   'morbilidad',

@@ -12,7 +12,7 @@
   color="green"
   :rows="ctrlintercurrencia"
   :columns="columnss"
-  row-key="id_inter"
+  row-key="id"
   :loading="loadingIN"
   :filter="filter"
   :rows-per-page-options="[10, 20, 30]"
