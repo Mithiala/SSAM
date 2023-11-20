@@ -37,7 +37,6 @@ class DatoEnfermeria(BaseModel):
     sala = models.CharField("Sala", max_length=10, blank=True, null=True)
     peso = models.DecimalField("Peso", max_digits=4, decimal_places=2)
     talla = models.DecimalField("Talla", max_digits=3, decimal_places=2)
-    imc = models.DecimalField("IMC", max_digits=3, decimal_places=2)
     clasif_imc = models.CharField(
         "Clasificación IMC", max_length=20, blank=True, null=True
     )
