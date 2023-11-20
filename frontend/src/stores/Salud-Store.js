@@ -121,9 +121,9 @@ export const useSaludStore = defineStore("Salud", {
           this.resetTempEstad();
         }
       } catch (error) {
-        console.log("FullError: ", error);
-        console.log("error: ", error.response.data);
-        const menssage = ( error.response.data.error)
+        console.log("Error completo:", error);
+        console.log("error:", error.response.data);
+        const message = error.response && error.response.data && error.response.data.error ? error.response.data.error : "Error desconocido";
         Notify.create({
           color: "negative",
           message: "Error al crear el registro",

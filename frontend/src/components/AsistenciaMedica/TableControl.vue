@@ -12,7 +12,7 @@
       color="green"
       :rows="ctrlglucemico"
       :columns="columns"
-      row-key="id_gluc"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -85,17 +85,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -112,7 +101,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyGlu(props.row.id_gluc)"
+            @click="destroyGlu(props.row.id)"
           />
         </q-td>
       </template>
@@ -127,25 +116,58 @@
 
               <q-space class="col-1" />
 
+              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempGlucemico.gluc_paciente"
+                label="Nombre del paciente"
+                :options="GluOption"
+                style="width: 250px"
+                behavior="menu"
+              />
+
+              <q-space class="col-1" />
+
               <!-- TODO:  "Fecha" -->
               <q-input
                 class="col-2"
-                outlined
                 dense
-              label="Fecha"
-              v-model="tempGlucemico.fecha_gluc"
-              mask="date">
-              <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="tempGlucemico.fecha_gluc">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Cerrar" color="green" flat />
-              </div>
-              </q-date>
-              </q-popup-proxy>
-              </q-icon>
-              </template>
+                outlined
+                label="Fecha"
+                v-model="tempGlucemico.fecha_gluc"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempGlucemico.fecha_gluc"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
               </q-input>
 
               <q-space class="col-1" />
@@ -181,7 +203,7 @@
                 dense
                 outlined
                 label="Observaciones"
-                v-model="tempGlucemico.observaciones_gluc"
+                v-model="tempGlucemico.observaciones"
               />
 
             </div>
@@ -192,7 +214,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditGL"
-                @click="updateGlu(tempGlucemico.id_gluc)"
+                @click="updateGlu(tempGlucemico.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
@@ -242,27 +264,7 @@ const {
 const { ctrlglucemico, AddGL, EditGL, showDialogGL, loading, tempGlucemico, tempPaciente } =
   storeToRefs(useCtrlglucemicoStore());
 
-
-  const baseurl = "http://127.0.0.1:3333";
-
   const columns = [
-  {
-    name: 'id_gluc',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_gluc,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -298,10 +300,10 @@ const { ctrlglucemico, AddGL, EditGL, showDialogGL, loading, tempGlucemico, temp
     field: 'resultado',
   },
   {
-    name: 'observaciones_gluc',
+    name: 'observaciones',
     align: 'center',
     label: 'Observaciones',
-    field: 'observaciones_gluc',
+    field: 'observaciones',
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
 ]
@@ -327,17 +329,18 @@ const TurnoOptions = [
   "7:00 pm a 7:00 am",
 ]
 
-const date = ref("");
+const GluOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
 
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
+const date = ref("");
 
 // TODO: Export To Excel:
 async function exportFile() {

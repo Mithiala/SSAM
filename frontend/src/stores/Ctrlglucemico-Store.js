@@ -14,6 +14,7 @@ export const useCtrlglucemicoStore = defineStore("Ctrlglucemico", {
       turno: "",
       resultado: "",
       observaciones: "",
+      gluc_paciente: 0,
     },
 
     tempPaciente: {
@@ -38,6 +39,8 @@ export const useCtrlglucemicoStore = defineStore("Ctrlglucemico", {
         turno: "",
         resultado: "",
         observaciones: "",
+        gluc_paciente: 0,
+
       };
     },
 
@@ -87,7 +90,13 @@ export const useCtrlglucemicoStore = defineStore("Ctrlglucemico", {
       try {
         const url = "/asistmedica/ctrlglucemico/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempGlucemico, {
+        const formData = new FormData();
+        formData.append("fecha_gluc", this.tempGlucemico.fecha_gluc);
+        formData.append("turno", this.tempGlucemico.turno);
+        formData.append("resultado", this.tempGlucemico.resultado);
+        formData.append("observaciones", this.tempGlucemico.observaciones);
+        formData.append("gluc_paciente", this.tempGlucemico.gluc_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -153,9 +162,10 @@ export const useCtrlglucemicoStore = defineStore("Ctrlglucemico", {
           turno: this.tempGlucemico.turno,
           resultado: this.tempGlucemico.resultado,
           observaciones: this.tempGlucemico.observaciones,
+          gluc_paciente: this.tempGlucemico.gluc_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {

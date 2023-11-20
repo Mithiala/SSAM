@@ -271,7 +271,6 @@
                 behavior="menu"
               />
 
-
               <!-- TODO: "Usa prótesis dental" -->
               <q-checkbox
                 style="max-width: 240px"
