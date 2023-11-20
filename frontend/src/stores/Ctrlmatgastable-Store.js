@@ -15,6 +15,7 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
       mat_util: "",
       med_util: "",
       via_admin: "",
+      mg_paciente: 0,
     },
 
     tempPaciente: {
@@ -40,6 +41,7 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
         mat_util: "",
         med_util: "",
         via_admin: "",
+        mg_paciente: 0,
       };
     },
 
@@ -67,7 +69,7 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
     async listPacientes() {
       this.loading = true;
       try {
-        const url = "/api/v1/pacientes";
+        const url = "/tsocial/pacientes/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
@@ -89,7 +91,14 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
       try {
         const url = "/asistmedica/matgastable/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempGast, {
+        const formData = new FormData();
+        formData.append("fecha_mat", this.tempGast.fecha_mat);
+        formData.append("turno", this.tempGast.turno);
+        formData.append("mat_util", this.tempGast.mat_util);
+        formData.append("med_util", this.tempGast.med_util);
+        formData.append("via_admin", this.tempGast.via_admin);
+        formData.append("mg_paciente", this.tempGast.mg_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -155,9 +164,10 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
           fecha_mat: this.tempGast.fecha_mat,
           turno: this.tempGast.turno,   
           via_admin: this.tempGast.via_admin,
+          mg_paciente: this.tempGast.mg_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {

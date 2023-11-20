@@ -9,7 +9,7 @@ export const useLawtonStore = defineStore("Lawton", {
     loading: false,
 
     tempLw: {
-      id_enfv: 0,
+      id: 0,
       usotelef: "",
       compras: "",
       prepalim: "",
@@ -19,6 +19,7 @@ export const useLawtonStore = defineStore("Lawton", {
       manejofin: "",
       usomed: "",
       fecha_value: "",
+      law_paciente: 0,
     },
 
     tempPaciente: {
@@ -47,6 +48,7 @@ export const useLawtonStore = defineStore("Lawton", {
         manejofin: "",
         usomed: "",
         fecha_value: "",
+        law_paciente: 0,
       };
     },
 
@@ -54,14 +56,14 @@ export const useLawtonStore = defineStore("Lawton", {
     async listLaw() {
       this.loading = true;
       try {
-        const url = "/api/v1/lawtonenfs";
+        const url = "/asistmedica/lawton/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.lawton = response.data;
+        this.lawton = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -74,7 +76,7 @@ export const useLawtonStore = defineStore("Lawton", {
     async listPacientes() {
       this.loading = true;
       try {
-        const url = "/api/v1/pacientes";
+        const url = "/tsocial/pacientes/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
@@ -94,9 +96,20 @@ export const useLawtonStore = defineStore("Lawton", {
     //TODO: Accion para crear Registros
     async createLaw() {
       try {
-        const url = "/api/v1/lawtonenfs";
+        const url = "/asistmedica/lawton/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempLw, {
+        const formData = new FormData();
+        formData.append("usotelef", this.tempLw.usotelef);
+        formData.append("compras", this.tempLw.compras);
+        formData.append("prepalim", this.tempLw.prepalim);
+        formData.append("manejocasa", this.tempLw.manejocasa);
+        formData.append("lavar", this.tempLw.lavar);
+        formData.append("transporte", this.tempLw.transporte);
+        formData.append("manejofin", this.tempLw.manejofin);
+        formData.append("usomed", this.tempLw.usomed);
+        formData.append("fecha_value", this.tempLw.fecha_value);
+        formData.append("law_paciente", this.tempLw.law_paciente);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -127,10 +140,10 @@ export const useLawtonStore = defineStore("Lawton", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveLaw(id_enfv) {
+    async retrieveLaw(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/lawtonenfs/${id_enfv}/`;
+        const url = `/asistmedica/lawton/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -151,13 +164,12 @@ export const useLawtonStore = defineStore("Lawton", {
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateLaw(id_enfv) {
+    async updateLaw(id) {
       try {
-        const url = `/api/v1/lawtonenfs/${id_enfv}/`;
+        const url = `/asistmedica/lawton/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_enfv: this.tempLw.id_enfv,
           usotelef: this.tempLw.usotelef,
           compras: this.tempLw.compras,
           prepalim: this.tempLw.prepalim,
@@ -169,7 +181,7 @@ export const useLawtonStore = defineStore("Lawton", {
           fecha_value: this.tempLw.fecha_value,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -209,7 +221,7 @@ export const useLawtonStore = defineStore("Lawton", {
       }
     },
 
-    async destroyLaw(id_enfv) {
+    async destroyLaw(id) {
       try {
         Dialog.create({
           html: true,
@@ -219,7 +231,7 @@ export const useLawtonStore = defineStore("Lawton", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/lawtonenfs/${id_enfv}/`;
+          const url = `/asistmedica/lawton/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

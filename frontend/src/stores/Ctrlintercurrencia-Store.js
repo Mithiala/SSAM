@@ -13,7 +13,7 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
       tratamiento: "",
       fecha_inicio: "",
       fecha_termina: "",
-      mg_paciente: 0,
+      inter_paciente: 0,
     },
 
     tempPaciente: {
@@ -37,7 +37,7 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
         tratamiento: "",
         fecha_inicio: "",
         fecha_termina: "",
-        mg_paciente: 0,
+        inter_paciente: 0,
       };
     },
 
@@ -52,7 +52,7 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.ctrlintercurrencia = response.data;
+        this.ctrlintercurrencia = response.data.results;
         this.loadingIN = false;
       } catch (error) {
         console.log(
@@ -87,7 +87,12 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
       try {
         const url = "/asistmedica/intercurrencia/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempInter, {
+        const formData = new FormData();
+        formData.append("tratamiento", this.tempInter.tratamiento);
+        formData.append("fecha_inicio", this.tempInter.fecha_inicio);
+        formData.append("fecha_termina", this.tempInter.fecha_termina);
+        formData.append("inter_paciente", this.tempInter.inter_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -151,10 +156,11 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
         const request = {
           tratamiento_inter: this.tempInter.tratamiento_inter,
           fecha_inicio: this.tempInter.fecha_inicio,
-          fecha_termina: this.tempInter.fecha_termina
+          fecha_termina: this.tempInter.fecha_termina,
+          inter_paciente: this.tempInter.inter_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {

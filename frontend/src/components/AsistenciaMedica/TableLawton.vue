@@ -12,7 +12,7 @@
       color="green"
       :rows="lawton"
       :columns="columns"
-      row-key="id_enfv"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :visible-columns="visibleColumns"
@@ -105,17 +105,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -132,7 +121,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyLaw(props.row.id_enfv)"
+            @click="destroyLaw(props.row.id)"
           />
         </q-td>
       </template>
@@ -144,6 +133,18 @@
         <q-card-section>
           <q-form>
             <div class="row justify-around q-gutter-md">
+
+              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempLw.law_paciente"
+                label="Nombre del paciente"
+                :options="LawOption"
+                style="width: 250px"
+                behavior="menu"
+              />
 
               <!-- TODO:  "Uso del teléfono" -->
               <q-select
@@ -286,20 +287,39 @@
                 class="col-2"
                 dense
                 outlined
-              label="Fecha"
-              v-model="tempLw.fecha_value"
-              mask="date">
-              <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="tempLw.fecha_value">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Cerrar" color="green" flat />
-              </div>
-              </q-date>
-              </q-popup-proxy>
-              </q-icon>
-              </template>
+                label="Fecha evaluación"
+                v-model="tempLw.fecha_value"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de la evaluación',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempLw.fecha_value"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
               </q-input>
 
             </div>
@@ -310,7 +330,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditLW"
-                @click="updateLaw(tempLw.id_enfv)"
+                @click="updateLaw(tempLw.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
@@ -360,26 +380,7 @@ const {
 const { lawton, AddLW, EditLW, showDialogLW, loading, tempLw, tempPaciente } =
   storeToRefs(useLawtonStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
   const columns = [
-  {
-    name: 'id_enfv',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_enfv,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -439,7 +440,7 @@ const { lawton, AddLW, EditLW, showDialogLW, loading, tempLw, tempPaciente } =
   {
     name: 'fecha_value',
     align: 'center',
-    label: 'Fecha',
+    label: 'Fecha evaluación',
     field: 'fecha_value'
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
@@ -502,8 +503,6 @@ const UsomOptions = [
 ];
 
 const visibleColumns = ref([
-  'id_enfv',
-  'image',
   'nombre',
   'usotelef',
   'compras',
@@ -516,17 +515,18 @@ const visibleColumns = ref([
   'fecha_value',
 ])
 
-const date = ref("");
+const LawOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
 
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
+const date = ref("");
 
 // TODO: Export To Excel:
 async function exportFileLW() {

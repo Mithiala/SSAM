@@ -7,7 +7,7 @@
       color="green"
       :rows="indice"
       :columns="columns"
-      row-key="id_enf"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -80,17 +80,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -107,7 +96,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyIndices(props.row.id_enf)"
+            @click="destroyIndices(props.row.id)"
           />
         </q-td>
       </template>
@@ -120,24 +109,50 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
-              <!-- TODO:  "Estado general" -->
-              <q-input
-                class="col-5"
+              <!-- TODO:  "paciente_ayuda tecnica" -->
+                <q-select
+                class="col-3"
                 dense
                 outlined
-                type="textarea"
-                label="Estado general"
+                v-model="tempIndice.ind_paciente"
+                label="Nombre del paciente"
+                :options="IndOption"
+                style="width: 250px"
+                behavior="menu"
+              />
+
+              <!-- TODO:  "Estado general" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
                 v-model="tempIndice.estado_general"
+                label="Estado General"
+                :options="GenOption"
+                style="width: 250px"
+                behavior="menu"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese el dato',
+                ]"
               />
 
               <!-- TODO:  "Estado mental" -->
-              <q-input
-                class="col-5"
+              <q-select
+                class="col-3"
                 dense
                 outlined
-                type="textarea"
-                label="Estado mental"
                 v-model="tempIndice.estado_mental"
+                label="Estado Mental"
+                :options="MentOption"
+                style="width: 250px"
+                behavior="menu"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese el dato',
+                ]"
               />
 
               <!-- TODO:  "Actividad" -->
@@ -196,21 +211,51 @@
                 class="col-2"
                 dense
                 outlined
-              label="Fecha"
-              v-model="tempIndice.fecha_ind"
-              mask="date">
-              <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="tempIndice.fecha_ind">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Cerrar" color="green" flat />
-              </div>
-              </q-date>
-              </q-popup-proxy>
-              </q-icon>
-              </template>
+                label="Fecha de evaluación"
+                v-model="tempIndice.fecha"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de la evaluación',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempIndice.fecha"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
               </q-input>
+
+              <!-- TODO:  "Resultado" -->
+              <q-input
+              class="col-2"
+                outlined
+                dense
+                readonly
+                type="text"
+                label="Resultado"
+                v-model="tempIndice.resultado"
+              />
 
             </div>
             <div class="q-mt-sm row justify-center">
@@ -220,7 +265,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDG"
-                @click="updateIndices(tempIndice.id_enf)"
+                @click="updateIndices(tempIndice.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
@@ -270,26 +315,7 @@ const {
 const { indice, AddDG, EditDG, showDialogDG, loading, tempIndice, tempPaciente } =
   storeToRefs(useIndiceStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
   const columns = [
-  {
-    name: 'id_enf',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_enf,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -298,6 +324,12 @@ const { indice, AddDG, EditDG, showDialogDG, loading, tempIndice, tempPaciente }
     sortable: true,
   },
 
+  {
+    name: 'fecha',
+    align: 'center',
+    label: 'Fecha de evaluación',
+    field: 'fecha'
+  },
   {
     name: 'estado_general',
     align: 'center',
@@ -329,10 +361,10 @@ const { indice, AddDG, EditDG, showDialogDG, loading, tempIndice, tempPaciente }
     field: 'incontinencia'
   },
   {
-    name: 'fecha_ind',
+    name: 'resultado',
     align: 'center',
-    label: 'Fecha',
-    field: 'fecha_ind'
+    label: 'Resultado',
+    field: 'resultado'
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
 ]
@@ -353,32 +385,113 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
+const IndOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
+
 const IncontOptions = [
-  "Dependiente",
-  "Independiente",
+  {
+    label: "Ninguna",
+    value: "4",
+  },
+  {
+    label: "Ocacional",
+    value: "3",
+  },
+  {
+    label: "Urinaria",
+    value: "2",
+  },
+  {
+    label: "Doble Incontinencia",
+    value: "1",
+  },
 ];
 
 const MovOptions = [
-  "Dependiente",
-  "Independiente",
+  {
+    label: "Total",
+    value: "4",
+  },
+  {
+    label: "Disminuido",
+    value: "3",
+  },
+  {
+    label: "Muy Limitado",
+    value: "2",
+  },
+  {
+    label: "Inmovil",
+    value: "1",
+  },
+];
+
+const GenOption = [
+  {
+    label: "Bueno",
+    value: "4",
+  },
+  {
+    label: "Débil",
+    value: "3",
+  },
+  {
+    label: "Malo",
+    value: "2",
+  },
+  {
+    label: "Muy Malo",
+    value: "1",
+  },
+];
+
+const MentOption = [
+  {
+    label: "Alerta",
+    value: "4",
+  },
+  {
+    label: "Apático",
+    value: "3",
+  },
+  {
+    label: "Confuso",
+    value: "2",
+  },
+  {
+    label: "Estuporoso",
+    value: "1",
+  },
 ];
 
 const ActOptions = [
-  "Dependiente",
-  "Independiente",
+  {
+    label: "Caminando",
+    value: "4",
+  },
+  {
+    label: "Sentado",
+    value: "3",
+  },
+  {
+    label: "Con ayuda",
+    value: "2",
+  },
+  {
+    label: "En cama",
+    value: "1",
+  },
 ];
 
 const date = ref("");
-
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
 
 // TODO: Export To Excel:
 async function exportFile() {

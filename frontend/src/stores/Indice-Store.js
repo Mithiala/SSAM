@@ -16,6 +16,8 @@ export const useIndiceStore = defineStore("Indice", {
       movilidad: "",
       incontinencia: "",
       fecha: "",
+      resultado: "",
+      ind_paciente: 0,
     },
 
     tempPaciente: {
@@ -41,6 +43,8 @@ export const useIndiceStore = defineStore("Indice", {
         movilidad: "",
         incontinencia: "",
         fecha: "",
+        resultado: "",
+        ind_paciente: 0,
       };
     },
 
@@ -55,7 +59,7 @@ export const useIndiceStore = defineStore("Indice", {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.indice = response.data;
+        this.indice = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -75,7 +79,7 @@ export const useIndiceStore = defineStore("Indice", {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.pacientes = response.data;
+        this.pacientes = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -90,7 +94,16 @@ export const useIndiceStore = defineStore("Indice", {
       try {
         const url = "/asistmedica/indice/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempIndice, {
+        const formData = new FormData();
+        formData.append("estado_general", this.tempIndice.estado_general);
+        formData.append("estado_mental", this.tempIndice.estado_mental);
+        formData.append("actividad", this.tempIndice.actividad);
+        formData.append("movilidad", this.tempIndice.movilidad);
+        formData.append("incontinencia", this.tempIndice.incontinencia);
+        formData.append("fecha", this.tempIndice.fecha);
+        formData.append("resultado", this.tempIndice.resultado);
+        formData.append("ind_paciente", this.tempIndice.ind_paciente);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -146,22 +159,23 @@ export const useIndiceStore = defineStore("Indice", {
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateIndices(id_enf) {
+    async updateIndices(id) {
       try {
-        const url = `/api/v1/indicenortonvaluekats/${id_enf}/`;
+        const url = `/asistmedica/indice/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_enf: this.tempIndice.id_enf,
           estado_general: this.tempIndice.estado_general,
           estado_mental: this.tempIndice.estado_mental,
           actividad: this.tempIndice.actividad,
           movilidad: this.tempIndice.movilidad,
           incontinencia: this.tempIndice.incontinencia,
-          fecha_ind: this.tempIndice.fecha_ind,
+          fecha: this.tempIndice.fecha,
+          resultado: this.tempIndice.resultado,
+          ind_paciente: this.tempIndice.ind_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -201,7 +215,7 @@ export const useIndiceStore = defineStore("Indice", {
       }
     },
 
-    async destroyIndices(id_enf) {
+    async destroyIndices(id) {
       try {
         Dialog.create({
           html: true,
@@ -211,7 +225,7 @@ export const useIndiceStore = defineStore("Indice", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/indicenortonvaluekats/${id_enf}/`;
+          const url = `/asistmedica/indice/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

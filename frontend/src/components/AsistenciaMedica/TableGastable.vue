@@ -12,7 +12,7 @@
       color="green"
       :rows="ctrlmatgastable"
       :columns="columnsss"
-      row-key="id_mat"
+      row-key="id"
       :loading="loadingMG"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -85,17 +85,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -112,7 +101,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyMatg(props.row.id_mat)"
+            @click="destroyMatg(props.row.id)"
           />
         </q-td>
       </template>
@@ -125,37 +114,68 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
+              <!-- TODO:  "paciente_ayuda tecnica" -->
+          <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempGast.mg_paciente"
+                label="Nombre del paciente"
+                :options="MatOption"
+                style="width: 250px"
+                behavior="menu"
+              />
+
               <q-space class="col-1" />
 
               <!-- TODO:  "Fecha" -->
               <q-input
-              class="col-2"
-              dense
-              outlined
-              label="Fecha"
-              v-model="tempGast.fecha_mat"
-              mask="date">
-              <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="tempGast.fecha_mat">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Cerrar" color="green" flat />
-              </div>
-              </q-date>
-              </q-popup-proxy>
-              </q-icon>
-              </template>
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempGast.fecha_mat"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempGast.fecha_mat"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
               </q-input>
 
-              <q-space class="col-2" />
+              <q-space class="col-1" />
 
               <!-- TODO:  "Turno" -->
               <q-select
                 class="col-3"
                 dense
                 outlined
-                v-model="tempGast.turno_mat"
+                v-model="tempGast.turno"
                 label="Turno"
                 :options="TurnoOptions"
                 style="width: 250px"
@@ -204,7 +224,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditMG"
-                @click="updateMatg(tempGast.id_mat)"
+                @click="updateMatg(tempGast.id)"
               />
               <q-btn
                 class="col-2"
@@ -254,27 +274,8 @@ const {
 const { ctrlmatgastable, AddMG, EditMG, showDialogMG, loadingMG, tempGast, tempPaciente } =
   storeToRefs(useCtrlmatgastableStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
 
   const columnsss = [
-  {
-    name: 'id_mat',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_mat,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -297,10 +298,10 @@ const { ctrlmatgastable, AddMG, EditMG, showDialogMG, loadingMG, tempGast, tempP
     field: "fecha_mat",
   },
   {
-    name: "turno_mat",
+    name: "turno",
     align: "center",
     label: "Turno",
-    field: "turno_mat",
+    field: "turno",
     sortable: true,
   },
   {
@@ -354,17 +355,18 @@ const ViaOptions = [
   "Inhalatoria",
 ]
 
-const date = ref("");
+const MatOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
 
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
+const date = ref("");
 
 // TODO: Export To Excel:
 async function exportFileMG() {

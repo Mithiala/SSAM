@@ -220,7 +220,7 @@ class LawtonValue(BaseModel):
     law_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Evaluación Lawton",
+        verbose_name="Paciente",
         related_name="law_paciente",
     )
 
@@ -245,7 +245,7 @@ class KatsValue(BaseModel):
     kat_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Evaluación Kats",
+        verbose_name="Paciente",
         related_name="kat_paciente",
     )
 

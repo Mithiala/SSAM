@@ -13,10 +13,9 @@
       color="green"
       :rows="enfvalue"
       :columns="columns"
-      row-key="id_venf"
+      row-key="id"
       :loading="loading"
       :filter="filter"
-      :visible-columns="visibleColumns"
       :rows-per-page-options="[10, 20, 30]"
       separator="cell"
     >
@@ -76,25 +75,6 @@
             </q-tooltip>
           </q-btn>
 
-          <q-select
-          bg-color="teal-3"
-          label="Evaluación Kats"
-          v-model="visibleColumns"
-          transition-show="scale"
-          transition-hide="scale"
-          multiple
-          outlined
-          dense
-          options-dense
-          :display-value="$q.lang.table.columns"
-          emit-value
-          map-options
-          :options="columns"
-          option-value="field"
-          options-cover
-          style="min-width: 150px"
-        />
-
           <q-btn
             class="q-ml-xs"
             flat
@@ -104,17 +84,6 @@
             @click="props.toggleFullscreen"
           />
         </div>
-      </template>
-
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
       </template>
 
       <template v-slot:body-cell-actions="props">
@@ -133,7 +102,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyValues(props.row.id_venf)"
+            @click="destroyValues(props.row.id)"
           />
         </q-td>
       </template>
@@ -144,6 +113,18 @@
         <q-card-section>
           <q-form>
             <div class="row justify-around q-gutter-md">
+
+              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempValue.kat_paciente"
+                label="Nombre del paciente"
+                :options="KatOption"
+                style="width: 250px"
+                behavior="menu"
+              />
 
               <!-- TODO:  "Bañarse" -->
               <q-select
@@ -249,23 +230,42 @@
 
               <!-- TODO:  "Fecha" -->
               <q-input
-              class="col-2"
-              dense
-              outlined
-              label="Fecha"
-              v-model="tempValue.fecha_kats"
-              mask="date">
-              <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="tempValue.fecha_kats">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Cerrar" color="green" flat />
-              </div>
-              </q-date>
-              </q-popup-proxy>
-              </q-icon>
-              </template>
+                class="col-2"
+                dense
+                outlined
+                label="Fecha evaluación"
+                v-model="tempValue.fecha_kats"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de la evaluación',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempValue.fecha_kats"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
               </q-input>
 
             </div>
@@ -276,7 +276,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDG"
-                @click="updateValues(tempValue.id_venf)"
+                @click="updateValues(tempValue.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
@@ -327,26 +327,7 @@ const {
 const { enfvalue, AddDG, EditDG, showDialogDG, loading, tempValue, tempPaciente } =
   storeToRefs(useEnfvalueStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
   const columns = [
-  {
-    name: 'id_venf',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_venf,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -446,31 +427,18 @@ const ComerOptions = [
   "Independiente",
 ];
 
-const visibleColumns = ref([
-  'id_venf',
-  'image',
-  'nombre',
-  'banarse',
-  'vestirse',
-  'servicio',
-  'levantarse',
-  'continencia',
-  'comer',
-  'fecha_kats',
-  'actions',
-])
+const KatOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
 
 const date = ref("");
-
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
 
 // TODO: Export To Excel:
 async function exportFile() {

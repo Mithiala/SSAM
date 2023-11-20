@@ -8,7 +8,7 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
     loading: false,
 
     tempValue: {
-      id_venf: 0,
+      id: 0,
       banarse: "",
       vestirse: "",
       servicio: "",
@@ -16,6 +16,7 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
       continencia: "",
       comer: "",
       fecha_kats: "",
+      kat_paciente: 0,
     },
 
     showDialogDG: false,
@@ -30,13 +31,14 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
     resetTempValues() {
       console.log("aqui receteo");
       this.tempValue = {
-      banarse: "",
-      vestirse: "",
-      servicio: "",
-      levantarse: "",
-      continencia: "",
-      comer: "",
-      fecha_kats: "",
+        banarse: "",
+        vestirse: "",
+        servicio: "",
+        levantarse: "",
+        continencia: "",
+        comer: "",
+        fecha_kats: "",
+        kat_paciente: 0,
       };
     },
 
@@ -44,14 +46,14 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
     async listValues() {
       this.loading = true;
       try {
-        const url = "/api/v1/enfvalues";
+        const url = "/asistmedica/kats/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.enfvalue= response.data;
+        this.enfvalue= response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -61,12 +63,41 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
       }
     },
 
+    async listPacientes() {
+      this.loading = true;
+      try {
+        const url = "/tsocial/pacientes/";
+        // const token = LocalStorage.getItem("access_token");
+        const response = await api.get(url, {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+        });
+        this.pacientes = response.data.results;
+        this.loading = false;
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
+          error
+        );
+      }
+    },
+
     //TODO: Accion para crear Registros
     async createValues() {
       try {
-        const url = "/api/v1/enfvalues";
+        const url = "/asistmedica/kats/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempValue, {
+        const formData = new FormData();
+        formData.append("banarse", this.tempValue.banarse);
+        formData.append("vestirse", this.tempValue.vestirse);
+        formData.append("servicio", this.tempValue.servicio);
+        formData.append("levantarse", this.tempValue.levantarse);
+        formData.append("continencia", this.tempValue.continencia);
+        formData.append("comer", this.tempValue.comer);
+        formData.append("fecha_kats", this.tempValue.fecha_kats);
+        formData.append("kat_paciente", this.tempValue.kat_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -98,10 +129,10 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveValues(id_venf) {
+    async retrieveValues(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/enfvalues/${id_venf}/`;
+        const url = `/asistmedica/kats/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -122,13 +153,12 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateValues(id_venf) {
+    async updateValues(id) {
       try {
-        const url = `/api/v1/enfvalues/${id_venf}/`;
+        const url = `/asistmedica/kats/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_venf: this.tempValue.id_venf,
           banarse: this.tempValue.banarse,
           vestirse: this.tempValue.vestirse,
           servicio: this.tempValue.servicio,
@@ -138,7 +168,7 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
           fecha_kats: this.tempValue.fecha_kats,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -178,7 +208,7 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
       }
     },
 
-    async destroyValues(id_venf) {
+    async destroyValues(id) {
       try {
         Dialog.create({
           html: true,
@@ -188,7 +218,7 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/enfvalues/${id_venf}/`;
+          const url = `/asistmedica/kats/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

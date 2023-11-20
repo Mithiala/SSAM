@@ -85,17 +85,6 @@
     </div>
   </template>
 
-  <!-- TODO:  "Método para image" -->
-  <template v-slot:body-cell-image="props">
-    <q-td :props="props">
-      <q-avatar size="xl">
-        <template v-if="props.row.image">
-          <q-img :src="baseurl + props.row.image.url" />
-        </template>
-      </q-avatar>
-    </q-td>
-  </template>
-
   <template v-slot:body-cell-actions="props">
     <q-td :props="props">
       <q-btn
@@ -125,7 +114,17 @@
       <q-form>
         <div class="row justify-around q-gutter-md">
 
-          <q-space class="col-1" />
+          <!-- TODO:  "paciente_ayuda tecnica" -->
+          <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempInter.inter_paciente"
+                label="Nombre del paciente"
+                :options="InterOption"
+                style="width: 250px"
+                behavior="menu"
+              />
 
           <!-- TODO:  "Tratamiento" -->
           <q-input
@@ -134,52 +133,90 @@
             dense
             outlined
             label="Tratamiento"
-            v-model="tempInter.tratamiento_inter"
+            v-model="tempInter.tratamiento"
           />
 
           <q-space class="col-1" />
 
           <!-- TODO:  "Fecha de inicio" -->
           <q-input
-          class="col-2"
-          outlined
-          dense
-          label="Fecha de inicio"
-          v-model="tempInter.fecha_inicio"
-          mask="date">
-          <template v-slot:append>
-          <q-icon name="event" class="cursor-pointer">
-          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-          <q-date v-model="tempInter.fecha_inicio">
-          <div class="row items-center justify-end">
-            <q-btn v-close-popup label="Cerrar" color="green" flat />
-          </div>
-          </q-date>
-          </q-popup-proxy>
-          </q-icon>
-          </template>
-          </q-input>
+                class="col-2"
+                dense
+                outlined
+                label="Fecha de inicio"
+                v-model="tempInter.fecha_inicio"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de inicio',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempInter.fecha_inicio"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
 
           <!-- TODO:  "Fecha en que termina" -->
           <q-input
-          class="col-2"
-          outlined
-          dense
-          label="Fecha en que termina"
-          v-model="tempInter.fecha_termina"
-          mask="date">
-          <template v-slot:append>
-          <q-icon name="event" class="cursor-pointer">
-          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-          <q-date v-model="tempInter.fecha_termina">
-          <div class="row items-center justify-end">
-            <q-btn v-close-popup label="Cerrar" color="green" flat />
-          </div>
-          </q-date>
-          </q-popup-proxy>
-          </q-icon>
-          </template>
-          </q-input>
+                class="col-2"
+                dense
+                outlined
+                label="Fecha del término"
+                v-model="tempInter.fecha_termina"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de término',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempInter.fecha_termina"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
 
         </div>
         <div class="q-mt-sm row justify-center">
@@ -189,7 +226,7 @@
             label="Actualizar"
             color="light-blue-8"
             v-if="EditIN"
-            @click="updateInt(tempInter.id_inter)"
+            @click="updateInt(tempInter.id)"
           />
           <q-btn
             class="col-2 q-mx-sm"
@@ -239,26 +276,7 @@ const {
 const { ctrlintercurrencia, AddIN, EditIN, showDialogIN, loadingIN, tempInter, tempPaciente } =
   storeToRefs(useCtrlintercurrenciaStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
   const columnss = [
-  {
-    name: 'id_inter',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_inter,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -275,10 +293,10 @@ const { ctrlintercurrencia, AddIN, EditIN, showDialogIN, loadingIN, tempInter, t
     sort: (a, b) => a - b,
   },
   {
-    name: "tratamiento_inter",
+    name: "tratamiento",
     align: "center",
     label: "Tratamiento",
-    field: "tratamiento_inter",
+    field: "tratamiento",
     sortable: true,
   },
   {
@@ -312,17 +330,18 @@ const openAddDialogIN = () => {
   showDialogIN.value = true;
 };
 
-const date = ref("");
+const InterOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
 
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
+const date = ref("");
 
 // TODO: Export To Excel:
 async function exportFileIN() {
