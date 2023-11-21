@@ -7,7 +7,7 @@
       color="green"
       :rows="solicitudmedicamento"
       :columns="columns"
-      row-key="id_ped"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -85,7 +85,7 @@
             dense
             color="accent"
             icon="block"
-            @click="declineSolicitud(props.row.id_ped)"
+            @click="declineSolicitud(props.row.id)"
           />
           <q-btn
             flat
@@ -93,7 +93,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroySolicitud(props.row.id_ped)"
+            @click="destroySolicitud(props.row.id)"
           />
         </q-td>
       </template>
@@ -141,16 +141,6 @@ const { solicitudrecibida, AcceptPD, DeclinePD } =
   storeToRefs(useSolicitudRecibidaStore());
 
   const columns = [
-  {
-    name: 'id_ped',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_ped,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
   {
     name: 'producto',
     align: 'center',

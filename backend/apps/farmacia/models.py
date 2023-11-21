@@ -33,7 +33,7 @@ class ControlLote(BaseModel):
     cl_disp = models.ForeignKey(
         Dispensacion,
         on_delete=models.CASCADE,
-        verbose_name="Control Lote",
+        verbose_name="Dispensación",
         related_name="cl_disp",
     )
 
@@ -43,7 +43,7 @@ class ControlLote(BaseModel):
         verbose_name_plural = "Controles Lotes"
 
     def __str__(self):
-        return f" {self.id} "
+        return f" {self.id} - {self.cl_disp.id}"
 
 
 class Cobertura(BaseModel):
@@ -59,7 +59,7 @@ class Cobertura(BaseModel):
     cob_disp = models.ForeignKey(
         Dispensacion,
         on_delete=models.CASCADE,
-        verbose_name="Cobertura",
+        verbose_name="Dispensación",
         related_name="cob_disp",
     )
 

@@ -7,7 +7,7 @@
       color="green"
       :rows="dispensacionfarmacia"
       :columns="columns"
-      row-key="id_codigo"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -96,14 +96,14 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyDisp(props.row.id_codigo)"
+            @click="destroyDisp(props.row.id)"
           />
         </q-td>
       </template>
     </q-table>
 
     <!-- TODO: Añadir - Editar -->
-    <q-dialog v-model="showDialogDF" persistent full-width >
+    <q-dialog v-model="showDialogDF" persistent full-medium >
       <q-card class="column medium">
         <q-card-section>
           <q-form>
@@ -111,57 +111,57 @@
 
               <!-- TODO: "Lote" -->
               <q-input
-                class="col-2"
+                class="col-3"
                 dense
                 outlined
                 type="text"
                 label="Lote"
-                v-model="tempDispensacion.lote_disp"
+                v-model="tempDispensacion.lote"
               />
 
               <!-- TODO: "Producto" -->
               <q-input
-                class="col-4"
+                class="col-6"
                 dense
                 outlined
                 type="text"
                 label="Producto"
-                v-model="tempDispensacion.producto_medicamento"
+                v-model="tempDispensacion.prod_med"
               />
 
               <!-- TODO: "U/M" -->
               <q-input
-                class="col-1"
+                class="col-2"
                 dense
                 outlined
                 type="text"
                 label="U/M"
-                v-model="tempDispensacion.unidad_medida"
+                v-model="tempDispensacion.uni_med"
               />
 
               <!-- TODO: "Cantidad" -->
               <q-input
-                class="col-1"
+                class="col-2"
                 dense
                 outlined
                 type="number"
                 label="Cantidad"
                 lazy-rules
-                v-model="tempDispensacion.cantidad_medicamento"
+                v-model="tempDispensacion.cant_med"
               />
 
               <!-- TODO: "Fecha de entrada" -->
               <q-input
-                class="col-2"
+                class="col-4"
                 dense
                 outlined
                 label="Fecha de entrada"
                 v-model="tempDispensacion.fecha_entrada"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de nacimiento',
+                    'Por favor inserte la fecha de entrada del medicamento',
                 ]"
               >
                 <template v-slot:append>
@@ -171,7 +171,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempDispensacion.fecha_entrada">
+                      <q-date
+                        v-model="tempDispensacion.fecha_entrada"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -188,16 +192,16 @@
 
               <!-- TODO: "Fecha de salida" -->
               <q-input
-                class="col-2"
+                class="col-4"
                 dense
                 outlined
                 label="Fecha de salida"
                 v-model="tempDispensacion.fecha_salida"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de nacimiento',
+                    'Por favor inserte la fecha de salida del medicamento',
                 ]"
               >
                 <template v-slot:append>
@@ -207,7 +211,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempDispensacion.fecha_salida">
+                      <q-date
+                        v-model="tempDispensacion.fecha_salida"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -224,16 +232,16 @@
 
               <!-- TODO: "Fecha de vencimiento" -->
               <q-input
-                class="col-2"
+                class="col-4"
                 dense
                 outlined
-                label="Fecha de vencimiento"
+                label="Fecha de entrada"
                 v-model="tempDispensacion.fecha_vence"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de nacimiento',
+                    'Por favor inserte la fecha de vencimiento del medicamento',
                 ]"
               >
                 <template v-slot:append>
@@ -243,7 +251,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempDispensacion.fecha_vence">
+                      <q-date
+                        v-model="tempDispensacion.fecha_vence"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -260,7 +272,7 @@
 
               <!-- TODO: "Clasificación" -->
               <q-input
-                class="col-5"
+                class="col-6"
                 dense
                 outlined
                 type="text"
@@ -271,7 +283,7 @@
             </div>
             <div class="q-mt-sm row justify-center">
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Actualizar"
                 color="light-blue-8"
@@ -279,7 +291,7 @@
                 @click="updateDisp(tempDispensacion.id_codigo)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Añadir"
                 color="light-blue-8"
@@ -287,7 +299,7 @@
                 @click="createDisp(tempDispensacion)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 color="purple-9"
                 label="Salir"
                 @click="showDialogDF = false"
@@ -327,39 +339,29 @@ const { dispensacionfarmacia, AddDF, EditDF, showDialogDF, loading, tempDispensa
 
   const columns = [
   {
-    name: 'id_codigo',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_codigo,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-  {
-    name: "lote_disp",
+    name: "lote",
     align: "center",
     label: "Lote",
-    field: "lote_disp",
+    field: "lote",
   },
   {
-    name: "producto_medicamento",
+    name: "prod_med",
     align: "center",
     label: "Producto",
-    field: "producto_medicamento",
+    field: "prod_med",
     sortable: true,
   },
   {
-    name: 'unidad_medida',
+    name: 'uni_med',
     align: 'center',
     label: 'U/M',
-    field: 'unidad_medida',
+    field: 'uni_med',
   },
   {
-    name: 'cantidad_medicamento',
+    name: 'cant_med',
     align: 'center',
     label: 'Cantidad',
-    field: 'cantidad_medicamento',
+    field: 'cant_med',
   },
   {
     name: 'fecha_entrada',

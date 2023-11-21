@@ -9,7 +9,7 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
     loading: false,
 
     tempIndi: {
-      id_ind: 0,
+      id: 0,
       calorias: "",
       fecha: "",
       momento: "",
@@ -72,6 +72,9 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
       antimicrobiano: "",
       ind_antim: "",
       ind_gener: "",
+      indic_paciente: 0,
+      indic_termo: 0,
+      indic_datoenf: 0,
     },
 
     tempPaciente: {
@@ -153,6 +156,9 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
         antimicrobiano: "",
         ind_antim: "",
         ind_gener: "",
+        indic_paciente: 0,
+        indic_termo: 0,
+        indic_datoenf: 0,
       };
     },
 
@@ -160,14 +166,14 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
     async listIndic() {
       this.loading = true;
       try {
-        const url = "/api/v1/indicaciones";
+        const url = "/asistmedica/indicacion/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.indicaciones = response.data;
+        this.indicaciones = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -180,14 +186,14 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
     async listPacientes() {
       this.loading = true;
       try {
-        const url = "/api/v1/pacientes";
+        const url = "/asistmedica/indice/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.pacientes = response.data;
+        this.pacientes = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -200,9 +206,75 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
     //TODO: Accion para crear Registros
     async createIndic() {
       try {
-        const url = "/api/v1/indicaciones";
+        const url = "/asistmedica/indicacion/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempIndi, {
+        const formData = new FormData();
+        formData.append("calorias", this.tempIndi.calorias);
+        formData.append("fecha", this.tempIndi.fecha);
+        formData.append("momento", this.tempIndi.momento);
+        formData.append("sig_vitales", this.tempIndi.sig_vitales);
+        formData.append("ctrl_peso", this.tempIndi.ctrl_peso);
+        formData.append("dieta", this.tempIndi.dieta);
+        formData.append("evitar_caidas", this.tempIndi.evitar_caidas);
+        formData.append("glicemia", this.tempIndi.glicemia);
+        formData.append("ind_glic", this.tempIndi.ind_glic);
+        formData.append("camb_ropa", this.tempIndi.camb_ropa);
+        formData.append("analgesicos", this.tempIndi.analgesicos);
+        formData.append("ind_analg", this.tempIndi.ind_analg);
+        formData.append("antiinflamatiorios", this.tempIndi.antiinflamatiorios);
+        formData.append("ind_flamat", this.tempIndi.ind_flamat);
+        formData.append("antibiotios", this.tempIndi.antibiotios);
+        formData.append("ind_antib", this.tempIndi.ind_antib);
+        formData.append("antidepresivos", this.tempIndi.antidepresivos);
+        formData.append("ind_antid", this.tempIndi.ind_antid);
+        formData.append("antihistaminicos", this.tempIndi.antihistaminicos);
+        formData.append("ind_antis", this.tempIndi.ind_antis);
+        formData.append("anticoagulantes", this.tempIndi.anticoagulantes);
+        formData.append("ind_antic", this.tempIndi.ind_antic);
+        formData.append("antihipertensivo", this.tempIndi.antihipertensivo);
+        formData.append("ind_antih", this.tempIndi.ind_antih);
+        formData.append("antidiabeticos", this.tempIndi.antidiabeticos);
+        formData.append("ind_antidb", this.tempIndi.ind_antidb);
+        formData.append("antiepilepticos", this.tempIndi.antiepilepticos);
+        formData.append("ind_antiep", this.tempIndi.ind_antiep);
+        formData.append("antipsicoticos", this.tempIndi.antipsicoticos);
+        formData.append("ind_antips", this.tempIndi.ind_antips);
+        formData.append("antiansiedad", this.tempIndi.antiansiedad);
+        formData.append("ind_antian", this.tempIndi.ind_antian);
+        formData.append("antiparasitario", this.tempIndi.antiparasitario);
+        formData.append("ind_antiparas", this.tempIndi.ind_antiparas);
+        formData.append("antivirales", this.tempIndi.antivirales);
+        formData.append("ind_antiv", this.tempIndi.ind_antiv);
+        formData.append("antiarritmicos", this.tempIndi.antiarritmicos);
+        formData.append("ind_antia", this.tempIndi.ind_antia);
+        formData.append("broncodilatadores", this.tempIndi.broncodilatadores);
+        formData.append("ind_bronco", this.tempIndi.ind_bronco);
+        formData.append("diureticos", this.tempIndi.diureticos);
+        formData.append("ind_diur", this.tempIndi.ind_diur);
+        formData.append("relajante_muscular", this.tempIndi.relajante_muscular);
+        formData.append("ind_rm", this.tempIndi.ind_rm);
+        formData.append("vitaminas", this.tempIndi.vitaminas);
+        formData.append("ind_vit", this.tempIndi.ind_vit);
+        formData.append("sonda", this.tempIndi.sonda);
+        formData.append("ind_sonda", this.tempIndi.ind_sonda);
+        formData.append("crisis_convul", this.tempIndi.crisis_convul);
+        formData.append("restriccion", this.tempIndi.restriccion);
+        formData.append("oxigenot", this.tempIndi.oxigenot);
+        formData.append("otras_indic", this.tempIndi.otras_indic);
+        formData.append("otros_med", this.tempIndi.otros_med);
+        formData.append("vasodilatador", this.tempIndi.vasodilatador);
+        formData.append("ind_vaso", this.tempIndi.ind_vaso);
+        formData.append("estatinas", this.tempIndi.estatinas);
+        formData.append("ind_est", this.tempIndi.ind_est);
+        formData.append("acido_dicarb", this.tempIndi.acido_dicarb);
+        formData.append("ind_acido", this.tempIndi.ind_acido);
+        formData.append("antimicrobiano", this.tempIndi.antimicrobiano);
+        formData.append("ind_antim", this.tempIndi.ind_antim);
+        formData.append("ind_gener", this.tempIndi.ind_gener);
+        formData.append("indic_paciente", this.tempIndi.indic_paciente.value);
+        formData.append("indic_termo", this.tempIndi.indic_termo.value);
+        formData.append("indic_datoenf", this.tempIndi.indic_datoenf.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -234,10 +306,10 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveIndic(id_ind) {
+    async retrieveIndic(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/indicaciones/${id_ind}/`;
+        const url = `/asistmedica/indicacion/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -258,9 +330,9 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateIndic(id_ind) {
+    async updateIndic(id) {
       try {
-        const url = `/api/v1/indicaciones/${id_ind}/`;
+        const url = `/asistmedica/indicacion/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
@@ -327,9 +399,12 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
           antimicrobiano: this.tempIndi.antimicrobiano,
           ind_antim: this.tempIndi.ind_antim,
           ind_gener: this.tempIndi.ind_gener,
+          indic_datoenf: this.tempIndi.indic_datoenf,
+          indic_paciente: this.tempIndi.indic_paciente,
+          indic_termo: this.tempIndi.indic_termo,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -369,7 +444,7 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
       }
     },
 
-    async destroyIndic(id_ind) {
+    async destroyIndic(id) {
       try {
         Dialog.create({
           html: true,
@@ -379,7 +454,7 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/indicaciones/${id_ind}/`;
+          const url = `/asistmedica/indicacion/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

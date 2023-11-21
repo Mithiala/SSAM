@@ -7,7 +7,7 @@
       color="green"
       :rows="mnt"
       :columns="columns"
-      row-key="id_mnt"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -107,7 +107,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyMntp(props.row.id_mnt)"
+            @click="destroyMntp(props.row.id)"
           />
         </q-td>
       </template>
@@ -120,6 +120,58 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
+              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempMntprog.mnt_paciente"
+                label="Nombre del paciente"
+                :options="MntOption"
+                style="width: 250px"
+                behavior="menu"
+              />
+
+              <!-- TODO:  "fecha" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempMntprog.fecha_mnt"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempMntprog.fecha_mnt"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
               <!-- TODO: "Tratamiento" -->
               <q-input
                 class="col-5"
@@ -127,7 +179,7 @@
                 outlined
                 type="text"
                 label="Tratamiento"
-                v-model="tempMntprog.otorg_mnt"
+                v-model="tempMntprog.tratamiento"
               />
 
               <!-- TODO: "Frecuencia" -->
@@ -137,7 +189,7 @@
                 outlined
                 type="text"
                 label="Frecuencia"
-                v-model="tempMntprog.frec_mnt"
+                v-model="tempMntprog.frecuencia"
               />
 
               <!-- TODO: "Diagnóstico" -->
@@ -147,7 +199,7 @@
                 dense
                 outlined
                 label="Diagnóstico"
-                v-model="tempMntprog.diag_mnt"
+                v-model="tempMntprog.diagnostico"
               />
 
             </div>
@@ -158,7 +210,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDG"
-                @click="updateMntp(tempMntprog.id_mnt)"
+                @click="updateMntp(tempMntprog.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
@@ -208,26 +260,7 @@ const {
 const { mnt, AddDG, EditDG, showDialogDG, loading, tempMntprog, tempPaciente } =
   storeToRefs(useMntStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
   const columns = [
-  {
-    name: 'id_mnt',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_mnt,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -243,25 +276,30 @@ const { mnt, AddDG, EditDG, showDialogDG, loading, tempMntprog, tempPaciente } =
     align: "center",
     sort: (a, b) => a - b,
   },
-
+  
   {
-    name: "otorg_mnt",
+    name: "fecha_mnt",
+    align: "center",
+    label: "Fecha",
+    field: "fecha_mnt",
+  },
+  {
+    name: "tratamiento",
     align: "center",
     label: "Tratamiento",
-    field: "otorg_mnt",
+    field: "tratamiento",
   },
   {
-    name: "diag_mnt",
+    name: "diagnostico",
     align: "center",
     label: "Diagnóstico",
-    field: "diag_mnt",
-    sortable: true,
+    field: "diagnostico",
   },
   {
-    name: 'frec_mnt',
+    name: 'frecuencia',
     align: 'center',
     label: 'Frecuencia',
-    field: 'frec_mnt',
+    field: 'frecuencia',
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
 ]
@@ -282,17 +320,18 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
-const date = ref("");
+const MntOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
 
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
+const date = ref("");
 
 // TODO: Export To Excel:
 async function exportFile() {

@@ -341,6 +341,7 @@ class Mnt(BaseModel):
     tratamiento = models.CharField("Tratamiento", max_length=50, blank=True, null=True)
     diagnostico = models.TextField("Diagnóstico", blank=False, null=False)
     frecuencia = models.CharField("frecuencia", max_length=20, blank=True, null=True)
+    fecha_mnt = models.DateField("Fecha", blank=True, null=True)
 
     mnt_paciente = models.ForeignKey(
         Paciente,
@@ -512,21 +513,21 @@ class Indicacion(BaseModel):
     indic_paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
-        verbose_name="Indicación",
+        verbose_name="Paciente",
         related_name="indic_paciente",
     )
 
     indic_termo = models.ForeignKey(
         Termometria,
         on_delete=models.CASCADE,
-        verbose_name="Indicación",
+        verbose_name="Temperatura",
         related_name="indic_termo",
     )
 
     indic_datoenf = models.ForeignKey(
         DatoEnfermeria,
         on_delete=models.CASCADE,
-        verbose_name="Indicación",
+        verbose_name="IMC",
         related_name="indic_datoenf",
     )
 
@@ -602,15 +603,8 @@ class SolicitudPedido(BaseModel):
     sp_disp = models.ForeignKey(
         Dispensacion,
         on_delete=models.CASCADE,
-        verbose_name="Solicitud Pedido",
+        verbose_name="Dispensación",
         related_name="sp_disp",
-    )
-
-    sp_indic = models.ForeignKey(
-        Indicacion,
-        on_delete=models.CASCADE,
-        verbose_name="Solicitud Pedido",
-        related_name="sp_indic",
     )
 
     class Meta:
@@ -619,4 +613,4 @@ class SolicitudPedido(BaseModel):
         verbose_name_plural = "Solicitudes Pedidos"
 
     def __str__(self):
-        return f" {self.id} - {self.sp_indic.id} "
+        return f" {self.id} -  {self.sp_disp.id}"

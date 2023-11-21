@@ -9,12 +9,13 @@ export const useTermometriaStore = defineStore("Termometria", {
     loading: false,
 
     tempTermo: {
-      id_termo: 0,
+      id: 0,
       hora_6am: "",
       hora_2pm: "",
       hora_10pm: "",
-      fecha_t: "",
-      observaciones_t: "",
+      fecha: "",
+      observaciones: "",
+      ter_paciente: 0,
     },
 
     tempPaciente: {
@@ -37,8 +38,9 @@ export const useTermometriaStore = defineStore("Termometria", {
         hora_6am: "",
         hora_2pm: "",
         hora_10pm: "",
-        fecha_t: "",
-        observaciones_t: "",
+        fecha: "",
+        observaciones: "",
+        ter_paciente: 0,
       };
     },
 
@@ -46,14 +48,14 @@ export const useTermometriaStore = defineStore("Termometria", {
     async listTer() {
       this.loading = true;
       try {
-        const url = "/api/v1/termometrias";
+        const url = "/asistmedica/termometria/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.termometria = response.data;
+        this.termometria = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -66,14 +68,14 @@ export const useTermometriaStore = defineStore("Termometria", {
     async listPacientes() {
       this.loading = true;
       try {
-        const url = "/api/v1/pacientes";
+        const url = "/tsocial/pacientes/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.pacientes = response.data;
+        this.pacientes = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -86,9 +88,16 @@ export const useTermometriaStore = defineStore("Termometria", {
     //TODO: Accion para crear Registros
     async createTer() {
       try {
-        const url = "/api/v1/termometrias";
+        const url = "/asistmedica/termometria/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempTermo, {
+        const formData = new FormData();
+        formData.append("hora_6am", this.tempTermo.hora_6am);
+        formData.append("hora_2pm", this.tempTermo.hora_2pm);
+        formData.append("hora_10pm", this.tempTermo.hora_10pm);
+        formData.append("fecha", this.tempTermo.fecha);
+        formData.append("observaciones", this.tempTermo.observaciones);
+        formData.append("ter_paciente", this.tempTermo.ter_paciente);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -120,10 +129,10 @@ export const useTermometriaStore = defineStore("Termometria", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveTer(id_termo) {
+    async retrieveTer(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/termometrias/${id_termo}/`;
+        const url = `/asistmedica/termometria/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -144,21 +153,20 @@ export const useTermometriaStore = defineStore("Termometria", {
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateTer(id_termo) {
+    async updateTer(id) {
       try {
-        const url = `/api/v1/termometrias/${id_termo}/`;
+        const url = `/asistmedica/termometria/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_termo: this.tempTermo.id_termo,
           hora_6am: this.tempTermo.hora_6am,
           hora_2pm: this.tempTermo.hora_2pm,
           hora_10pm: this.tempTermo.hora_10pm,
-          fecha_t: this.tempTermo.fecha_t,
-          observaciones_t: this.tempTermo.observaciones_t,
+          fecha: this.tempTermo.fecha,
+          observaciones: this.tempTermo.observaciones,
         };
 
-        const response = await api.put(
+        const response = await api.pash(
           url,
           request
           //   , {
@@ -198,7 +206,7 @@ export const useTermometriaStore = defineStore("Termometria", {
       }
     },
 
-    async destroyTer(id_termo) {
+    async destroyTer(id) {
       try {
         Dialog.create({
           html: true,
@@ -208,7 +216,7 @@ export const useTermometriaStore = defineStore("Termometria", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/termometrias/${id_termo}/`;
+          const url = `/asistmedica/termometria/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

@@ -8,7 +8,7 @@ export const useSindromeStore = defineStore("Sindrome", {
     loading: false,
 
     tempSindrome: {
-      id_cant: 0,
+      id: 0,
       cant_ira: 0,
       cant_neumonias: 0,
       cant_covid: 0,
@@ -48,14 +48,14 @@ export const useSindromeStore = defineStore("Sindrome", {
     async listSindromes() {
       this.loading = true;
       try {
-        const url = "/api/v1/sindromes";
+        const url = "/asistmedica/sindromes/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.sindrome = response.data;
+        this.sindrome = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -68,8 +68,18 @@ export const useSindromeStore = defineStore("Sindrome", {
     //TODO: Accion para crear Registros
     async createSindromes() {
       try {
-        const url = "/api/v1/sindromes";
+        const url = "/asistmedica/sindromes/";
         // const token = LocalStorage.getItem("access_token");
+        const formData = new FormData();
+        formData.append("cant_ira", this.tempSindrome.cant_ira);
+        formData.append("cant_neumonias", this.tempSindrome.cant_neumonias);
+        formData.append("cant_covid", this.tempSindrome.cant_covid);
+        formData.append("cant_eda", this.tempSindrome.cant_eda);
+        formData.append("cant_micosis", this.tempSindrome.cant_micosis);
+        formData.append("cant_escabiosis", this.tempSindrome.cant_escabiosis);
+        formData.append("cant_hta", this.tempSindrome.cant_hta);
+        formData.append("cant_diabetes", this.tempSindrome.cant_diabetes);
+        formData.append("otras", this.tempSindrome.otras);
         const response = await api.post(url, this.tempSindrome, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
@@ -102,10 +112,10 @@ export const useSindromeStore = defineStore("Sindrome", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveSindromes(id_venf) {
+    async retrieveSindromes(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/sindromes/${id_venf}/`;
+        const url = `/asistmedica/sindromes/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -126,13 +136,12 @@ export const useSindromeStore = defineStore("Sindrome", {
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateSindromes(id_cant) {
+    async updateSindromes(id) {
       try {
-        const url = `/api/v1/sindromes/${id_cant}/`;
+        const url = `/asistmedica/sindromes/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_cant: this.tempSindrome.id_cant,
           cant_ira: this.tempSindrome.cant_ira,
           cant_neumonias: this.tempSindrome.cant_neumonias,
           cant_covid: this.tempSindrome.cant_covid,
@@ -144,7 +153,7 @@ export const useSindromeStore = defineStore("Sindrome", {
           otras: this.tempSindrome.otras,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -184,7 +193,7 @@ export const useSindromeStore = defineStore("Sindrome", {
       }
     },
 
-    async destroySindromes(id_cant) {
+    async destroySindromes(id) {
       try {
         Dialog.create({
           html: true,
@@ -194,7 +203,7 @@ export const useSindromeStore = defineStore("Sindrome", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/sindromes/${id_cant}/`;
+          const url = `/asistmedica/sindromes/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

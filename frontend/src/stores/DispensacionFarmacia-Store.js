@@ -8,11 +8,11 @@ export const useDispensacionFarmaciaStore = defineStore("DispensacionFarmacia", 
     loading: false,
 
     tempDispensacion: {
-      id_codigo: 0,
-      lote_disp: "",
-      producto_medicamento: "",
-      unidad_medida: "",
-      cantidad_medicamento: 0,
+      id: 0,
+      lote: "",
+      prod_med: "",
+      uni_med: "",
+      cant_med: 0,
       fecha_entrada: "",
       fecha_salida: "",
       fecha_vence: "",
@@ -31,10 +31,10 @@ export const useDispensacionFarmaciaStore = defineStore("DispensacionFarmacia", 
     resetTempDisp() {
       console.log("aqui receteo");
       this.tempDispensacion = {
-        lote_disp: "",
-        producto_medicamento: "",
-        unidad_medida: "",
-        cantidad_medicamento: 0,
+        lote: "",
+        prod_med: "",
+        uni_med: "",
+        cant_med: 0,
         fecha_entrada: "",
         fecha_salida: "",
         fecha_vence: "",
@@ -46,14 +46,14 @@ export const useDispensacionFarmaciaStore = defineStore("DispensacionFarmacia", 
     async listDisp() {
       this.loading = true;
       try {
-        const url = "/api/v1/dispensacionfarmacias";
+        const url = "/farmacia/dispensacion/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.dispensacionfarmacia = response.data;
+        this.dispensacionfarmacia = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -66,9 +66,17 @@ export const useDispensacionFarmaciaStore = defineStore("DispensacionFarmacia", 
     //TODO: Accion para crear Registros
     async createDisp() {
       try {
-        const url = "/api/v1/dispensacionfarmacias";
+        const url = "/farmacia/dispensacion/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempDispensacion, {
+        const formData = new FormData();
+        formData.append("lote", this.tempDispensacion.lote);
+        formData.append("prod_med", this.tempDispensacion.prod_med);
+        formData.append("fecha_entrada", this.tempDispensacion.fecha_entrada);
+        formData.append("cant_med", this.tempDispensacion.cant_med);
+        formData.append("fecha_salida", this.tempDispensacion.fecha_salida);
+        formData.append("fecha_vence", this.tempDispensacion.fecha_vence);
+        formData.append("clasificacion", this.tempDispensacion.clasificacion);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -100,10 +108,10 @@ export const useDispensacionFarmaciaStore = defineStore("DispensacionFarmacia", 
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveDisp(id_codigo) {
+    async retrieveDisp(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/dispensacionfarmacias/${id_codigo}/`;
+        const url = `/farmacia/dispensacion/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -124,13 +132,12 @@ export const useDispensacionFarmaciaStore = defineStore("DispensacionFarmacia", 
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateDisp(id_codigo) {
+    async updateDisp(id) {
       try {
-        const url = `/api/v1/dispensacionfarmacias/${id_codigo}/`;
+        const url = `/farmacia/dispensacion/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_codigo: this.tempDispensacion.id_codigo,
           lote_disp: this.tempDispensacion.lote_disp,
           producto_medicamento: this.tempDispensacion.producto_medicamento,
           unidad_medida: this.tempDispensacion.unidad_medida,
@@ -140,7 +147,7 @@ export const useDispensacionFarmaciaStore = defineStore("DispensacionFarmacia", 
           fecha_vence: this.tempDispensacion.fecha_vence,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -180,7 +187,7 @@ export const useDispensacionFarmaciaStore = defineStore("DispensacionFarmacia", 
       }
     },
 
-    async destroyDisp(id_codigo) {
+    async destroyDisp(id) {
       try {
         Dialog.create({
           html: true,
@@ -190,7 +197,7 @@ export const useDispensacionFarmaciaStore = defineStore("DispensacionFarmacia", 
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/dispensacionfarmacias/${id_codigo}/`;
+          const url = `/farmacia/dispensacion/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

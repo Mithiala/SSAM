@@ -9,14 +9,14 @@ export const useVaccinesStore = defineStore("Vaccines", {
     loading: false,
 
     tempVacuna: {
-      id_vacun: 0,
-      tipo_vacunacion: "",
-      lote_vacunacion: "",
-      fecha_vacunacion: "",
+      id: 0,
+      tipo: "",
+      lote: "",
+      fecha: "",
+      vac_paciente: 0,
     },
 
     tempPaciente: {
-      image: "",
       nombre: "",
       edad: 0,
     },
@@ -33,9 +33,10 @@ export const useVaccinesStore = defineStore("Vaccines", {
     resetTempVac() {
       console.log("aqui receteo");
       this.tempVacuna = {
-        tipo_vacunacion: "",
-        lote_vacunacion: "",
-        fecha_vacunacion: "",
+        tipo: "",
+        lote: "",
+        fecha: "",
+        vac_paciente: 0,
       };
     },
 
@@ -43,14 +44,14 @@ export const useVaccinesStore = defineStore("Vaccines", {
     async listVac() {
       this.loading = true;
       try {
-        const url = "/api/v1/vaccines";
+        const url = "/asistmedica/vacunacion/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.vaccines = response.data;
+        this.vaccines = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -63,14 +64,14 @@ export const useVaccinesStore = defineStore("Vaccines", {
     async listPacientes() {
       this.loading = true;
       try {
-        const url = "/api/v1/pacientes";
+        const url = "/tsocial/pacientes/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.pacientes = response.data;
+        this.pacientes = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -83,9 +84,14 @@ export const useVaccinesStore = defineStore("Vaccines", {
     //TODO: Accion para crear Registros
     async createVac() {
       try {
-        const url = "/api/v1/vaccines";
+        const url = "/asistmedica/vacunacion/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempVacuna, {
+        const formData = new FormData();
+        formData.append("tipo", this.tempVacuna.tipo);
+        formData.append("lote", this.tempVacuna.lote);
+        formData.append("fecha", this.tempVacuna.fecha);
+        formData.append("vac_paciente", this.tempVacuna.vac_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -117,10 +123,10 @@ export const useVaccinesStore = defineStore("Vaccines", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveVac(id_vacun) {
+    async retrieveVac(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/vaccines/${id_vacun}/`;
+        const url = `/asistmedica/vacunacion/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -141,16 +147,16 @@ export const useVaccinesStore = defineStore("Vaccines", {
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateVac(id_vacun) {
+    async updateVac(id) {
       try {
-        const url = `/api/v1/vaccines/${id_vacun}/`;
+        const url = `/asistmedica/vacunacion/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_vacun: this.tempVacuna.id_vacun,
-          tipo_vacunacion: this.tempVacuna.tipo_vacunacion,
-          lote_vacunacion: this.tempVacuna.lote_vacunacion,
-          fecha_vacunacion: this.tempVacuna.fecha_vacunacion,
+          tipo: this.tempVacuna.tipo,
+          lote: this.tempVacuna.lote,
+          fecha: this.tempVacuna.fecha,
+          vac_paciente: this.tempVacuna.vac_paciente,
         };
 
         const response = await api.put(
@@ -193,7 +199,7 @@ export const useVaccinesStore = defineStore("Vaccines", {
       }
     },
 
-    async destroyVac(id_vacun) {
+    async destroyVac(id) {
       try {
         Dialog.create({
           html: true,
@@ -203,7 +209,7 @@ export const useVaccinesStore = defineStore("Vaccines", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/vaccines/${id_vacun}/`;
+          const url = `/asistmedica/vacunacion/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

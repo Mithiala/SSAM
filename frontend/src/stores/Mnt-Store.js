@@ -9,10 +9,12 @@ export const useMntStore = defineStore("Mnt", {
     loading: false,
 
     tempMntprog: {
-      id_mnt: 0,
-      otorg_mnt: "",
-      diag_mnt: "",
-      frec_mnt: "",
+      id: 0,
+      tratamiento: "",
+      diagnostico: "",
+      frecuencia: "",
+      fecha_mnt: "",
+      mnt_paciente: 0,
     },
 
     tempPaciente: {
@@ -33,9 +35,11 @@ export const useMntStore = defineStore("Mnt", {
     resetTempMntp() {
       console.log("aqui receteo");
       this.tempMntprog = {
-        otorg_mnt: "",
-        diag_mnt: "",
-        frec_mnt: "",
+        tratamiento: "",
+        diagnostico: "",
+        frecuencia: "",
+        fecha_mnt: "",
+        mnt_paciente: 0,
       };
     },
 
@@ -43,14 +47,14 @@ export const useMntStore = defineStore("Mnt", {
     async listMntp() {
       this.loading = true;
       try {
-        const url = "/api/v1/mnts";
+        const url = "/asistmedica/mnt/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.mnt = response.data;
+        this.mnt = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -63,14 +67,14 @@ export const useMntStore = defineStore("Mnt", {
     async listPacientes() {
       this.loading = true;
       try {
-        const url = "/api/v1/pacientes";
+        const url = "/tsocial/pacientes/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.pacientes = response.data;
+        this.pacientes = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -83,9 +87,15 @@ export const useMntStore = defineStore("Mnt", {
     //TODO: Accion para crear Registros
     async createMntp() {
       try {
-        const url = "/api/v1/mnts";
+        const url = "/asistmedica/mnt/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempMntprog, {
+        const formData = new FormData();
+        formData.append("tratamiento", this.tempMntprog.tratamiento);
+        formData.append("diagnostico", this.tempMntprog.diagnostico);
+        formData.append("frecuencia", this.tempMntprog.frecuencia);
+        formData.append("fecha_mnt", this.tempMntprog.fecha_mnt);
+        formData.append("mnt_paciente", this.tempMntprog.mnt_paciente.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -117,10 +127,10 @@ export const useMntStore = defineStore("Mnt", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveMntp(id_mnt) {
+    async retrieveMntp(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/mnts/${id_mnt}/`;
+        const url = `/asistmedica/mnt/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -141,19 +151,20 @@ export const useMntStore = defineStore("Mnt", {
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateMntp(id_mnt) {
+    async updateMntp(id) {
       try {
-        const url = `/api/v1/mnts/${id_mnt}/`;
+        const url = `/asistmedica/mnt/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_mnt: this.tempMntprog.id_mnt,
-          otorg_mnt: this.tempMntprog.otorg_mnt,
-          diag_mnt: this.tempMntprog.diag_mnt,
-          frec_mnt: this.tempMntprog.frec_mnt,
+          tratamiento: this.tempMntprog.tratamiento,
+          diagnostico: this.tempMntprog.diagnostico,
+          frecuencia: this.tempMntprog.frecuencia,
+          fecha_mnt: this.tempMntprog.fecha_mnt,
+          mnt_paciente: this.tempMntprog.mnt_paciente,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -193,7 +204,7 @@ export const useMntStore = defineStore("Mnt", {
       }
     },
 
-    async destroyMntp(id_mnt) {
+    async destroyMntp(id) {
       try {
         Dialog.create({
           html: true,
@@ -203,7 +214,7 @@ export const useMntStore = defineStore("Mnt", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/mnts/${id_mnt}/`;
+          const url = `/asistmedica/mnt/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

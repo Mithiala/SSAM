@@ -8,13 +8,14 @@ export const useControlLotesStore = defineStore("ControlLotes", {
     loading: false,
 
     tempLotes: {
-      id_lote: 0,
+      id: 0,
       lotes: "",
       producto_lotes: "",
       unidad_med: "",
       cant: 0,
       fecha_produccion: "",
       fecha_vence: "",
+      cl_disp: 0,
     },
 
     showDialogDF: false,
@@ -35,6 +36,7 @@ export const useControlLotesStore = defineStore("ControlLotes", {
         cant: 0,
         fecha_produccion: "",
         fecha_vence: "",
+        cl_disp: 0,
       };
     },
 
@@ -42,14 +44,14 @@ export const useControlLotesStore = defineStore("ControlLotes", {
     async listClotes() {
       this.loading = true;
       try {
-        const url = "/api/v1/controllotes";
+        const url = "/farmacia/lotes/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.controllotes = response.data;
+        this.controllotes = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -62,9 +64,17 @@ export const useControlLotesStore = defineStore("ControlLotes", {
     //TODO: Accion para crear Registros
     async createClotes() {
       try {
-        const url = "/api/v1/controllotes";
+        const url = "/farmacia/lotes/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempLotes, {
+        const formData = new FormData();
+        formData.append("lotes", this.tempLotes.lotes);
+        formData.append("producto_lotes", this.tempLotes.producto_lotes);
+        formData.append("unidad_med", this.tempLotes.unidad_med);
+        formData.append("cant", this.tempLotes.cant);
+        formData.append("fecha_produccion", this.tempLotes.fecha_produccion);
+        formData.append("fecha_vence", this.tempLotes.fecha_vence);
+        formData.append("cl_disp", this.tempLotes.cl_disp.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -96,10 +106,10 @@ export const useControlLotesStore = defineStore("ControlLotes", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveClotes(id_lote) {
+    async retrieveClotes(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/controllotes/${id_lote}/`;
+        const url = `/farmacia/lotes/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -120,13 +130,12 @@ export const useControlLotesStore = defineStore("ControlLotes", {
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateClotes(id_lote) {
+    async updateClotes(id) {
       try {
-        const url = `/api/v1/controllotes/${id_lote}/`;
+        const url = `/farmacia/lotes/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_lote: this.tempLotes.id_lote,
           lotes: this.tempLotes.lotes,
           producto_lotes: this.tempLotes.producto_lotes,
           unidad_med: this.tempLotes.unidad_med,
@@ -135,7 +144,7 @@ export const useControlLotesStore = defineStore("ControlLotes", {
           fecha_vence: this.tempLotes.fecha_vence,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -175,7 +184,7 @@ export const useControlLotesStore = defineStore("ControlLotes", {
       }
     },
 
-    async destroyClotes(id_lote) {
+    async destroyClotes(id) {
       try {
         Dialog.create({
           html: true,
@@ -185,7 +194,7 @@ export const useControlLotesStore = defineStore("ControlLotes", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/controllotes/${id_lote}/`;
+          const url = `/farmacia/lotes/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

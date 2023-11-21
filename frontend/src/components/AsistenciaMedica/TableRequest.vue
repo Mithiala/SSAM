@@ -7,7 +7,7 @@
       color="green"
       :rows="solicitudmedicamento"
       :columns="columns"
-      row-key="id_ped"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -107,7 +107,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyMed(props.row.id_ped)"
+            @click="destroyMed(props.row.id)"
           />
         </q-td>
       </template>
@@ -138,11 +138,6 @@
                 type="text"
                 label="U/M"
                 v-model="tempSolicitud.unidad_medida"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese el dato',
-                ]"
               />
 
               <!-- TODO: "Cantidad" -->
@@ -161,20 +156,39 @@
                 class="col-2"
                 dense
                 outlined
-              label="Fecha"
-              v-model="tempSolicitud.fecha_pedido"
-              mask="date">
-              <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="tempSolicitud.fecha_pedido">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Cerrar" color="green" flat />
-              </div>
-              </q-date>
-              </q-popup-proxy>
-              </q-icon>
-              </template>
+                label="Fecha"
+                v-model="tempSolicitud.fecha_pedido"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor inserte la fecha del pedido',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempSolicitud.fecha_pedido"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
               </q-input>
 
             </div>
@@ -185,7 +199,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditPD"
-                @click="updateMed(tempSolicitud.id_ped)"
+                @click="updateMed(tempSolicitud.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
@@ -235,16 +249,6 @@ const { solicitudmedicamento, AddPD, EditPD, showDialogPD, loading, tempSolicitu
   storeToRefs(useSolicitudMedicamentoStore());
 
   const columns = [
-  {
-    name: 'id_ped',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_ped,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
   {
     name: 'producto',
     align: 'center',

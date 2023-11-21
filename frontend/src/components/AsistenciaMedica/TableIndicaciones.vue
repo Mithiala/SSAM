@@ -7,7 +7,7 @@
       color="green"
       :rows="indicaciones"
       :columns="columns"
-      row-key="id_ind"
+      row-key="id"
       :visible-columns="visibleColumns"
       :loading="loading"
       :filter="filter"
@@ -98,17 +98,6 @@
             @click="props.toggleFullscreen"
           />
         </div>
-      </template>
-
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
       </template>
 
       <!-- TODO:  "Método evitar caidas" -->
@@ -218,7 +207,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyIndic(props.row.id_ind)"
+            @click="destroyIndic(props.row.id)"
           />
         </q-td>
       </template>
@@ -231,30 +220,80 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
+              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempIndi.indic_paciente"
+                label="Nombre del paciente"
+                :options="PacOption"
+                style="width: 250px"
+                behavior="menu"
+              />
+
+              <!-- TODO:  "temperatura" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempIndi.indic_termo"
+                label="Temperatura"
+                :options="TerOption"
+                style="width: 250px"
+                behavior="menu"
+              />
+
+              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempIndi.indic_datoenf"
+                label="IMC"
+                :options="EnfOption"
+                style="width: 250px"
+                behavior="menu"
+              />
+
               <!-- TODO:  "Fecha" -->
               <q-input
                 class="col-2"
                 dense
                 outlined
-              label="Fecha"
-              v-model="tempIndi.fecha"
-              mask="date"
-              :rules="[
+                label="Fecha"
+                v-model="tempIndi.fecha"
+                mask="####-##-##"
+                :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de hoy'
-                ]">
-              <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="tempIndi.fecha">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Cerrar" color="green" flat />
-              </div>
-              </q-date>
-              </q-popup-proxy>
-              </q-icon>
-              </template>
+                    'Por favor ingrese la fecha',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempIndi.fecha"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
               </q-input>
 
               <!-- TODO:  "Calorias" -->
@@ -952,7 +991,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditIM"
-                @click="updateIndic(tempIndi.id_ind)"
+                @click="updateIndic(tempIndi.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
@@ -1002,26 +1041,7 @@ const {
 const { indicaciones, AddIM, EditIM, showDialogIM, loading, tempIndi, tempPaciente } =
   storeToRefs(useIndicacinesStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
   const columns = [
-  {
-    name: 'id_ind',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_ind,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: 'num_cama',
     align: 'center',
@@ -1649,9 +1669,40 @@ const EstOptions = [
   "ATORVASTATINA 20MG TAB",
 ];
 
+const PacOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
+
+const TerOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
+
+const EnfOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
+
 const visibleColumns = ref([
-      'id_ind',
-      'image',
       'num_cama',
       'clasif_imc',
       'hora_6am',
@@ -1726,16 +1777,6 @@ const visibleColumns = ref([
 ])
 
 const date = ref("");
-
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
 
 // TODO: Export To Excel:
 async function exportFile() {

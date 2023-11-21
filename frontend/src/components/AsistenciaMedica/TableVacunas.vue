@@ -7,7 +7,7 @@
       color="green"
       :rows="vaccines"
       :columns="columns"
-      row-key="id_vacun"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -80,17 +80,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -107,7 +96,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyVac(props.row.id_vacun)"
+            @click="destroyVac(props.row.id)"
           />
         </q-td>
       </template>
@@ -120,12 +109,24 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
+              <!-- TODO:  "paciente_vacuna" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempVacuna.vac_paciente"
+                label="Nombre del paciente"
+                :options="VacOption"
+                style="width: 250px"
+                behavior="menu"
+              />
+
               <!-- TODO: "Tipo de vacunación" -->
               <q-select
                 class="col-4"
                 dense
                 outlined
-                v-model="tempVacuna.tipo_vacunacion"
+                v-model="tempVacuna.tipo"
                 label="Tipo de vacunación"
                 :options="TipoOptions"
                 behavior="menu"
@@ -137,29 +138,47 @@
                 dense
                 outlined
                 label="Lote"
-                v-model="tempVacuna.lote_vacunacion"
+                v-model="tempVacuna.lote"
               />
 
               <!-- TODO: "Fecha de vacunación" -->
               <q-input
-              class="col-4"
-              dense
-              outlined
-              label="Fecha de vacunación"
-              v-model="tempVacuna.fecha_vacunacion"
-              mask="date"
-              :rules="['date']">
-              <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="tempVacuna.fecha_vacunacion">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Cerrar" color="green" flat />
-              </div>
-              </q-date>
-              </q-popup-proxy>
-              </q-icon>
-              </template>
+                class="col-2"
+                dense
+                outlined
+                label="Fecha de vacunación"
+                v-model="tempVacuna.fecha"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor inserte la fecha de vacunación',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempVacuna.fecha"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
               </q-input>
 
             </div>
@@ -170,7 +189,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDG"
-                @click="updateVac(tempVacuna.id_vacun)"
+                @click="updateVac(tempVacuna.id)"
               />
               <q-btn
                 class="col-3 q-mx-sm"
@@ -220,26 +239,7 @@ const {
 const { vaccines, AddDG, EditDG, showDialogDG, loading, tempVacuna, tempPaciente } =
   storeToRefs(useVaccinesStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
   const columns = [
-  {
-    name: 'id_vacun',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_vacun,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -257,22 +257,22 @@ const { vaccines, AddDG, EditDG, showDialogDG, loading, tempVacuna, tempPaciente
   },
 
   {
-    name: 'tipo_vacunacion',
+    name: 'tipo',
     align: 'center',
     label: 'Tipo de vacunación',
-    field: 'tipo_vacunacion',
+    field: 'tipo',
   },
   {
-    name: 'lote_vacunacion',
+    name: 'lote',
     align: 'center',
     label: 'Lote',
-    field: 'lote_vacunacion',
+    field: 'lote',
   },
   {
-    name: 'fecha_vacunacion',
+    name: 'fecha',
     align: 'center',
     label: 'Fecha de la vacunación',
-    field: 'fecha_vacunacion'
+    field: 'fecha'
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
 ]
@@ -302,17 +302,18 @@ const TipoOptions = [
   "Otras",
 ];
 
-const date = ref("");
+const VacOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
 
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
+const date = ref("");
 
 // TODO: Export To Excel:
 async function exportFile() {

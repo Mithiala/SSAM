@@ -8,12 +8,13 @@ export const useCoberturaFarmaciaStore = defineStore("CoberturaFarmacia", {
     loading: false,
 
     tempCobertura: {
-      id_cob: 0,
+      id: 0,
       lote_cob: "",
       tipo_med: "",
       cantidad_cob: 0,
       falta: false,
       ocioso: false,
+      cob_disp: 0,
     },
 
     showDialogDF: false,
@@ -33,6 +34,7 @@ export const useCoberturaFarmaciaStore = defineStore("CoberturaFarmacia", {
         cantidad_cob: 0,
         falta: false,
         ocioso: false,
+        cob_disp: 0,
       };
     },
 
@@ -40,14 +42,14 @@ export const useCoberturaFarmaciaStore = defineStore("CoberturaFarmacia", {
     async listCob() {
       this.loading = true;
       try {
-        const url = "/api/v1/coberturafarmacias";
+        const url = "/farmacia/cobertura/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.coberturafarmacia = response.data;
+        this.coberturafarmacia = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -60,9 +62,16 @@ export const useCoberturaFarmaciaStore = defineStore("CoberturaFarmacia", {
     //TODO: Accion para crear Registros
     async createCob() {
       try {
-        const url = "/api/v1/coberturafarmacias";
+        const url = "/farmacia/cobertura/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempCobertura, {
+        const formData = new FormData();
+        formData.append("lote_cob", this.tempCobertura.lote_cob);
+        formData.append("tipo_med", this.tempCobertura.tipo_med);
+        formData.append("cantidad_cob", this.tempCobertura.cantidad_cob);
+        formData.append("falta", this.tempCobertura.falta);
+        formData.append("ocioso", this.tempCobertura.ocioso);
+        formData.append("cob_disp", this.tempCobertura.cob_disp.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -94,10 +103,10 @@ export const useCoberturaFarmaciaStore = defineStore("CoberturaFarmacia", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveCob(id_cob) {
+    async retrieveCob(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/coberturafarmacias/${id_cob}/`;
+        const url = `/farmacia/cobertura/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -120,11 +129,10 @@ export const useCoberturaFarmaciaStore = defineStore("CoberturaFarmacia", {
     //TODO: Accion para modificar un Registro desde un ID
     async updateCob(id_cob) {
       try {
-        const url = `/api/v1/coberturafarmacias/${id_cob}/`;
+        const url = `/farmacia/cobertura/${id_cob}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_cob: this.tempCobertura.id_cob,
           lote_cob: this.tempCobertura.lote_cob,
           tipo_med: this.tempCobertura.tipo_med,
           cantidad_cob: this.tempCobertura.cantidad_cob,
@@ -132,7 +140,7 @@ export const useCoberturaFarmaciaStore = defineStore("CoberturaFarmacia", {
           ocioso: this.tempCobertura.ocioso,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -172,7 +180,7 @@ export const useCoberturaFarmaciaStore = defineStore("CoberturaFarmacia", {
       }
     },
 
-    async destroyCob(id_cob) {
+    async destroyCob(id) {
       try {
         Dialog.create({
           html: true,
@@ -182,7 +190,7 @@ export const useCoberturaFarmaciaStore = defineStore("CoberturaFarmacia", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/coberturafarmacias/${id_cob}/`;
+          const url = `/farmacia/cobertura/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

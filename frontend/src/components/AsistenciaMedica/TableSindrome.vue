@@ -7,7 +7,7 @@
       color="green"
       :rows="sindrome"
       :columns="columns"
-      row-key="id_cant"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -80,17 +80,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -107,7 +96,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroySindromes(props.row.id_cant)"
+            @click="destroySindromes(props.row.id)"
           />
         </q-td>
       </template>
@@ -272,7 +261,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDG"
-                @click="updateSindromes(tempSindrome.id_cant)"
+                @click="updateSindromes(tempSindrome.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
@@ -302,18 +291,12 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useSindromeStore } from "src/stores/Sindrome-Store";
-import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listSindromes();
-  await listPacientes();
   // }
 });
-
-const {
-  listPacientes,
-} = usePacientesStore()
 
 const {
   resetTempSindromes,
@@ -327,20 +310,7 @@ const {
 const { sindrome, AddDG, EditDG, showDialogDG, loading, tempSindrome } =
   storeToRefs(useSindromeStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
   const columns = [
-  {
-    name: 'id_cant',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_cant,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
-
   {
     name: "cant_ira",
     align: "center",
@@ -411,16 +381,6 @@ const openAddDialog = () => {
 };
 
 const date = ref("");
-
-const imagenFile = ref(null);
-const imagenURL = ref("");
-function generarURL() {
-  if (tempPaciente.value.image) {
-    imagenURL.value = URL.createObjectURL(tempPaciente.value.image);
-  } else {
-    imagenURL.value = "";
-  }
-}
 
 // TODO: Export To Excel:
 async function exportFile() {

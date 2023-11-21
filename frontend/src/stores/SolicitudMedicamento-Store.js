@@ -8,11 +8,12 @@ export const useSolicitudMedicamentoStore = defineStore("SolicitudMedicamento", 
     loading: false,
 
     tempSolicitud: {
-      id_ped: 0,
+      id: 0,
       producto: "",
       unidad_medida: "",
       cantidad: 0,
       fecha_pedido: "",
+      sp_disp: 0,
     },
 
     showDialogPD: false,
@@ -31,6 +32,7 @@ export const useSolicitudMedicamentoStore = defineStore("SolicitudMedicamento", 
         unidad_medida: "",
         cantidad: 0,
         fecha_pedido: "",
+        sp_disp: 0,
       };
     },
 
@@ -38,14 +40,14 @@ export const useSolicitudMedicamentoStore = defineStore("SolicitudMedicamento", 
     async listMed() {
       this.loading = true;
       try {
-        const url = "/api/v1/solicitudmedicamentos";
+        const url = "/asistmedica/pedido/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.solicitudmedicamento = response.data;
+        this.solicitudmedicamento = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -58,9 +60,15 @@ export const useSolicitudMedicamentoStore = defineStore("SolicitudMedicamento", 
     //TODO: Accion para crear Registros
     async createMed() {
       try {
-        const url = "/api/v1/solicitudmedicamentos";
+        const url = "/asistmedica/pedido/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempSolicitud, {
+        const formData = new FormData();
+        formData.append("producto", this.tempSolicitud.producto);
+        formData.append("unidad_medida", this.tempSolicitud.unidad_medida);
+        formData.append("cantidad", this.tempSolicitud.cantidad);
+        formData.append("fecha_pedido", this.tempSolicitud.fecha_pedido);
+        formData.append("sp_disp", this.tempSolicitud.sp_disp.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -92,10 +100,10 @@ export const useSolicitudMedicamentoStore = defineStore("SolicitudMedicamento", 
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveMed(id_ped) {
+    async retrieveMed(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/solicitudmedicamentos/${id_ped}/`;
+        const url = `/api/v1/solicitudmedicamentos/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -116,20 +124,19 @@ export const useSolicitudMedicamentoStore = defineStore("SolicitudMedicamento", 
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateMed(id_ped) {
+    async updateMed(id) {
       try {
-        const url = `/api/v1/solicitudmedicamentos/${id_ped}/`;
+        const url = `/asistmedica/pedido/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_ped: this.tempSolicitud.id_ped,
           producto: this.tempSolicitud.producto,
           unidad_medida: this.tempSolicitud.unidad_medida,
           cantidad: this.tempSolicitud.cantidad,
           fecha_pedido: this.tempSolicitud.fecha_pedido,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -169,7 +176,7 @@ export const useSolicitudMedicamentoStore = defineStore("SolicitudMedicamento", 
       }
     },
 
-    async destroyMed(id_ped) {
+    async destroyMed(id) {
       try {
         Dialog.create({
           html: true,
@@ -179,7 +186,7 @@ export const useSolicitudMedicamentoStore = defineStore("SolicitudMedicamento", 
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/solicitudmedicamentos/${id_ped}/`;
+          const url = `/asistmedica/pedido/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

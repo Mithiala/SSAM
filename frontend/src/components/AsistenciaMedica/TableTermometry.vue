@@ -7,7 +7,7 @@
       color="green"
       :rows="termometria"
       :columns="columns"
-      row-key="id_termo"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -80,17 +80,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -107,7 +96,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyTer(props.row.id_termo)"
+            @click="destroyTer(props.row.id)"
           />
         </q-td>
       </template>
@@ -119,6 +108,18 @@
         <q-card-section>
           <q-form>
             <div class="row justify-around q-gutter-md">
+
+              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <q-select
+                class="col-3"
+                dense
+                outlined
+                v-model="tempTermo.ter_paciente"
+                label="Nombre del paciente"
+                :options="TerOption"
+                style="width: 250px"
+                behavior="menu"
+              />
 
               <!-- TODO: "Hora 6:00am" -->
               <q-input
@@ -152,24 +153,42 @@
 
               <!-- TODO: "Fecha" -->
               <q-input
-              class="col-2"
-              dense
-              outlined
-              label="Fecha"
-              v-model="tempTermo.fecha_t"
-              mask="date"
-              :rules="['date']">
-              <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="tempTermo.fecha_t">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Cerrar" color="green" flat />
-              </div>
-              </q-date>
-              </q-popup-proxy>
-              </q-icon>
-              </template>
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempTermo.fecha"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempTermo.fecha"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
               </q-input>
 
               <!-- TODO: "Observaciones" -->
@@ -179,7 +198,7 @@
                 dense
                 outlined
                 label="Observaciones"
-                v-model="tempTermo.observaciones_t"
+                v-model="tempTermo.observaciones"
               />
 
             </div>
@@ -190,7 +209,7 @@
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDG"
-                @click="updateTer(tempTermo.id_termo)"
+                @click="updateTer(tempTermo.id)"
               />
               <q-btn
                 class="col-2 q-mx-sm"
@@ -220,7 +239,6 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useTermometriaStore } from "src/stores/Termometria-Store";
-import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
@@ -241,26 +259,7 @@ const {
 const { termometria, AddDG, EditDG, showDialogDG, loading, tempTermo, tempPaciente } =
   storeToRefs(useTermometriaStore());
 
-  const baseurl = "http://127.0.0.1:3333";
-
   const columns = [
-  {
-    name: 'id_termo',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_termo,
-    format: val => `${val}`,
-    sortable: true,
-    align: 'center',
-  },
-
-  {
-    name: "image",
-    align: "center",
-    label: "Foto",
-    field: "image",
-  },
   {
     name: "nombre",
     align: "center",
@@ -288,16 +287,16 @@ const { termometria, AddDG, EditDG, showDialogDG, loading, tempTermo, tempPacien
     field: 'hora_10pm'
   },
   {
-    name: 'fecha_t',
+    name: 'fecha',
     align: 'center',
     label: 'Fecha',
-    field: 'fecha_t',
+    field: 'fecha',
   },
   {
-    name: 'observaciones_t',
+    name: 'observaciones',
     align: 'center',
     label: 'Observaciones',
-    field: 'observaciones_t'
+    field: 'observaciones'
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
 ]
@@ -317,6 +316,17 @@ const openAddDialog = () => {
   resetTempTer();
   showDialogDG.value = true;
 };
+
+const TerOption = [
+  {
+    label: "Andrés Cueva Heredia",
+    value: "1",
+  },
+  {
+    label: "Francisaca Navia Cuadrado",
+    value: "2",
+  },
+];
 
 const date = ref("");
 

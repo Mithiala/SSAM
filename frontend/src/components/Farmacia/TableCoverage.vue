@@ -7,7 +7,7 @@
       color="green"
       :rows="coberturafarmacia"
       :columns="columns"
-      row-key="id_cob"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -122,14 +122,14 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyCob(props.row.id_cob)"
+            @click="destroyCob(props.row.id)"
           />
         </q-td>
       </template>
     </q-table>
 
     <!-- TODO: Añadir - Editar -->
-    <q-dialog v-model="showDialogDF" persistent full-width >
+    <q-dialog v-model="showDialogDF" persistent full-medium >
       <q-card class="column medium">
         <q-card-section>
           <q-form>
@@ -137,7 +137,7 @@
 
               <!-- TODO: "Lote" -->
               <q-input
-                class="col-2"
+                class="col-3"
                 dense
                 outlined
                 type="text"
@@ -147,7 +147,7 @@
 
               <!-- TODO: "Producto" -->
               <q-input
-                class="col-4"
+                class="col-6"
                 dense
                 outlined
                 type="text"
@@ -157,7 +157,7 @@
 
               <!-- TODO: "Cantidad" -->
               <q-input
-                class="col-1"
+                class="col-2"
                 dense
                 outlined
                 type="number"
@@ -168,8 +168,8 @@
 
               <!-- TODO: "Medicamento en falta" -->
               <q-checkbox
-                style="max-width: 200px"
-                class="col-3"
+                style="max-width: 270px"
+                class="col-4"
                 rigth-label
                 dense
                 outlined
@@ -191,15 +191,15 @@
             </div>
             <div class="q-mt-sm row justify-center">
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDF"
-                @click="updateCob(tempCobertura.id_cob)"
+                @click="updateCob(tempCobertura.id)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Añadir"
                 color="light-blue-8"
@@ -207,7 +207,7 @@
                 @click="createCob(tempCobertura)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 color="purple-9"
                 label="Salir"
                 @click="showDialogDF = false"
@@ -246,16 +246,6 @@ const { coberturafarmacia, AddDF, EditDF, showDialogDF, loading, tempCobertura }
   storeToRefs(useCoberturaFarmaciaStore());
 
   const columns = [
-  {
-    name: 'id_cob',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_cob,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
   {
     name: "lote_cob",
     align: "center",

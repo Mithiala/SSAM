@@ -7,7 +7,7 @@
       color="green"
       :rows="controllotes"
       :columns="columns"
-      row-key="id_lote"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -96,14 +96,14 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyClotes(props.row.id_lote)"
+            @click="destroyClotes(props.row.id)"
           />
         </q-td>
       </template>
     </q-table>
 
     <!-- TODO: Añadir - Editar -->
-    <q-dialog v-model="showDialogDF" persistent full-width >
+    <q-dialog v-model="showDialogDF" persistent full-medium >
       <q-card class="column medium">
         <q-card-section>
           <q-form>
@@ -111,7 +111,7 @@
 
               <!-- TODO: "Lote" -->
               <q-input
-                class="col-2"
+                class="col-4"
                 dense
                 outlined
                 type="text"
@@ -121,7 +121,7 @@
 
               <!-- TODO: "Producto" -->
               <q-input
-                class="col-4"
+                class="col-6"
                 dense
                 outlined
                 type="text"
@@ -131,7 +131,7 @@
 
               <!-- TODO: "U/M" -->
               <q-input
-                class="col-1"
+                class="col-3"
                 dense
                 outlined
                 type="text"
@@ -139,9 +139,11 @@
                 v-model="tempLotes.unidad_med"
               />
 
+              <q-space class="col-1" />
+
               <!-- TODO: "Cantidad" -->
               <q-input
-                class="col-1"
+                class="col-2"
                 dense
                 outlined
                 type="number"
@@ -152,16 +154,16 @@
 
               <!-- TODO: "Fecha de producción" -->
               <q-input
-                class="col-2"
+                class="col-5"
                 dense
                 outlined
-                label="Fecha de producción"
+                label="Fecha de prodrucción"
                 v-model="tempLotes.fecha_produccion"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de nacimiento',
+                    'Por favor inserte la fecha de producción',
                 ]"
               >
                 <template v-slot:append>
@@ -171,7 +173,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempLotes.fecha_produccion">
+                      <q-date
+                        v-model="tempLotes.fecha_produccion"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -188,16 +194,16 @@
 
               <!-- TODO: "Fecha de vencimiento" -->
               <q-input
-                class="col-2"
+                class="col-5"
                 dense
                 outlined
                 label="Fecha de vencimiento"
                 v-model="tempLotes.fecha_vence"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de nacimiento',
+                    'Por favor inserte la fecha de vencimiento',
                 ]"
               >
                 <template v-slot:append>
@@ -207,7 +213,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempLotes.fecha_vence">
+                      <q-date
+                        v-model="tempLotes.fecha_vence"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -225,15 +235,15 @@
             </div>
             <div class="q-mt-sm row justify-center">
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDF"
-                @click="updateClotes(tempLotes.id_lote)"
+                @click="updateClotes(tempLotes.id)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Añadir"
                 color="light-blue-8"
@@ -241,7 +251,7 @@
                 @click="createClotes(tempLotes)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 color="purple-9"
                 label="Salir"
                 @click="showDialogDF = false"
@@ -263,7 +273,7 @@ import { useControlLotesStore } from "src/stores/ControlLotes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
-  await listDonFarm();
+  await listClotes();
   // }
 });
 
@@ -280,16 +290,6 @@ const { controllotes, AddDF, EditDF, showDialogDF, loading, tempLotes } =
   storeToRefs(useControlLotesStore());
 
   const columns = [
-  {
-    name: 'id_lote',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_lote,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
   {
     name: "lotes",
     align: "center",
