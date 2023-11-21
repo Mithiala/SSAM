@@ -27,34 +27,21 @@ class ControlGucemicoSerializer(serializers.ModelSerializer):
 
 
 class DatoEnfermeriaSerializer(serializers.ModelSerializer):
+    receiver_nombre = serializers.SerializerMethodField()
+    receiver_edad = serializers.SerializerMethodField()
+    receiver_sexo = serializers.SerializerMethodField()
+
     class Meta:
         model = DatoEnfermeria
         fields = "__all__"
 
-    def to_representation(self, instance):
-        return {
-            "id": instance.id,
-            "state": instance.state,
-            "receiver": instance.receiver.nombre
-            if instance.receiver is not None
-            else "",
-            "receiver": instance.receiver.ci if instance.receiver is not None else "",
-            "receiver": instance.receiver.hs if instance.receiver is not None else "",
-            "receiver": instance.receiver.fecha_inscripcion
-            if instance.receiver is not None
-            else "",
-            "content": instance.content,
-            "timestamp": instance.timestamp,
-            "lecturatime": instance.lecturatime,
-        }
-
-    def get_Paciente_nombre(self, instance):
+    def get_receiver_nombre(self, instance):
         return instance.receiver.nombre if instance.receiver is not None else ""
 
-    def get_Paciente_edad(self, instance):
+    def get_receiver_edad(self, instance):
         return instance.receiver.edad if instance.receiver is not None else ""
 
-    def get_Paciente_sexo(self, instance):
+    def get_receiver_sexo(self, instance):
         return instance.receiver.sexo if instance.receiver is not None else ""
 
 

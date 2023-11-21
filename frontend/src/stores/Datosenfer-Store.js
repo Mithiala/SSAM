@@ -38,7 +38,6 @@ export const useDatosenferStore = defineStore("Datosenfer", {
     },
 
     tempPaciente: {
-      image: "",
       nombre: "",
       edad: 0,
       sexo: "",
