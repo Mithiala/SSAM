@@ -17,11 +17,11 @@ export const useIndiceStore = defineStore("Indice", {
       incontinencia: "",
       fecha: "",
       resultado: "",
+      resultadoIndice: "",
       ind_paciente: 0,
     },
 
     tempPaciente: {
-      image: "",
       nombre: "",
     },
 
@@ -45,6 +45,7 @@ export const useIndiceStore = defineStore("Indice", {
         fecha: "",
         resultado: "",
         ind_paciente: 0,
+        resultadoIndice: "",
       };
     },
 
@@ -102,6 +103,7 @@ export const useIndiceStore = defineStore("Indice", {
         formData.append("incontinencia", this.tempIndice.incontinencia);
         formData.append("fecha", this.tempIndice.fecha);
         formData.append("resultado", this.tempIndice.resultado);
+        formData.append("resultadoIndice", this.tempIndice.resultadoIndice);
         formData.append("ind_paciente", this.tempIndice.ind_paciente);
         const response = await api.post(url, formData, {
           // headers: {
@@ -116,6 +118,7 @@ export const useIndiceStore = defineStore("Indice", {
             progress: true,
             icon: "check",
           });
+          this.resultadoIndice = response.data.resultado;
           await this.listIndices();
           this.showDialogDG = false;
           this.resetTempIndices();
@@ -172,6 +175,7 @@ export const useIndiceStore = defineStore("Indice", {
           incontinencia: this.tempIndice.incontinencia,
           fecha: this.tempIndice.fecha,
           resultado: this.tempIndice.resultado,
+          resultadoIndice: this.tempIndice.resetTempIndices,
           ind_paciente: this.tempIndice.ind_paciente,
         };
 

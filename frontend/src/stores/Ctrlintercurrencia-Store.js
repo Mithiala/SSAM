@@ -17,7 +17,6 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
     },
 
     tempPaciente: {
-      image: "",
       nombre: "",
       edad: 0,
     },
@@ -92,7 +91,7 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
         formData.append("fecha_inicio", this.tempInter.fecha_inicio);
         formData.append("fecha_termina", this.tempInter.fecha_termina);
         formData.append("inter_paciente", this.tempInter.inter_paciente.value);
-        const response = await api.post(url, formData, {
+        const response = await api.post(url, this.tempInter, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },

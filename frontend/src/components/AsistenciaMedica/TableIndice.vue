@@ -246,17 +246,6 @@
                 </template>
               </q-input>
 
-              <!-- TODO:  "Resultado" -->
-              <q-input
-              class="col-2"
-                outlined
-                dense
-                readonly
-                type="text"
-                label="Resultado"
-                v-model="tempIndice.resultado"
-              />
-
             </div>
             <div class="q-mt-sm row justify-center">
               <q-btn
@@ -314,6 +303,8 @@ const {
 
 const { indice, AddDG, EditDG, showDialogDG, loading, tempIndice, tempPaciente } =
   storeToRefs(useIndiceStore());
+
+  const resultadoIndice = useIndiceStore();
 
   const columns = [
   {

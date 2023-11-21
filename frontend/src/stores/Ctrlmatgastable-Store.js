@@ -10,7 +10,6 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
 
     tempGast: {
       id: 0,
-      fecha_mat: "",
       turno: "",
       mat_util: "",
       med_util: "",
@@ -19,7 +18,6 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
     },
 
     tempPaciente: {
-      image: "",
       nombre: "",
       edad: 0,
     },
@@ -36,7 +34,6 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
     resetTempMatg() {
       console.log("aqui receteo");
       this.tempGast = {
-        fecha_mat: "",
         turno: "",
         mat_util: "",
         med_util: "",
@@ -56,8 +53,8 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.ctrlmatgastable = response.data.results;
-        this.loading = false;
+        this.ctrlintercurrencia = response.data.results;
+        this.loadingIN = false;
       } catch (error) {
         console.log(
           "🚀 ~ file: Ctrlmatgastable-Store.js:99 ~ listMatg ~ error:",
@@ -144,7 +141,7 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
           "🚀 ~ file: Ctrlmatgastable-Store.js:130 ~ retrieveMatg ~ response:",
           response.statusText
         );
-        this.loading = false;
+        this.loadingIN = false;
       } catch (error) {
         console.log(
           "🚀 ~ file: Ctrlmatgastable-Store.js:132 ~ retrieveMatg ~ error:",
@@ -164,7 +161,6 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
           fecha_mat: this.tempGast.fecha_mat,
           turno: this.tempGast.turno,   
           via_admin: this.tempGast.via_admin,
-          mg_paciente: this.tempGast.mg_paciente,
         };
 
         const response = await api.patch(
@@ -217,7 +213,7 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/asistmedica/matgastable/${id_mat}/`;
+          const url = `/asistmedica/matgastable/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {
@@ -226,7 +222,7 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
 
           if (response.status === 204) {
             console.log(
-              "🚀 ~ file: Ctrlmatgastable-Store.js:214 ~ destroyMatg  ~ response:",
+              "🚀 ~ file: Ctrlintercurrencia-Store.js:214 ~ destroyInt  ~ response:",
               response.statusText
             );
 

@@ -14,7 +14,6 @@ from .models_nomenclador import (
 
 def calcular_resultado(self):
     """Calcula el resultado general del índice."""
-
     puntuacion_incontinencia = self.incontinencia.puntuacion
     puntuacion_movilidad = self.movilidad.puntuacion
     puntuacion_actividad = self.actividad.puntuacion
@@ -22,12 +21,24 @@ def calcular_resultado(self):
     puntuacion_estado_general = self.estado_general.puntuacion
 
     # Calculamos el resultado general
-    if puntuacion_incontinencia == 3 and puntuacion_movilidad > 3:
-        resultado_calculado = "Alto"
-    elif puntuacion_incontinencia == 1 and puntuacion_movilidad > 2:
-        resultado_calculado = "Bajo"
+    indice_norton = (
+        puntuacion_incontinencia
+        + puntuacion_movilidad
+        + puntuacion_actividad
+        + puntuacion_estado_mental
+        + puntuacion_estado_general
+    )
+
+    if indice_norton <= 12:
+        resultado_calculado = "Muy alto"
+    elif indice_norton <= 14:
+        resultado_calculado = "Riesgo evidente"
     else:
-        resultado_calculado = "Bajo2"
+        resultado_calculado = "No hay riesgo"
+
+    # Guardar resultado en la base de datos
+    indice_value = IndiceValue(resultado=resultado_calculado)
+    indice_value.save()
 
     return resultado_calculado
 
