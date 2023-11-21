@@ -12,37 +12,6 @@ from .models_nomenclador import (
 )
 
 
-def calcular_resultado(self):
-    """Calcula el resultado general del índice."""
-    puntuacion_incontinencia = self.incontinencia.puntuacion
-    puntuacion_movilidad = self.movilidad.puntuacion
-    puntuacion_actividad = self.actividad.puntuacion
-    puntuacion_estado_mental = self.estado_mental.puntuacion
-    puntuacion_estado_general = self.estado_general.puntuacion
-
-    # Calculamos el resultado general
-    indice_norton = (
-        puntuacion_incontinencia
-        + puntuacion_movilidad
-        + puntuacion_actividad
-        + puntuacion_estado_mental
-        + puntuacion_estado_general
-    )
-
-    if indice_norton <= 12:
-        resultado_calculado = "Muy alto"
-    elif indice_norton <= 14:
-        resultado_calculado = "Riesgo evidente"
-    else:
-        resultado_calculado = "No hay riesgo"
-
-    # Guardar resultado en la base de datos
-    indice_value = IndiceValue(resultado=resultado_calculado)
-    indice_value.save()
-
-    return resultado_calculado
-
-
 class DatoEnfermeria(BaseModel):
     num_cama = models.PositiveSmallIntegerField("# Cama", blank=True, null=True)
     sala = models.CharField("Sala", max_length=10, blank=True, null=True)
@@ -202,8 +171,36 @@ class IndiceValue(BaseModel):
         verbose_name_plural = "Evaluaciones Índices"
 
     def save(self, **kwargs):
-        self.resultado = calcular_resultado()
+        self.resultado = (
+            self.calcular_resultado()
+        )  # Llama al método calcular_resultado() usando self
         super().save(**kwargs)
+
+    def calcular_resultado(self):
+        """Calcula el resultado general del índice."""
+        puntuacion_incontinencia = self.incontinencia.puntuacion
+        puntuacion_movilidad = self.movilidad.puntuacion
+        puntuacion_actividad = self.actividad.puntuacion
+        puntuacion_estado_mental = self.estado_mental.puntuacion
+        puntuacion_estado_general = self.estado_general.puntuacion
+
+        # Calculamos el resultado general
+        indice_norton = (
+            puntuacion_incontinencia
+            + puntuacion_movilidad
+            + puntuacion_actividad
+            + puntuacion_estado_mental
+            + puntuacion_estado_general
+        )
+
+        if indice_norton <= 12:
+            resultado_calculado = "Muy alto"
+        elif indice_norton <= 14:
+            resultado_calculado = "Riesgo evidente"
+        else:
+            resultado_calculado = "No hay riesgo"
+
+        return resultado_calculado
 
     def __str__(self):
         return f" {self.id} - {self.ind_paciente.nombre} "
