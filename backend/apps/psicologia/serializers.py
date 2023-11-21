@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Defectologia, Enars, Resultado, SaludMental, Yasevage
+from .models import Defectologia, Enars, SaludMental, Yasevage
 
 
 class YasevageSerializer(serializers.ModelSerializer):
@@ -24,10 +24,4 @@ class DefectologiaSerializer(serializers.ModelSerializer):
 class SaludMentalSerializer(serializers.ModelSerializer):
     class Meta:
         model = SaludMental
-        fields = "__all__"
-
-
-class ResultadoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Resultado
         fields = "__all__"

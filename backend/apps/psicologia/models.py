@@ -2,22 +2,76 @@ from apps.base.models import BaseModel
 from django.db import models
 
 from ..tsocial.models import Paciente
+from .modelos_nomenclador import (
+    NomAlgVeces,
+    NomAtenCalculo,
+    NomDepModerada,
+    NomDepSevera,
+    NomFijacion,
+    NomFrecuente,
+    NomLenguaje,
+    NomMemoria,
+    NomNoDepresion,
+    NomNormal,
+    NomNunca,
+    NomOrientemporal,
+    NomOrientespacial,
+    NomSiempre,
+)
 
 
 class SaludMental(BaseModel):
-    orientemporal = models.PositiveSmallIntegerField(
-        "Orientación Temporal", blank=True, null=True
+    resultado = models.CharField("Resultado", max_length=15, blank=True, null=True)
+    fecha = models.DateField("Fecha evaluación", blank=True, null=True)
+
+    orientemporal = models.ForeignKey(
+        NomOrientemporal,
+        on_delete=models.CASCADE,
+        verbose_name="Orientación Temporal",
+        related_name="orientemporal",
     )
-    orientespacial = models.PositiveSmallIntegerField(
-        "Orientación Espacial", blank=True, null=True
+
+    orientespacial = models.ForeignKey(
+        NomOrientespacial,
+        on_delete=models.CASCADE,
+        verbose_name="Orientación Espacial",
+        related_name="orientespacial",
     )
-    fijacion = models.PositiveSmallIntegerField("Fijación", blank=True, null=True)
-    atcalculo = models.PositiveSmallIntegerField(
-        "Atención y Cálculo", blank=True, null=True
+
+    fijacion = models.ForeignKey(
+        NomFijacion,
+        on_delete=models.CASCADE,
+        verbose_name="Fijacion",
+        related_name="fijacion",
     )
-    memoria = models.PositiveSmallIntegerField("Memoria", blank=True, null=True)
-    lenguaje = models.PositiveSmallIntegerField("Lenguaje", blank=True, null=True)
-    normal = models.PositiveSmallIntegerField("Normal", blank=True, null=True)
+
+    atencalculo = models.ForeignKey(
+        NomAtenCalculo,
+        on_delete=models.CASCADE,
+        verbose_name="Atención Cálculo",
+        related_name="atencalculo",
+    )
+
+    memoria = models.ForeignKey(
+        NomMemoria,
+        on_delete=models.CASCADE,
+        verbose_name="Memoria",
+        related_name="memoria",
+    )
+
+    lenguaje = models.ForeignKey(
+        NomLenguaje,
+        on_delete=models.CASCADE,
+        verbose_name="Lenguaje",
+        related_name="lenguaje",
+    )
+
+    normal = models.ForeignKey(
+        NomNormal,
+        on_delete=models.CASCADE,
+        verbose_name="Normal",
+        related_name="normal",
+    )
 
     sm_paciente = models.ForeignKey(
         Paciente,
@@ -31,18 +85,69 @@ class SaludMental(BaseModel):
         verbose_name = "Salud Mental"
         verbose_name_plural = "Salud Mentales"
 
+        # Calcula la suma total de los puntajes
+        # def save(self, **kwargs):
+        #    self.resultado = (
+        #        self.calcular_resultado()
+        #    )  # Llama al método calcular_resultado() usando self
+
+        # super().save(**kwargs)
+
+    # def calcular_resultado(self):
+    # """Calcula el resultado general de la salud mental."""
+    # puntuacion_orientemporal = self.orientemporal.puntuacion
+    # puntuacion_orientespacial = self.orientespacial.puntuacion
+    # puntuacion_fijacion = self.fijacion.puntuacion
+    # puntuacion_atencalculo = self.atencalculo.puntuacion
+    # puntuacion_memoria = self.memoria.puntuacion
+    # puntuacion_lenguaje = self.lenguaje.puntuacion
+    # puntuacion_normal = self.normal.puntuacion
+
+    # Calculamos el resultado general
+    # suma_total = (
+    #   puntuacion_orientemporal
+    #   + puntuacion_orientespacial
+    #   + puntuacion_fijacion
+    #   + puntuacion_atencalculo
+    #   + puntuacion_memoria
+    #   + puntuacion_lenguaje
+    #   + puntuacion_normal
+    # )
+
+    # Comprueba si la suma total indica un déficit cognitivo
+    # if suma_total >= 6:
+    #    sugerencia = "Sugiere déficit cognitivo"
+    # else:
+    #    sugerencia = "No sugiere déficit cognitivo"
+
     def __str__(self):
         return f" {self.id} - {self.sm_paciente.nombre} "
 
 
 class Yasevage(BaseModel):
-    depmoderada = models.PositiveSmallIntegerField(
-        "Depresión Moderada", blank=True, null=True
+    resultado = models.CharField("Resultado", max_length=15, blank=True, null=True)
+    fecha = models.DateField("Fecha evaluación", blank=True, null=True)
+
+    depmoderada = models.ForeignKey(
+        NomDepModerada,
+        on_delete=models.CASCADE,
+        verbose_name="Depresión Moderada",
+        related_name="depmoderada",
     )
-    depsevera = models.PositiveSmallIntegerField(
-        "Depresión Severa", blank=True, null=True
+
+    depsevera = models.ForeignKey(
+        NomDepSevera,
+        on_delete=models.CASCADE,
+        verbose_name="Depresión Severa",
+        related_name="depsevera",
     )
-    normal = models.PositiveSmallIntegerField("Normal", blank=True, null=True)
+
+    nodepresion = models.ForeignKey(
+        NomNoDepresion,
+        on_delete=models.CASCADE,
+        verbose_name="No Depresión",
+        related_name="nodepresion",
+    )
 
     y_paciente = models.ForeignKey(
         Paciente,
@@ -61,12 +166,36 @@ class Yasevage(BaseModel):
 
 
 class Enars(BaseModel):
-    algveces = models.PositiveSmallIntegerField("Algunas Veces", blank=True, null=True)
-    frecuente = models.PositiveSmallIntegerField(
-        "Frecuentemente", blank=True, null=True
+    resultado = models.CharField("Resultado", max_length=15, blank=True, null=True)
+    fecha = models.DateField("Fecha evaluación", blank=True, null=True)
+
+    algveces = models.ForeignKey(
+        NomAlgVeces,
+        on_delete=models.CASCADE,
+        verbose_name="Algunas Veces",
+        related_name="algveces",
     )
-    siempre = models.PositiveSmallIntegerField("Siempre", blank=True, null=True)
-    nunca = models.PositiveSmallIntegerField("Nunca", blank=True, null=True)
+
+    frecuente = models.ForeignKey(
+        NomFrecuente,
+        on_delete=models.CASCADE,
+        verbose_name="Frecuentemente",
+        related_name="frecuente",
+    )
+
+    siempre = models.ForeignKey(
+        NomSiempre,
+        on_delete=models.CASCADE,
+        verbose_name="Siempre",
+        related_name="siempre",
+    )
+
+    nunca = models.ForeignKey(
+        NomNunca,
+        on_delete=models.CASCADE,
+        verbose_name="Nunca",
+        related_name="nunca",
+    )
 
     en_paciente = models.ForeignKey(
         Paciente,
@@ -82,30 +211,6 @@ class Enars(BaseModel):
 
     def __str__(self):
         return f" {self.id} - {self.en_paciente.nombre} "
-
-
-class Resultado(BaseModel):
-    depresion = models.PositiveSmallIntegerField("Depresion", blank=True, null=True)
-    intentosuicida = models.PositiveSmallIntegerField(
-        "Intento Suicida", blank=True, null=True
-    )
-    demencia = models.PositiveSmallIntegerField("Demencia", blank=True, null=True)
-    normales = models.PositiveSmallIntegerField("Normales", blank=True, null=True)
-
-    resul_paciente = models.ForeignKey(
-        Paciente,
-        on_delete=models.CASCADE,
-        verbose_name="Paciente",
-        related_name="resul_paciente",
-    )
-
-    class Meta:
-        db_table = "resultado"
-        verbose_name = "Resultado"
-        verbose_name_plural = "Resultados"
-
-    def __str__(self):
-        return f" {self.id} - {self.resul_paciente.nombre} "
 
 
 class Defectologia(BaseModel):
