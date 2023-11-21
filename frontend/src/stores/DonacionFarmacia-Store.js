@@ -8,12 +8,13 @@ export const useDonacionFarmaciaStore = defineStore("DonacionFarmacia", {
     loading: false,
 
     tempDonacion: {
-      id_donacion: 0,
+      id: 0,
       lote_don: "",
       prod_don: "",
       und_med: "",
       cant_don: 0,
       fecha_venced: "",
+      don_disp: 0,
     },
 
     showDialogDF: false,
@@ -33,6 +34,7 @@ export const useDonacionFarmaciaStore = defineStore("DonacionFarmacia", {
         und_med: "",
         cant_don: 0,
         fecha_venced: "",
+        don_disp: 0,
       };
     },
 
@@ -40,14 +42,14 @@ export const useDonacionFarmaciaStore = defineStore("DonacionFarmacia", {
     async listDonFarm() {
       this.loading = true;
       try {
-        const url = "/api/v1/donacionfarmacias";
+        const url = "/farmacia/donacion/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.donacionfarmacia = response.data;
+        this.donacionfarmacia = response.data.results;
         this.loading = false;
       } catch (error) {
         console.log(
@@ -60,9 +62,16 @@ export const useDonacionFarmaciaStore = defineStore("DonacionFarmacia", {
     //TODO: Accion para crear Registros
     async createDonFarm() {
       try {
-        const url = "/api/v1/donacionfarmacias";
+        const url = "/farmacia/donacion/";
         // const token = LocalStorage.getItem("access_token");
-        const response = await api.post(url, this.tempDonacion, {
+        const formData = new FormData();
+        formData.append("lote_don", this.tempDonacion.lote_don);
+        formData.append("prod_don", this.tempDonacion.prod_don);
+        formData.append("und_med", this.tempDonacion.und_med);
+        formData.append("cant_don", this.tempDonacion.cant_don);
+        formData.append("fecha_venced", this.tempDonacion.fecha_venced);
+        formData.append("don_disp", this.tempDonacion.don_disp.value);
+        const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -94,10 +103,10 @@ export const useDonacionFarmaciaStore = defineStore("DonacionFarmacia", {
     },
 
     //TODO: Accion para obtener un Registro desde un ID
-    async retrieveDonFarm(id_donacion) {
+    async retrieveDonFarm(id) {
       try {
         this.loading = true;
-        const url = `/api/v1/donacionfarmacias/${id_donacion}/`;
+        const url = `/farmacia/donacion/${id}/`;
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
@@ -118,13 +127,12 @@ export const useDonacionFarmaciaStore = defineStore("DonacionFarmacia", {
       },
 
     //TODO: Accion para modificar un Registro desde un ID
-    async updateDonFarm(id_donacion) {
+    async updateDonFarm(id) {
       try {
-        const url = `/api/v1/donacionfarmacias/${id_donacion}/`;
+        const url = `/farmacia/donacion/${id}/`;
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          id_donacion: this.tempDonacion.id_donacion,
           lote_don: this.tempDonacion.lote_don,
           prod_don: this.tempDonacion.prod_don,
           und_med: this.tempDonacion.und_med,
@@ -132,7 +140,7 @@ export const useDonacionFarmaciaStore = defineStore("DonacionFarmacia", {
           fecha_venced: this.tempDonacion.fecha_venced,
         };
 
-        const response = await api.put(
+        const response = await api.patch(
           url,
           request
           //   , {
@@ -172,7 +180,7 @@ export const useDonacionFarmaciaStore = defineStore("DonacionFarmacia", {
       }
     },
 
-    async destroyDonFarm(id_donacion) {
+    async destroyDonFarm(id) {
       try {
         Dialog.create({
           html: true,
@@ -182,7 +190,7 @@ export const useDonacionFarmaciaStore = defineStore("DonacionFarmacia", {
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const url = `/api/v1/donacionfarmacias/${id_donacion}/`;
+          const url = `/farmacia/donacion/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
              //headers: {

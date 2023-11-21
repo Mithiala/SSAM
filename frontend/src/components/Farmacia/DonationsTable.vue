@@ -7,7 +7,7 @@
       color="green"
       :rows="donacionfarmacia"
       :columns="columns"
-      row-key="id_donacion"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -96,14 +96,14 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyDonFarm(props.row.id_donacion)"
+            @click="destroyDonFarm(props.row.id)"
           />
         </q-td>
       </template>
     </q-table>
 
     <!-- TODO: Añadir - Editar -->
-    <q-dialog v-model="showDialogDF" persistent full-width >
+    <q-dialog v-model="showDialogDF" persistent full-medium >
       <q-card class="column medium">
         <q-card-section>
           <q-form>
@@ -111,7 +111,7 @@
 
               <!-- TODO: "Lote" -->
               <q-input
-                class="col-2"
+                class="col-3"
                 dense
                 outlined
                 type="text"
@@ -121,7 +121,7 @@
 
               <!-- TODO: "Producto" -->
               <q-input
-                class="col-4"
+                class="col-6"
                 dense
                 outlined
                 type="text"
@@ -131,7 +131,7 @@
 
               <!-- TODO: "U/M" -->
               <q-input
-                class="col-1"
+                class="col-2"
                 dense
                 outlined
                 type="text"
@@ -141,7 +141,7 @@
 
               <!-- TODO: "Cantidad" -->
               <q-input
-                class="col-1"
+                class="col-2"
                 dense
                 outlined
                 type="number"
@@ -152,16 +152,16 @@
 
               <!-- TODO: "Fecha de vencimiento" -->
               <q-input
-                cclass="col-2"
+                class="col-5"
                 dense
                 outlined
                 label="Fecha de vencimiento"
                 v-model="tempDonacion.fecha_venced"
-                mask="date"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingrese la fecha de nacimiento',
+                    'Por favor inserte la fecha de vencimiento',
                 ]"
               >
                 <template v-slot:append>
@@ -171,7 +171,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempDonacion.fecha_venced">
+                      <q-date
+                        v-model="tempDonacion.fecha_venced"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -189,15 +193,15 @@
             </div>
             <div class="q-mt-sm row justify-center">
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Actualizar"
                 color="light-blue-8"
                 v-if="EditDF"
-                @click="updateDonFarm(tempDonacion.id_donacion)"
+                @click="updateDonFarm(tempDonacion.id)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Añadir"
                 color="light-blue-8"
@@ -205,7 +209,7 @@
                 @click="createDonFarm(tempDonacion)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 color="purple-9"
                 label="Salir"
                 @click="showDialogDF = false"
@@ -244,16 +248,6 @@ const { donacionfarmacia, AddDF, EditDF, showDialogDF, loading, tempDonacion } =
   storeToRefs(useDonacionFarmaciaStore());
 
   const columns = [
-  {
-    name: 'id_donacion',
-    required: true,
-    label: 'Id',
-    align: 'left',
-    field: row => row.id_donacion,
-    format: val => `${val}`,
-    sortable: true,
-    align: "center",
-  },
   {
     name: "lote_don",
     align: "center",

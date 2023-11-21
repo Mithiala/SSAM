@@ -8,7 +8,7 @@ export const useSolicitudRecibidaStore = defineStore("SolicitudRecibida", {
     loading: false,
 
     tempSolenv: {
-      id_ped: 0,
+      id: 0,
       producto: "",
       unidad_medida: "",
       cantidad: 0,
