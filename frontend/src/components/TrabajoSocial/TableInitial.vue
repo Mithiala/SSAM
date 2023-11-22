@@ -353,7 +353,6 @@
                 option-value="value"
                 option-label="label"
               />
-              <!-- style="width: 250px" -->
 
               <!-- TODO:  "Fecha" -->
               <q-input

@@ -9,7 +9,7 @@ export const usePacientesStore = defineStore("Pacientes", {
     edad: 0,
 
     tempPaciente: {
-      id: 0,
+      id: null,
       image: "",
       nombre: "",
       edad: 0,
@@ -38,7 +38,7 @@ export const usePacientesStore = defineStore("Pacientes", {
       reportado_por: "",
       motivo_reporte: "",
       problema_social: "",
-      centro: 0,
+      centro: null,
     },
 
     showDialogDG: false,
@@ -83,7 +83,7 @@ export const usePacientesStore = defineStore("Pacientes", {
         reportado_por: "",
         motivo_reporte: "",
         problema_social: "",
-        centro: 0,
+        centro: null,
         this: this.pacientes,
       }
     },

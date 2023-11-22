@@ -263,18 +263,23 @@
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempdiscapacidad.disc_paciente"
                 label="Nombre del paciente"
-                :options="DiscapOptions"
-                style="width: 250px"
-                behavior="menu"
+                :options="AyudaOptions"
+                @filter="filterAyuda"
+                @popup-show="getNomAyuda"
+                option-value="value"
+                option-label="label"
               />
 
 
               <!-- TODO: "Discapacidad motora" -->
               <q-checkbox
-                style="max-width: 240px"
+                style="max-width: 200px"
                 class="col-3"
                 rigth-label
                 dense
@@ -285,7 +290,7 @@
 
               <!-- TODO: "Discapacidad auditiva" -->
               <q-checkbox
-                style="max-width: 240px"
+                style="max-width: 200px"
                 class="col-3"
                 rigth-label
                 dense
@@ -296,7 +301,7 @@
 
               <!-- TODO: "Visual" -->
               <q-checkbox
-                style="max-width: 240px"
+                style="max-width: 200px"
                 class="col-3"
                 rigth-label
                 dense
@@ -307,7 +312,7 @@
 
               <!-- TODO: "Discapacidad intelectual" -->
               <q-checkbox
-                style="max-width: 240px"
+                style="max-width: 200px"
                 class="col-3"
                 rigth-label
                 dense
@@ -318,7 +323,7 @@
 
               <!-- TODO: "Discapacidad mixta" -->
               <q-checkbox
-                style="max-width: 240px"
+                style="max-width: 200px"
                 class="col-3"
                 rigth-label
                 dense
@@ -329,7 +334,7 @@
 
               <!-- TODO: "Psicopatía" -->
               <q-checkbox
-                style="max-width: 240px"
+                style="max-width: 200px"
                 class="col-3"
                 rigth-label
                 dense
@@ -340,7 +345,7 @@
 
               <!-- TODO: "Incontinencia urinaria" -->
               <q-checkbox
-                style="max-width: 240px"
+                style="max-width: 200px"
                 class="col-3"
                 rigth-label
                 dense
@@ -351,7 +356,7 @@
 
               <!-- TODO: "Incontinencia fecal" -->
               <q-checkbox
-                style="max-width: 240px"
+                style="max-width: 200px"
                 class="col-3"
                 rigth-label
                 dense
@@ -362,7 +367,7 @@
 
               <!-- TODO: "Incontinencia mixta" -->
               <q-checkbox
-                style="max-width: 240px"
+                style="max-width: 200px"
                 class="col-3"
                 rigth-label
                 dense
@@ -408,25 +413,28 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useDiscapacidadStore } from "src/stores/Discapacidad-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listDiscap();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempDiscap,
   listDiscap,
-  listPacientes,
   createDiscap,
   updateDiscap,
   destroyDiscap,
 } = useDiscapacidadStore();
 
-const { discapacidad, AddDG, EditDG, showDialogDG, loading, tempdiscapacidad, tempPaciente } =
+const { discapacidad, AddDG, EditDG, showDialogDG, loading, tempdiscapacidad } =
   storeToRefs(useDiscapacidadStore());
+
+const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
@@ -511,16 +519,38 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
-const DiscapOptions = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+const AyudaOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomAyuda = async () => {
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  AyudaOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterAyuda(val, update) {
+  if (val === "") {
+    update(() => {
+      AyudaOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    AyudaOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const visibleColumns = ref([
   'nombre',

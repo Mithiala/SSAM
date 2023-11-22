@@ -250,12 +250,17 @@
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempDefect.d_paciente"
                 label="Nombre del paciente"
-                :options="DefectOption"
-                style="width: 250px"
-                behavior="menu"
+                :options="DefectOptions"
+                @filter="filterDefect"
+                @popup-show="getNomDefect"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO: "Defectología auditivo" -->
@@ -433,25 +438,28 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useDefectologiaStore } from "src/stores/Defectologia-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listDef();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempDef,
   listDef,
-  listPacientes,
   createDef,
   updateDef,
   destroyDef,
 } = useDefectologiaStore();
 
-const { defectologia, AddDG, EditDG, showDialogDG, loading, tempDefect, tempPaciente } =
+const { defectologia, AddDG, EditDG, showDialogDG, loading, tempDefect } =
   storeToRefs(useDefectologiaStore());
+
+const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
@@ -588,16 +596,38 @@ const LenguajeOptions = [
   "Normal",
 ];
 
-const DefectOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+const DefectOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomDefect = async () => {
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  DefectOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterDefect(val, update) {
+  if (val === "") {
+    update(() => {
+      DefectOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    DefectOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const visibleColumns = ref([
   'nombre',

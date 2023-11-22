@@ -5,24 +5,19 @@ import { Notify, Dialog } from "quasar";
 export const useIndiceStore = defineStore("Indice", {
   state: () => ({
     indice: [],
-    pacientes: [],
     loading: false,
 
     tempIndice: {
-      id: 0,
-      estado_general: "",
+      id: null,
+      estado_general: null,
       estado_mental: null,
-      actividad: "",
-      movilidad: "",
-      incontinencia: "",
-      fecha: "",
-      resultado: "",
-      resultadoIndice: "",
-      ind_paciente: 0,
-    },
-
-    tempPaciente: {
-      nombre: "",
+      actividad: null,
+      movilidad: null,
+      incontinencia: null,
+      fecha: null,
+      resultado: null,
+      resultadoIndice: null,
+      ind_paciente: null,
     },
 
     showDialogDG: false,
@@ -37,15 +32,15 @@ export const useIndiceStore = defineStore("Indice", {
     resetTempIndices() {
       console.log("aqui receteo");
       this.tempIndice = {
-        estado_general: "",
-        estado_mental: "",
-        actividad: "",
-        movilidad: "",
-        incontinencia: "",
-        fecha: "",
-        resultado: "",
-        ind_paciente: 0,
-        resultadoIndice: "",
+        estado_general: null,
+        estado_mental: null,
+        actividad: null,
+        movilidad: null,
+        incontinencia: null,
+        fecha: null,
+        resultado: null,
+        ind_paciente: null,
+        resultadoIndice: null,
       };
     },
 
@@ -65,26 +60,6 @@ export const useIndiceStore = defineStore("Indice", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Indice-Store.js:99 ~ listIndices ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/asistmedica/indice/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

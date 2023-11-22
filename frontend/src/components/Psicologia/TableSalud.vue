@@ -121,7 +121,7 @@
             dense
             color="warning"
             icon="delete"
-            @click="destroyDef(props.row.id)"
+            @click="destroySaludm(props.row.id)"
           />
         </q-td>
       </template>
@@ -140,44 +140,51 @@
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempSalud.sm_paciente"
                 label="Nombre del paciente"
-                :options="SaludOption"
-                style="width: 250px"
-                behavior="menu"
+                :options="SaludOptions"
+                @filter="filterSalud"
+                @popup-show="getNomSalud"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Orientación Temporal" -->
-              <q-input
-                class="col-2"
-                outlined
+              <q-select
+                class="col-3"
                 dense
-                type="number"
+                options-dense
+                outlined
+                use-input
+                input-debounce="0"
+                v-model="tempSalud.sm_paciente"
                 label="Orientación Temporal"
-                lazy-rules
-                v-model="tempSalud.orientemporal"
-                :rules="[
-                  (val) =>
-                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
+                :options="OTOptions"
+                @filter="filterOT"
+                @popup-show="getNomOrientacionTemporal"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Orientación Espacial" -->
-              <q-input
-                class="col-2"
-                outlined
+              <q-select
+                class="col-3"
                 dense
-                type="number"
+                options-dense
+                outlined
+                use-input
+                input-debounce="0"
+                v-model="tempSalud.sm_paciente"
                 label="Orientación Espacial"
-                lazy-rules
-                v-model="tempSalud.orientespacial"
-                :rules="[
-                  (val) =>
-                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
+                :options="OEOptions"
+                @filter="filterEM"
+                @popup-show="getNomOrientacionEspacial"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Fijación" -->
@@ -300,33 +307,55 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useSaludStore } from "src/stores/Salud-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
+import { useNomenclatorStore } from "src/stores/Nomenclator-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listSaludm();
-  await listPacientes();
+  await listnomestadomental();
+  await listnomorientemporal();
+  await listnomorientespacial();
   // }
 });
+
+const { listnomestadomental } = useNomenclatorStore();
+const { nomestadomental } = storeToRefs(useNomenclatorStore());
+
+const { listnomorientemporal } = useNomenclatorStore();
+const { nomorientemporal } = storeToRefs(useNomenclatorStore());
+
+const { listnomorientespacial } = useNomenclatorStore();
+const { nomorientespacial } = storeToRefs(useNomenclatorStore());
 
 const {
   resetTempSaludm,
   listSaludm,
-  listPacientes,
   createSaludm,
   updateSaludm,
   destroySaludm,
 } = useSaludStore();
 
-const { salud, AddSM, EditSM, showDialogSM, loading, tempSalud, tempPaciente } =
+const { salud, AddSM, EditSM, showDialogSM, loading, tempSalud } =
   storeToRefs(useSaludStore());
+
+const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
+  },
+  {
+    name: 'fecha',
+    align: 'center',
+    label: 'Fecha evaluación',
+    field: 'fecha',
   },
 
   {
@@ -368,8 +397,14 @@ const { salud, AddSM, EditSM, showDialogSM, loading, tempSalud, tempPaciente } =
   {
     name: 'normal',
     align: 'center',
-    label: 'Normalo',
+    label: 'Normal',
     field: 'normal'
+  },
+  {
+    name: "resultado",
+    align: "center",
+    label: "Resultado",
+    field: "resultado",
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
 ]
@@ -390,16 +425,110 @@ const openAddDialog = () => {
   showDialogSM.value = true;
 };
 
-const SaludOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+const SaludOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomSalud = async () => {
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  SaludOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterSalud(val, update) {
+  if (val === "") {
+    update(() => {
+      SaludOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    SaludOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
+
+// ----------Orientación Temporal--------------------
+const OTOptions = ref([]);
+const nomorientemporalArray = ref([nomorientemporal.value]);
+
+const getNomOrientacionTemporal = async () => {
+  console.log("getNomOrientacionTemporal");
+  await listnomorientemporal();
+  nomorientemporalArray.value = nomorientemporal.value;
+  OTOptions.value = nomorientemporal.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterOT(val, update) {
+  if (val === "") {
+    update(() => {
+      OTOptions.value = nomorientemporalArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    OTOptions.value = nomorientemporalArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
+
+// ----------Orientación Espacial--------------------
+const OEOptions = ref([]);
+const nomorientespacialArray = ref([nomorientespacial.value]);
+
+const getNomOrientacionEspacial = async () => {
+  console.log("getNomOrientacionTemporal");
+  await listnomorientespacial();
+  nomorientespacialArray.value = nomorientespacial.value;
+  OEOptions.value = nomorientespacial.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterEM(val, update) {
+  if (val === "") {
+    update(() => {
+      OEOptions.value = nomorientespacialArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    OEOptions.value = nomorientespacialArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
 
 const visibleColumns = ref([
   'nombre',
@@ -412,6 +541,7 @@ const visibleColumns = ref([
   'memoria',
   'lenguaje',
   'normal',
+  'resultado',
   'actions',
 ])
 

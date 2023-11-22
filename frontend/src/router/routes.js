@@ -88,11 +88,6 @@ const routes = [
         name: "yasevageps",
         component: () => import("src/pages/Psicologia/YasevagePage.vue"),
       },
-      {
-        path: "resultadops",
-        name: "resultadops",
-        component: () => import("src/pages/Psicologia/ResultadoPage.vue"),
-      },
     ],
   },
   {

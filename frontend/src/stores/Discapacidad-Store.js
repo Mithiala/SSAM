@@ -5,11 +5,10 @@ import { Notify, Dialog } from "quasar";
 export const useDiscapacidadStore = defineStore("Discapacidad", {
   state: () => ({
     discapacidad: [],
-    pacientes: [],
     loading: false,
 
     tempdiscapacidad: {
-      id: 0,
+      id: null,
       motora: false,
       auditiva: false,
       visual: false,
@@ -20,12 +19,7 @@ export const useDiscapacidadStore = defineStore("Discapacidad", {
       inconturinaria: false,
       incontfecal: false,
       incontmixta: false,
-      disc_paciente: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
+      disc_paciente: null,
     },
 
     showDialogDG: false,
@@ -50,7 +44,7 @@ export const useDiscapacidadStore = defineStore("Discapacidad", {
         inconturinaria: false,
         incontfecal: false,
         incontmixta: false,
-        disc_paciente: 0,
+        disc_paciente: null,
       };
     },
 
@@ -70,26 +64,6 @@ export const useDiscapacidadStore = defineStore("Discapacidad", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Discapacidad-Store.js:99 ~ listDiscap ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

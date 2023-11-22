@@ -5,23 +5,14 @@ import { Notify, Dialog } from "quasar";
 export const useControlPasesStore = defineStore("ControlPases", {
   state: () => ({
     controlpases: [],
-    pacientes: [],
     loading: false,
 
     tempPase: {
-      id_pase: 0,
+      id_pase: null,
       fecha_salida: "",
       direc_part: "",
       fecha_regreso: "",
-      cp_paciente: 0,
-      cp_familiar: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
-      edad: 0,
-      num_hs: 0,
+      cp_paciente: null,
     },
 
     showDialogDP: false,
@@ -39,8 +30,7 @@ export const useControlPasesStore = defineStore("ControlPases", {
         fecha_salida: "",
         direc_part: "",
         fecha_regreso: "",
-        cp_paciente: 0,
-        cp_familiar: 0,
+        cp_paciente: null,
       };
     },
 
@@ -60,26 +50,6 @@ export const useControlPasesStore = defineStore("ControlPases", {
       } catch (error) {
         console.log(
           "🚀 ~ file: ControlPases-Store.js:99 ~ listPases ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

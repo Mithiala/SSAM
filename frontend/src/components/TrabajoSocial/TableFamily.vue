@@ -134,12 +134,17 @@
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempFamiliar.cf_paciente"
                 label="Nombre del paciente"
                 :options="FamiliaOption"
-                style="width: 250px"
-                behavior="menu"
+                @filter="filterFamilia"
+                @popup-show="getNomFamilia"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Nombre y Apellidos" -->
@@ -149,7 +154,7 @@
                 dense
                 type="text"
                 label="Nombre y Apellidos"
-                v-model="tempFamiliar.nombre"
+                v-model="tempFamiliar.nombre_f"
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
@@ -305,25 +310,28 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useComposicionFamiliarStore } from "src/stores/ComposicionFamiliar-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listFamiliares();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempFamiliares,
   listFamiliares,
-  listPacientes,
   createFamiliares,
   updateFamiliares,
   destroyFamiliares,
 } = useComposicionFamiliarStore();
 
-const { composicionfamiliar, AddDG, EditDG, showDialogDG, loading, tempFamiliar, tempPaciente } =
+const { composicionfamiliar, AddDG, EditDG, showDialogDG, loading, tempFamiliar } =
   storeToRefs(useComposicionFamiliarStore());
+
+  const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
@@ -341,11 +349,11 @@ const { composicionfamiliar, AddDG, EditDG, showDialogDG, loading, tempFamiliar,
   },
 
   {
-    name: 'nombre',
+    name: 'nombre_f',
     align: 'center',
     sortable: true,
     label: 'Nombre y Apellidos',
-    field: 'nombre',
+    field: 'nombre_f',
   },
   {
     name: "edad",
@@ -416,16 +424,38 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
-const FamiliaOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+const FamiliaOption = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomFamilia = async () => {
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  FamiliaOption.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterFamilia(val, update) {
+  if (val === "") {
+    update(() => {
+      FamiliaOption.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    FamiliaOption.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const CivilOptions = [
   "Casado",
@@ -455,7 +485,7 @@ const ParentOptions = [
 const visibleColumns = ref([
 'nombre',
 'recibevisita',
-'nombre',
+'nombre_f',
 'edad',
 'parentesco',
 'telefono',

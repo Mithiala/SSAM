@@ -296,7 +296,6 @@ const { nomestadomental } = storeToRefs(useNomenclatorStore());
 const {
   resetTempIndices,
   listIndices,
-  listPacientes,
   createIndices,
   updateIndices,
   destroyIndices,
@@ -309,7 +308,6 @@ const {
   showDialogDG,
   loading,
   tempIndice,
-  tempPaciente,
 } = storeToRefs(useIndiceStore());
 
 const resultadoIndice = useIndiceStore();

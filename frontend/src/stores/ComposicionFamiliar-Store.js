@@ -5,12 +5,11 @@ import { Notify, Dialog } from "quasar";
 export const useComposicionFamiliarStore = defineStore("ComposicionFamiliar", {
   state: () => ({
     composicionfamiliar: [],
-    pacientes: [],
     loading: false,
 
     tempFamiliar: {
-      id: 0,
-      nombre: "",
+      id: null,
+      nombre_f: "",
       edad: 0,
       parentesco: "",
       telefono: 0,
@@ -19,13 +18,7 @@ export const useComposicionFamiliarStore = defineStore("ComposicionFamiliar", {
       escolaridad: "",
       ocupacion: "",
       ingreso_economico: "",
-      cf_paciente: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
-      recibevisita: false,
+      cf_paciente: null,
     },
 
     showDialogDG: false,
@@ -40,7 +33,7 @@ export const useComposicionFamiliarStore = defineStore("ComposicionFamiliar", {
     resetTempFamiliares() {
       console.log("aqui receteo");
       this.tempFamiliar = {
-        nombre: "",
+        nombre_f: "",
         edad: 0,
         parentesco: "",
         telefono: 0,
@@ -49,7 +42,7 @@ export const useComposicionFamiliarStore = defineStore("ComposicionFamiliar", {
         escolaridad: "",
         ocupacion: "",
         ingreso_economico: "",
-        cf_paciente: 0,
+        cf_paciente: null,
       };
     },
 
@@ -74,33 +67,13 @@ export const useComposicionFamiliarStore = defineStore("ComposicionFamiliar", {
       }
     },
 
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
-          error
-        );
-      }
-    },
-
     //TODO: Accion para crear Registros
     async createFamiliares() {
       try {
         const url = "/tsocial/cfamiliar/";
         // const token = LocalStorage.getItem("access_token");
         const formData = new FormData();
-        formData.append("nombre", this.tempFamiliar.nombre);
+        formData.append("nombre_f", this.tempFamiliar.nombre_f);
         formData.append("edad", this.tempFamiliar.edad);
         formData.append("telefono", this.tempFamiliar.telefono);
         formData.append("parentesco", this.tempFamiliar.parentesco);
@@ -173,7 +146,7 @@ export const useComposicionFamiliarStore = defineStore("ComposicionFamiliar", {
         // const token = LocalStorage.getItem("access_token");
 
         const request = {
-          nombre: this.tempFamiliar.nombre,
+          nombre_f: this.tempFamiliar.nombre_f,
           edad: this.tempFamiliar.edad,
           parentesco: this.tempFamiliar.parentesco,
           telefono: this.tempFamiliar.telefono,

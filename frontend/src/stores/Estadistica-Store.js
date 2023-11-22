@@ -5,11 +5,10 @@ import { Notify, Dialog } from "quasar";
 export const useEstadisticaStore = defineStore("Estadistica", {
   state: () => ({
     estadistica: [],
-    pacientes: [],
     loading: false,
 
     tempEstadistica: {
-      id: 0,
+      id: null,
       protesisdental: false,
       protesisauditiva: false,
       anteojos: false,
@@ -20,12 +19,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
       colchon: false,
       camaplana: false,
       camafowler: false,
-      at_paciente: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
+      at_paciente: null,
     },
 
     showDialogDG: false,
@@ -50,7 +44,7 @@ export const useEstadisticaStore = defineStore("Estadistica", {
         colchon: false,
         camaplana: false,
         camafowler: false,
-        at_paciente: 0,
+        at_paciente: null,
       };
     },
 
@@ -70,26 +64,6 @@ export const useEstadisticaStore = defineStore("Estadistica", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Estadistica-Store.js:99 ~ listEstad ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

@@ -5,11 +5,10 @@ import { Notify, Dialog, LocalStorage } from "quasar";
 export const useTrabajoDiarioStore = defineStore("TrabajoDiario", {
   state: () => ({
     trabajodiario: [],
-    pacientes: [],
     loading: false,
 
     tempDiario: {
-      id: 0,
+      id: null,
       fecha_ent: "",
       lugar_entrevista: "",
       tarjeton_medicamento: "",
@@ -19,14 +18,7 @@ export const useTrabajoDiarioStore = defineStore("TrabajoDiario", {
       mot_invest: "",
       efectuada: false,
       conclusiones: "",
-      td_paciente: 0,
-      td_familiar: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
-      num_hs: 0,
+      td_paciente: null,
     },
 
     showDialogDG: false,
@@ -50,8 +42,7 @@ export const useTrabajoDiarioStore = defineStore("TrabajoDiario", {
       mot_invest: "",
       efectuada: false,
       conclusiones: "",
-      td_paciente: 0,
-      td_familiar: 0,
+      td_paciente: null,
       };
     },
 
@@ -71,26 +62,6 @@ export const useTrabajoDiarioStore = defineStore("TrabajoDiario", {
       } catch (error) {
         console.log(
           "🚀 ~ file: TrabajoDiario-Store.js:99 ~ listDiarios ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        //const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          //headers: {
-            //Authorization: `Bearer ${token}`,
-          //},
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

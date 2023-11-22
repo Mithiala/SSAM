@@ -263,12 +263,17 @@
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempEstadistica.at_paciente"
                 label="Nombre del paciente"
-                :options="AyudaOption"
-                style="width: 250px"
-                behavior="menu"
+                :options="EstadOptions"
+                @filter="filterEstad"
+                @popup-show="getNomEstad"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO: "Usa prótesis dental" -->
@@ -418,31 +423,34 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useEstadisticaStore } from "src/stores/Estadistica-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listEstad();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempEstad,
   listEstad,
-  listPacientes,
   createEstad,
   updateEstad,
   destroyEstad,
 } = useEstadisticaStore();
 
-const { estadistica, AddDG, EditDG, showDialogDG, loading, tempEstadistica, tempPaciente } =
+const { estadistica, AddDG, EditDG, showDialogDG, loading, tempEstadistica } =
   storeToRefs(useEstadisticaStore());
+
+const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -526,16 +534,38 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
-const AyudaOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+const EstadOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomEstad = async () => {
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  EstadOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterEstad(val, update) {
+  if (val === "") {
+    update(() => {
+      EstadOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    EstadOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const visibleColumns = ref([
   'nombre',

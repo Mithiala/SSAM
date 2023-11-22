@@ -5,24 +5,18 @@ import { Notify, Dialog } from "quasar";
 export const useSaludStore = defineStore("Salud", {
   state: () => ({
     salud: [],
-    pacientes: [],
     loading: false,
 
     tempSalud: {
-      id: 0,
-      orientemporal: 0,
-      orientespacial: 0,
-      fijacion: 0,
-      atcalculo: 0,
-      memoria: 0,
-      lenguaje: 0,
-      normal: 0,
-      sm_paciente: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
+      id: null,
+      orientemporal: null,
+      orientespacial: null,
+      fijacion: null,
+      atcalculo: null,
+      memoria: null,
+      lenguaje: null,
+      normal: null,
+      sm_paciente: null,
     },
 
     showDialogSM: false,
@@ -37,14 +31,14 @@ export const useSaludStore = defineStore("Salud", {
     resetTempSaludm() {
       console.log("aqui receteo");
       this.tempSalud = {
-        orientemporal: 0,
-        orientespacial: 0,
-        fijacion: 0,
-        atcalculo: 0,
-        memoria: 0,
-        lenguaje: 0,
-        normal: 0,
-        sm_paciente: 0,
+        orientemporal: null,
+        orientespacial: null,
+        fijacion: null,
+        atcalculo: null,
+        memoria: null,
+        lenguaje: null,
+        normal: null,
+        sm_paciente: null,
       };
     },
 
@@ -64,26 +58,6 @@ export const useSaludStore = defineStore("Salud", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Salud-Store.js:99 ~ listSaludm ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

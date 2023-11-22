@@ -41,20 +41,18 @@ router.register(r"sindromes", SindromeViewSet, basename="Sindrome")
 router.register(r"pedido", SolicitudPedidoViewSet, basename="Solicitud de medicamentos")
 
 
-router.register(r"nomactividad", NomActividadViewSet, basename="NomActividadViewSet")
-router.register(r"nommovilidad", NomMovilidadViewSet, basename="NomMovilidadViewSet")
-router.register(
-    r"nomestadomental", NomEstadoMentalViewSet, basename="NomEstadoMentalViewSet"
-)
+router.register(r"nomactividad", NomActividadViewSet, basename="NomActividad")
+router.register(r"nommovilidad", NomMovilidadViewSet, basename="NomMovilidad")
+router.register(r"nomestadomental", NomEstadoMentalViewSet, basename="NomEstadoMental")
 router.register(
     r"nomestadogeneral",
     NomEstadoGeneralViewSet,
-    basename="NomEstadoGeneralViewSet",
+    basename="NomEstadoGeneral",
 )
 router.register(
     r"nomincontinencia",
     NomIncontinenciaViewSet,
-    basename="NomIncontinenciaViewSet",
+    basename="NomIncontinencia",
 )
 
 

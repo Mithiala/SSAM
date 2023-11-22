@@ -8,7 +8,6 @@
     <TableSalud />
     <TableEnars />
     <TableYasevage />
-    <TableResultado />
   </q-page>
 </template>
 
@@ -16,5 +15,4 @@
 import TableSalud from "src/components/Psicologia/TableSalud.vue"
 import TableEnars from "src/components/Psicologia/TableEnars.vue"
 import TableYasevage from "src/components/Psicologia/TableYasevage.vue"
-import TableResultado from "src/components/Psicologia/TableResultado.vue"
 </script>

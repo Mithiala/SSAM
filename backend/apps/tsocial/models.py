@@ -154,7 +154,7 @@ class EncuestaInicial(BaseModel):
 
 
 class ComposicionFamiliar(BaseModel):
-    nombre = models.CharField("Nombre", max_length=50, blank=False, null=False)
+    nombre_f = models.CharField("Nombre", max_length=50, blank=False, null=False)
     edad = models.PositiveSmallIntegerField("edad", blank=False, null=False)
     telefono = models.PositiveIntegerField("telefono", blank=False, null=False)
     direc_part = models.CharField("direc_part", max_length=50, blank=False, null=False)
@@ -183,7 +183,7 @@ class ComposicionFamiliar(BaseModel):
         verbose_name_plural = "Composiciones Familiares"
 
     def __str__(self):
-        return f" {self.id} - {self.cf_paciente.nombre} - {self.nombre}"
+        return f" {self.id} - {self.cf_paciente.nombre} - {self.nombre_f}"
 
 
 class TrabajoDiario(BaseModel):
@@ -221,7 +221,7 @@ class TrabajoDiario(BaseModel):
         verbose_name_plural = "Trabajos Diarios"
 
     def __str__(self):
-        return f" {self.id} - {self.td_paciente.nombre} - {self.td_familiar.nombre}"
+        return f" {self.id} - {self.td_paciente.nombre} - {self.td_familiar.nombre_f}"
 
 
 class ControlPase(BaseModel):

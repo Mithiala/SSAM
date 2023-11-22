@@ -731,13 +731,6 @@ const columns = [
     align: "center",
   },
   {
-    name: "antecedentes",
-    align: "center",
-    label: "Antecedentes",
-    field: "antecedentes",
-  },
-
-  {
     name: "recibevisita",
     label: "Recibe visitas",
     field: "recibevisita",
@@ -789,6 +782,12 @@ const columns = [
     name: "motivo_reporte",
     label: "Motivo de reporte",
     field: "motivo_reporte",
+    align: "center",
+  },
+  {
+    name: "antecedentes",
+    label: "Antecedentes",
+    field: "antecedentes",
     align: "center",
   },
   {

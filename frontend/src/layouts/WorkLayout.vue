@@ -10,22 +10,6 @@
           Sistema de Salud para Adulto Mayor
         </q-toolbar-title>
         <q-separator vertical inset />
-        <div id="listaNotificaciones">
-          <q-btn dense
-            stretch
-            unelevated
-            padding="5px"
-            icon="notifications"
-            @click="mostrarNotificaciones">
-            <q-badge
-            floating
-            color="green"
-            rounded
-            v-if="notificaciones.length > 0"
-            {{ notificaciones.length }}
-            />
-          </q-btn>
-        </div>
 
         <div>
           <q-btn

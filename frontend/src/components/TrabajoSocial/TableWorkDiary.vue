@@ -181,28 +181,21 @@
           <q-form class="">
             <div class="row justify-around q-gutter-md">
 
-              <!-- TODO:  "familiar_diario" -->
-              <q-select
-                class="col-3"
-                dense
-                outlined
-                v-model="tempDiario.td_familiar"
-                label="Nombre del familiar"
-                :options="FamilyOptions"
-                style="width: 250px"
-                behavior="menu"
-              />
-
               <!-- TODO:  "paciente_diario" -->
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempDiario.td_paciente"
                 label="Nombre del paciente"
-                :options="PacOptions"
-                style="width: 250px"
-                behavior="menu"
+                :options="DiarioOption"
+                @filter="filterDiario"
+                @popup-show="getNomDiario"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Fecha de entrevista" -->
@@ -247,7 +240,7 @@
 
               <!-- TODO: "Entrevista en" -->
               <q-select
-                class="col-3"
+                class="col-2"
                 outlined
                 dense
                 v-model="tempDiario.lugar_entrevista"
@@ -263,7 +256,7 @@
 
               <!-- TODO: "Recibidos" -->
               <q-checkbox
-                style="max-width: 340px"
+                style="max-width: 200px"
                 class="col-2"
                 rigth-label
                 dense
@@ -274,7 +267,7 @@
 
               <!-- TODO: "Enviados" -->
               <q-checkbox
-                style="max-width: 340px"
+                style="max-width: 200px"
                 class="col-2"
                 rigth-label
                 dense
@@ -373,18 +366,17 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useTrabajoDiarioStore } from "src/stores/TrabajoDiario-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listDiarios();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempDiarios,
   listDiarios,
-  listPacientes,
   createDiarios,
   updateDiarios,
   destroyDiarios,
@@ -393,15 +385,26 @@ const {
 const { trabajodiario, AddDG, EditDG, showDialogDG, loading, tempDiario, tempPaciente } =
   storeToRefs(useTrabajoDiarioStore());
 
+  const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
+
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
   { name: "num_hs", align: "center", label: "Historia social", field: "num_hs" },
+  {
+    name: "nombre_f",
+    align: "center",
+    label: "Nombre del familiar",
+    field: "nombre_f",
+    sortable: true,
+  },
 
   {
     name: 'fecha_ent',
@@ -479,27 +482,38 @@ const EntrevistaOptions = [
   "Otros"
 ];
 
-const FamilyOptions = [
-  {
-    label: "Juan",
-    value: "1",
-  },
-  {
-    label: "Pedro",
-    value: "2",
-  },
-];
+const FamiliaOption = ref([]);
+const pacientesArray = ref(pacientes.value);
 
-const PacOptions = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisca Navia Cuadrado",
-    value: "2",
-  },
-];
+const getNomFamilia = async () => {
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  FamiliaOption.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterFamilia(val, update) {
+  if (val === "") {
+    update(() => {
+      FamiliaOption.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    FamiliaOption.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const visibleColumns = ref([
 'fecha_ent',

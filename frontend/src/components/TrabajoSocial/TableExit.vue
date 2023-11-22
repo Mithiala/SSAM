@@ -103,34 +103,27 @@
     </q-table>
 
     <!-- TODO: Añadir - Editar -->
-    <q-dialog v-model="showDialogDP" persistent full-height >
-      <q-card class="column medium">
+    <q-dialog v-model="showDialogDP" persistent full-medium >
+      <q-card class="column">
         <q-card-section>
           <q-form class="">
             <div class="row justify-center q-gutter-md">
 
               <!-- TODO:  "familiar_pase" -->
               <q-select
-                class="col-3"
+                class="col-4"
                 dense
+                options-dense
                 outlined
-                v-model="tempPase.cp_familiar"
-                label="Nombre del familiar"
-                :options="PasefOptions"
-                style="width: 250px"
-                behavior="menu"
-              />
-
-              <!-- TODO:  "paciente_pase" -->
-              <q-select
-                class="col-3"
-                dense
-                outlined
+                use-input
+                input-debounce
                 v-model="tempPase.cp_paciente"
                 label="Nombre del paciente"
-                :options="PacienteOptions"
-                style="width: 250px"
-                behavior="menu"
+                :options="PaseOption"
+                @filter="filterPase"
+                @popup-show="getNomPase"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Fecha" -->
@@ -261,31 +254,34 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useControlPasesStore } from "src/stores/ControlPases-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listPases();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempPases,
   listPases,
-  listPacientes,
   createPases,
   updatePases,
   destroyPases,
 } = useControlPasesStore();
 
-const { controlpases, AddDP, EditDP, showDialogDP, loading, tempPase, tempPaciente } =
+const { controlpases, AddDP, EditDP, showDialogDP, loading, tempPase } =
   storeToRefs(useControlPasesStore());
+
+  const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -302,6 +298,13 @@ const { controlpases, AddDP, EditDP, showDialogDP, loading, tempPase, tempPacien
     label: "Historia social",
     field: "num_hs",
     align: "center",
+  },
+  {
+    name: "nombre_f",
+    align: "center",
+    label: "Nombre del familiar",
+    field: "nombre_f",
+    sortable: true,
   },
 
   {
@@ -352,16 +355,38 @@ const PasefOptions = [
   },
 ];
 
-const PacienteOptions = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisca Navia Cuadrado",
-    value: "2",
-  },
-];
+const PaseOption = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomPase = async () => {
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  PaseOption.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterPase(val, update) {
+  if (val === "") {
+    update(() => {
+      PaseOption.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    PaseOption.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const date = ref("");
 

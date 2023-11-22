@@ -5,11 +5,10 @@ import { Notify, Dialog } from "quasar";
 export const useDefectologiaStore = defineStore("Defectologia", {
   state: () => ({
     defectologia: [],
-    pacientes: [],
     loading: false,
 
     tempDefect: {
-      id: 0,
+      id: null,
       auditivo: false,
       visual: false,
       ecv: false,
@@ -17,19 +16,12 @@ export const useDefectologiaStore = defineStore("Defectologia", {
       retrazomental: "",
       trastornolenguaje: "",
       trastornopensamiento: "",
-      d_paciente: 0,
+      d_paciente: null,
       anciedad: false,
       esquizofrenia: false,
       fuma: false,
       alcoholico: false,
       parkinson: false,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
-      edad: 0,
-      sexo: "",
     },
 
     showDialogDG: false,
@@ -51,7 +43,7 @@ export const useDefectologiaStore = defineStore("Defectologia", {
         retrazomental: "",
         trastornolenguaje: "",
         trastornopensamiento: "",
-        d_paciente: 0,
+        d_paciente: null,
         anciedad: false,
         esquizofrenia: false,
         fuma: false,
@@ -76,26 +68,6 @@ export const useDefectologiaStore = defineStore("Defectologia", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Defectologia-Store.js:99 ~ listDef ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

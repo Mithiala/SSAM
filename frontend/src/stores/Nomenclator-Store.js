@@ -5,6 +5,8 @@ export const useNomenclatorStore = defineStore("Nomenclator", {
   state: () => ({
     loading: false,
     nomestadomental: [],
+    nomorientemporal: [],
+    nomorientespacial: [],
   }),
 
   getters: {},
@@ -31,20 +33,46 @@ export const useNomenclatorStore = defineStore("Nomenclator", {
       }
     },
 
-    //TODO: Accion para Obtener todos Registros
-    async listSindromes() {
+    //TODO: Accion para Obtener nomorientemporal
+    async listnomorientemporal() {
       this.loading = true;
       try {
-        const url = "/asistmedica/sindromes/";
+        const url = "/psicologia/nomorientemporal/";
         // const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
         });
-        this.sindrome = response.data.results;
+        this.nomorientemporal = response.data.results;
         this.loading = false;
-      } catch (error) {}
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: Nomenclator-Store.js:27 ~ listnomorientemporal ~ error:",
+          error.response
+        );
+      }
+    },
+
+    //TODO: Accion para Obtener nomorientespacial
+    async listnomorientespacial() {
+      this.loading = true;
+      try {
+        const url = "/psicologia/nomorientespacial/";
+        // const token = LocalStorage.getItem("access_token");
+        const response = await api.get(url, {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+        });
+        this.nomorientespacial = response.data.results;
+        this.loading = false;
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: Nomenclator-Store.js:27 ~ listnomorientespacial ~ error:",
+          error.response
+        );
+      }
     },
   },
 });
