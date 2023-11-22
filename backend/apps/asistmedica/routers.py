@@ -16,6 +16,13 @@ from .viewsets import (
     TrasladoViewSet,
     VacunacionViewSet,
 )
+from .viewsets_nomenclador import (
+    NomActividadViewSet,
+    NomEstadoGeneralViewSet,
+    NomEstadoMentalViewSet,
+    NomIncontinenciaViewSet,
+    NomMovilidadViewSet,
+)
 
 router = DefaultRouter()
 router.register(r"enfermeria", DatoEnfermeriaViewSet, basename="Datos Enfermería")
@@ -32,4 +39,23 @@ router.register(r"termometria", TermometriaViewSet, basename="Termometría")
 router.register(r"vacunacion", VacunacionViewSet, basename="Vacunación")
 router.register(r"sindromes", SindromeViewSet, basename="Sindrome")
 router.register(r"pedido", SolicitudPedidoViewSet, basename="Solicitud de medicamentos")
+
+
+router.register(r"nomactividad", NomActividadViewSet, basename="NomActividadViewSet")
+router.register(r"nommovilidad", NomMovilidadViewSet, basename="NomMovilidadViewSet")
+router.register(
+    r"nomestadomental", NomEstadoMentalViewSet, basename="NomEstadoMentalViewSet"
+)
+router.register(
+    r"nomestadogeneral",
+    NomEstadoGeneralViewSet,
+    basename="NomEstadoGeneralViewSet",
+)
+router.register(
+    r"nomincontinencia",
+    NomIncontinenciaViewSet,
+    basename="NomIncontinenciaViewSet",
+)
+
+
 urlpatterns = router.urls

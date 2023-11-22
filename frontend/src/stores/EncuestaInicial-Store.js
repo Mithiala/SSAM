@@ -35,15 +35,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
       visitaamistades: false,
       avisarleingreso: false,
       antecedentes_patologicos: "",
-      enc_paciente: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
-      ci: 0,
-      num_hs: 0,
-      fecha_inscripcion: "",
+      enc_paciente: null,
     },
 
     showDialogDG: false,
@@ -58,7 +50,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
     resetTempEncuestas() {
       console.log("aqui receteo");
       this.tempEncuesta = {
-        fecha: new Date().toISOString().substring(0,10),
+        fecha: new Date().toISOString().substring(0, 10),
         lectura: false,
         tv: false,
         juegomesa: false,
@@ -82,7 +74,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
         visitaamistades: false,
         avisarleingreso: false,
         antecedentes_patologicos: "",
-        enc_paciente: 0,
+        enc_paciente: null,
       };
     },
 
@@ -106,25 +98,6 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
         );
       }
     },
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
-          error
-        );
-      }
-    },
 
     //TODO: Accion para crear Registros
     async createEncuestas() {
@@ -140,13 +113,25 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
         formData.append("radio", this.tempEncuesta.radio);
         formData.append("pelota", this.tempEncuesta.pelota);
         formData.append("otras", this.tempEncuesta.otras);
-        formData.append("procedencia_at_asist_social", this.tempEncuesta.procedencia_at_asist_social);
-        formData.append("persona_cobra_chequera", this.tempEncuesta.persona_cobra_chequera);
+        formData.append(
+          "procedencia_at_asist_social",
+          this.tempEncuesta.procedencia_at_asist_social
+        );
+        formData.append(
+          "persona_cobra_chequera",
+          this.tempEncuesta.persona_cobra_chequera
+        );
         formData.append("grado_parentesco", this.tempEncuesta.grado_parentesco);
-        formData.append("direc_person_responsable", this.tempEncuesta.direc_person_responsable);
+        formData.append(
+          "direc_person_responsable",
+          this.tempEncuesta.direc_person_responsable
+        );
         formData.append("ingresado", this.tempEncuesta.ingresado);
         formData.append("motivo", this.tempEncuesta.motivo);
-        formData.append("antes_donde_residia", this.tempEncuesta.antes_donde_residia);
+        formData.append(
+          "antes_donde_residia",
+          this.tempEncuesta.antes_donde_residia
+        );
         formData.append("jefenucleo", this.tempEncuesta.jefenucleo);
         formData.append("impfisico", this.tempEncuesta.impfisico);
         formData.append("protesis", this.tempEncuesta.protesis);
@@ -155,7 +140,10 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
         formData.append("visitafamiliares", this.tempEncuesta.visitafamiliares);
         formData.append("visitaamistades", this.tempEncuesta.visitaamistades);
         formData.append("avisarleingreso", this.tempEncuesta.avisarleingreso);
-        formData.append("antecedentes_patologicos", this.tempEncuesta.antecedentes_patologicos);
+        formData.append(
+          "antecedentes_patologicos",
+          this.tempEncuesta.antecedentes_patologicos
+        );
         formData.append("enc_paciente", this.tempEncuesta.enc_paciente.value);
         const response = await api.post(url, formData, {
           // headers: {
@@ -175,9 +163,11 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
           this.resetTempEncuestas();
         }
       } catch (error) {
-        console.log("FullError: ", error);
-        console.log("error: ", error.response.data);
-        const menssage = ( error.response.data.error)
+        console.log(
+          "🚀 ~ file: EncuestaInicial-Store.js:153 ~ createEncuestas ~ error:",
+          error.response
+        );
+
         Notify.create({
           color: "negative",
           message: "Error al crear el registro",
@@ -196,7 +186,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
         //const token = LocalStorage.getItem("access_token");
         const response = await api.get(url, {
           //headers: {
-           // Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
           //},
         });
         console.log(
@@ -210,7 +200,7 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
           error.response.data
         );
       }
-      },
+    },
 
     //TODO: Accion para modificar un Registro desde un ID
     async updateEncuestas(id) {
@@ -227,7 +217,8 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
           radio: this.tempEncuesta.radio,
           pelota: this.tempEncuesta.pelota,
           otras: this.tempEncuesta.otras,
-          procedencia_at_asist_social: this.tempEncuesta.procedencia_at_asist_social,
+          procedencia_at_asist_social:
+            this.tempEncuesta.procedencia_at_asist_social,
           persona_cobra_chequera: this.tempEncuesta.persona_cobra_chequera,
           grado_parentesco: this.tempEncuesta.grado_parentesco,
           direc_person_responsable: this.tempEncuesta.direc_person_responsable,
@@ -307,9 +298,9 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
           const url = `/tsocial/encuestainicial/${id}/`;
           //const token = LocalStorage.getItem("access_token");
           const response = await api.delete(url, {
-             //headers: {
-             // Authorization: `Bearer ${token}`,
-            });
+            //headers: {
+            // Authorization: `Bearer ${token}`,
+          });
 
           if (response.status === 204) {
             console.log(
@@ -348,6 +339,6 @@ export const useEncuestaInicialStore = defineStore("EncuestaInicial", {
           progress: true,
         });
       }
-    }
-  }
-})
+    },
+  },
+});

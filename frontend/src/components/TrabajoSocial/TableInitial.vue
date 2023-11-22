@@ -71,24 +71,24 @@
           </q-btn>
 
           <q-select
-          label="Encuesta inicial"
-          bg-color="teal-3"
-          v-model="visibleColumns"
-          transition-show="scale"
-          transition-hide="scale"
-          multiple
-          outlined
-          standout="bg-teal-10 text-white"
-          dense
-          options-dense
-          :display-value="$q.lang.table.columns"
-          emit-value
-          map-options
-          :options="columns"
-          option-value="field"
-          options-cover
-          style="min-width: 150px"
-        />
+            label="Encuesta inicial"
+            bg-color="teal-3"
+            v-model="visibleColumns"
+            transition-show="scale"
+            transition-hide="scale"
+            multiple
+            outlined
+            standout="bg-teal-10 text-white"
+            dense
+            options-dense
+            :display-value="$q.lang.table.columns"
+            emit-value
+            map-options
+            :options="columns"
+            option-value="field"
+            options-cover
+            style="min-width: 150px"
+          />
 
           <q-btn
             class="q-ml-xs"
@@ -332,23 +332,28 @@
     </q-table>
 
     <!-- TODO:  "Añadir -- editar" -->
-    <q-dialog v-model="showDialogDG" persistent full-width >
+    <q-dialog v-model="showDialogDG" persistent full-width>
       <q-card class="column full-height">
         <q-card-section>
           <q-form class="">
             <div class="row justify-around q-gutter-md">
-
               <!-- TODO:  "encuesta_paciente" -->
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempEncuesta.enc_paciente"
                 label="Nombre del paciente"
                 :options="EncuestaOptions"
-                style="width: 250px"
-                behavior="menu"
+                @filter="filterEncuesta"
+                @popup-show="getNomEncuesta"
+                option-value="value"
+                option-label="label"
               />
+              <!-- style="width: 250px" -->
 
               <!-- TODO:  "Fecha" -->
               <q-input
@@ -665,28 +670,30 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useEncuestaInicialStore } from "src/stores/EncuestaInicial-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listEncuestas();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempEncuestas,
   listEncuestas,
-  listPacientes,
   createEncuestas,
   updateEncuestas,
   destroyEncuestas,
 } = useEncuestaInicialStore();
 
-const { encuestainicial, AddDG, EditDG, showDialogDG, loading, tempEncuesta, tempPaciente } =
+const { encuestainicial, AddDG, EditDG, showDialogDG, loading, tempEncuesta } =
   storeToRefs(useEncuestaInicialStore());
 
-  const columns = [
+const { listPacientes } = usePacientesStore();
 
+const { pacientes } = storeToRefs(usePacientesStore());
+
+const columns = [
   {
     name: "nombre",
     align: "center",
@@ -698,13 +705,13 @@ const { encuestainicial, AddDG, EditDG, showDialogDG, loading, tempEncuesta, tem
     name: "ci",
     align: "center",
     label: "Carnet de identidad",
-    field: "ci"
+    field: "ci",
   },
   {
     name: "num_hs",
     align: "center",
     label: "Historia social",
-    field: "num_hs"
+    field: "num_hs",
   },
   {
     name: "fecha_inscripcion",
@@ -721,145 +728,145 @@ const { encuestainicial, AddDG, EditDG, showDialogDG, loading, tempEncuesta, tem
   },
 
   {
-    name: 'lectura',
-    align: 'center',
-    label: 'Lectura',
-    field: 'lectura',
+    name: "lectura",
+    align: "center",
+    label: "Lectura",
+    field: "lectura",
   },
   {
-    name: 'tv',
-    align: 'center',
-    label: 'TV',
-    field: 'tv',
+    name: "tv",
+    align: "center",
+    label: "TV",
+    field: "tv",
   },
   {
-    name: 'juegomesa',
-    align: 'center',
-    label: 'Juego de mesa',
-    field: 'juegomesa',
+    name: "juegomesa",
+    align: "center",
+    label: "Juego de mesa",
+    field: "juegomesa",
   },
   {
-    name: 'cine',
-    align: 'center',
-    label: 'Cine',
-    field: 'cine',
+    name: "cine",
+    align: "center",
+    label: "Cine",
+    field: "cine",
   },
   {
-    name: 'radio',
-    align: 'center',
-    label: 'Radio',
-    field: 'radio',
+    name: "radio",
+    align: "center",
+    label: "Radio",
+    field: "radio",
   },
   {
-    name: 'pelota',
-    align: 'center',
-    label: 'Pelota',
-    field: 'pelota',
+    name: "pelota",
+    align: "center",
+    label: "Pelota",
+    field: "pelota",
   },
   {
-    name: 'otras',
-    align: 'center',
-    label: 'Otras',
-    field: 'otras',
+    name: "otras",
+    align: "center",
+    label: "Otras",
+    field: "otras",
   },
   {
-    name: 'procedencia_at_asist_social',
-    align: 'center',
-    label: 'Procedencia si es atendido por la asistencia social',
-    field: 'procedencia_at_asist_social',
+    name: "procedencia_at_asist_social",
+    align: "center",
+    label: "Procedencia si es atendido por la asistencia social",
+    field: "procedencia_at_asist_social",
   },
   {
-    name: 'persona_cobra_chequera',
-    align: 'center',
-    label: '¿Qué persona cobra su chequera?',
-    field: 'persona_cobra_chequera'
+    name: "persona_cobra_chequera",
+    align: "center",
+    label: "¿Qué persona cobra su chequera?",
+    field: "persona_cobra_chequera",
   },
   {
-    name: 'grado_parentesco',
-    align: 'center',
-    label: 'Grado de parentesco',
-    field: 'grado_parentesco'
+    name: "grado_parentesco",
+    align: "center",
+    label: "Grado de parentesco",
+    field: "grado_parentesco",
   },
   {
-    name: 'direc_person_responsable',
-    align: 'center',
-    label: 'Dirección de la persona responsable',
-    field: 'direc_person_responsable'
+    name: "direc_person_responsable",
+    align: "center",
+    label: "Dirección de la persona responsable",
+    field: "direc_person_responsable",
   },
   {
-    name: 'ingresado',
-    align: 'center',
-    label: '¿A estado ingresado?',
-    field: 'ingresado'
+    name: "ingresado",
+    align: "center",
+    label: "¿A estado ingresado?",
+    field: "ingresado",
   },
   {
-    name: 'motivo',
-    align: 'center',
-    label: 'Motivo',
-    field: 'motivo'
+    name: "motivo",
+    align: "center",
+    label: "Motivo",
+    field: "motivo",
   },
   {
-    name: 'antes_donde_residia',
-    align: 'center',
-    label: 'Antes de ingreso donde residía',
-    field: 'antes_donde_residia'
+    name: "antes_donde_residia",
+    align: "center",
+    label: "Antes de ingreso donde residía",
+    field: "antes_donde_residia",
   },
   {
-    name: 'jefenucleo',
-    align: 'center',
-    label: '¿Era jefa de núcleo?',
-    field: 'jefenucleo'
+    name: "jefenucleo",
+    align: "center",
+    label: "¿Era jefa de núcleo?",
+    field: "jefenucleo",
   },
   {
-    name: 'impfisico',
-    align: 'center',
-    label: 'Impedido físico',
-    field: 'impfisico'
+    name: "impfisico",
+    align: "center",
+    label: "Impedido físico",
+    field: "impfisico",
   },
   {
-    name: 'protesis',
-    align: 'center',
-    label: 'Prótesis',
-    field: 'protesis'
+    name: "protesis",
+    align: "center",
+    label: "Prótesis",
+    field: "protesis",
   },
   {
-    name: 'calsadoortop',
-    align: 'center',
-    label: 'Calsado ortopédico',
-    field: 'calsadoortop'
+    name: "calsadoortop",
+    align: "center",
+    label: "Calsado ortopédico",
+    field: "calsadoortop",
   },
   {
-    name: 'espejuelos',
-    align: 'center',
-    label: 'Espejuelos',
-    field: 'espejuelos'
+    name: "espejuelos",
+    align: "center",
+    label: "Espejuelos",
+    field: "espejuelos",
   },
   {
-    name: 'visitafamiliares',
-    align: 'center',
-    label: 'Recibe visita de familiares',
-    field: 'visitafamiliares'
+    name: "visitafamiliares",
+    align: "center",
+    label: "Recibe visita de familiares",
+    field: "visitafamiliares",
   },
   {
-    name: 'visitaamistades',
-    align: 'center',
-    label: 'Recibe visita de amistades',
-    field: 'visitaamistades'
+    name: "visitaamistades",
+    align: "center",
+    label: "Recibe visita de amistades",
+    field: "visitaamistades",
   },
   {
-    name: 'avisarleingreso',
-    align: 'center',
-    label: 'Avisarles de ingreso',
-    field: 'avisarleingreso'
+    name: "avisarleingreso",
+    align: "center",
+    label: "Avisarles de ingreso",
+    field: "avisarleingreso",
   },
   {
-    name: 'antecedentes_patologicos',
-    align: 'center',
-    label: 'Antecedentes patológicos',
-    field: 'antecedentes_patologicos'
+    name: "antecedentes_patologicos",
+    align: "center",
+    label: "Antecedentes patológicos",
+    field: "antecedentes_patologicos",
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
-]
+];
 
 const filter = ref("");
 const persistent = ref(false);
@@ -878,58 +885,80 @@ const openAddDialog = () => {
 };
 
 const ParentOptions = [
-  'Hijos',
-  'Esposo(a)',
-  'Sobrino(a)',
-  'Nietos',
-  'Hermanos',
-  'Sin Familia',
-  'Otros(hijastros)',
-]
-
-const EncuestaOptions = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
+  "Hijos",
+  "Esposo(a)",
+  "Sobrino(a)",
+  "Nietos",
+  "Hermanos",
+  "Sin Familia",
+  "Otros(hijastros)",
 ];
 
+const EncuestaOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomEncuesta = async () => {
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  EncuestaOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterEncuesta(val, update) {
+  if (val === "") {
+    update(() => {
+      EncuestaOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    EncuestaOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
+
 const visibleColumns = ref([
-  'nombre',
-  'ci',
-  'num_hs',
-  'fecha_inscripcion',
-  'fecha',
-  'lectura',
-  'tv',
-  'juegomesa',
-  'cine',
-  'radio',
-  'pelota',
-  'otras',
-  'procedencia_at_asist_social',
-  'persona_cobra_chequera',
-  'grado_parentesco',
-  'ingresado',
-  'motivo',
-  'antes_donde_residia',
-  'direc_person_responsable',
-  'jefenucleo',
-  'impfisico',
-  'protesis',
-  'calsadoortop',
-  'espejuelos',
-  'visitafamiliares',
-  'visitaamistades',
-  'avisarleingreso',
-  'antecedentes_patologicos',
-  'actions',
-])
-const date = ref("")
+  "nombre",
+  "ci",
+  "num_hs",
+  "fecha_inscripcion",
+  "fecha",
+  "lectura",
+  "tv",
+  "juegomesa",
+  "cine",
+  "radio",
+  "pelota",
+  "otras",
+  "procedencia_at_asist_social",
+  "persona_cobra_chequera",
+  "grado_parentesco",
+  "ingresado",
+  "motivo",
+  "antes_donde_residia",
+  "direc_person_responsable",
+  "jefenucleo",
+  "impfisico",
+  "protesis",
+  "calsadoortop",
+  "espejuelos",
+  "visitafamiliares",
+  "visitaamistades",
+  "avisarleingreso",
+  "antecedentes_patologicos",
+  "actions",
+]);
+const date = ref("");
 
 // TODO: Export To Excel:
 async function exportFile() {

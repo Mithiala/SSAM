@@ -103,14 +103,13 @@
     </q-table>
 
     <!-- Añadir - Editar -->
-    <q-dialog v-model="showDialogDG" persistent full-width >
+    <q-dialog v-model="showDialogDG" persistent full-width>
       <q-card class="column medium">
         <q-card-section>
           <q-form>
             <div class="row justify-around q-gutter-md">
-
               <!-- TODO:  "paciente_ayuda tecnica" -->
-                <q-select
+              <q-select
                 class="col-3"
                 dense
                 outlined
@@ -133,8 +132,7 @@
                 behavior="menu"
                 :rules="[
                   (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese el dato',
+                    (val && val.length > 0) || 'Por favor ingrese el dato',
                 ]"
               />
 
@@ -142,19 +140,22 @@
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce="0"
                 v-model="tempIndice.estado_mental"
                 label="Estado Mental"
-                :options="MentOption"
-                style="width: 250px"
-                behavior="menu"
+                :options="EMOptions"
+                @filter="filterEM"
+                @popup-show="getNomEstadoMental"
+                option-value="value"
+                option-label="label"
                 :rules="[
                   (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese el dato',
+                    (val && val.length > 0) || 'Por favor ingrese el dato',
                 ]"
               />
-
               <!-- TODO:  "Actividad" -->
               <q-select
                 class="col-3"
@@ -167,8 +168,7 @@
                 behavior="menu"
                 :rules="[
                   (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese el dato',
+                    (val && val.length > 0) || 'Por favor ingrese el dato',
                 ]"
               />
 
@@ -184,8 +184,7 @@
                 behavior="menu"
                 :rules="[
                   (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese el dato',
+                    (val && val.length > 0) || 'Por favor ingrese el dato',
                 ]"
               />
 
@@ -201,8 +200,7 @@
                 behavior="menu"
                 :rules="[
                   (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese el dato',
+                    (val && val.length > 0) || 'Por favor ingrese el dato',
                 ]"
               />
 
@@ -245,7 +243,6 @@
                   </q-icon>
                 </template>
               </q-input>
-
             </div>
             <div class="q-mt-sm row justify-center">
               <q-btn
@@ -284,13 +281,17 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useIndiceStore } from "src/stores/Indice-Store";
+import { useNomenclatorStore } from "src/stores/Nomenclator-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listIndices();
-  await listPacientes();
+  await listnomestadomental();
   // }
 });
+
+const { listnomestadomental } = useNomenclatorStore();
+const { nomestadomental } = storeToRefs(useNomenclatorStore());
 
 const {
   resetTempIndices,
@@ -301,12 +302,19 @@ const {
   destroyIndices,
 } = useIndiceStore();
 
-const { indice, AddDG, EditDG, showDialogDG, loading, tempIndice, tempPaciente } =
-  storeToRefs(useIndiceStore());
+const {
+  indice,
+  AddDG,
+  EditDG,
+  showDialogDG,
+  loading,
+  tempIndice,
+  tempPaciente,
+} = storeToRefs(useIndiceStore());
 
-  const resultadoIndice = useIndiceStore();
+const resultadoIndice = useIndiceStore();
 
-  const columns = [
+const columns = [
   {
     name: "nombre",
     align: "center",
@@ -316,49 +324,49 @@ const { indice, AddDG, EditDG, showDialogDG, loading, tempIndice, tempPaciente }
   },
 
   {
-    name: 'fecha',
-    align: 'center',
-    label: 'Fecha de evaluación',
-    field: 'fecha'
+    name: "fecha",
+    align: "center",
+    label: "Fecha de evaluación",
+    field: "fecha",
   },
   {
-    name: 'estado_general',
-    align: 'center',
-    label: 'Estado general',
-    field: 'estado_general',
+    name: "estado_general",
+    align: "center",
+    label: "Estado general",
+    field: "estado_general",
   },
   {
-    name: 'estado_mental',
-    align: 'center',
-    label: 'Estado mental',
-    field: 'estado_mental',
+    name: "estado_mental",
+    align: "center",
+    label: "Estado mental",
+    field: "estado_mental",
   },
   {
-    name: 'actividad',
-    align: 'center',
-    label: 'Actividad',
-    field: 'actividad'
+    name: "actividad",
+    align: "center",
+    label: "Actividad",
+    field: "actividad",
   },
   {
-    name: 'movilidad',
-    align: 'center',
-    label: 'Movilidad',
-    field: 'movilidad',
+    name: "movilidad",
+    align: "center",
+    label: "Movilidad",
+    field: "movilidad",
   },
   {
-    name: 'incontinencia',
-    align: 'center',
-    label: 'Incontinencia',
-    field: 'incontinencia'
+    name: "incontinencia",
+    align: "center",
+    label: "Incontinencia",
+    field: "incontinencia",
   },
   {
-    name: 'resultado',
-    align: 'center',
-    label: 'Resultado',
-    field: 'resultado'
+    name: "resultado",
+    align: "center",
+    label: "Resultado",
+    field: "resultado",
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
-]
+];
 
 const filter = ref("");
 const persistent = ref(false);
@@ -444,25 +452,6 @@ const GenOption = [
   },
 ];
 
-const MentOption = [
-  {
-    label: "Alerta",
-    value: "4",
-  },
-  {
-    label: "Apático",
-    value: "3",
-  },
-  {
-    label: "Confuso",
-    value: "2",
-  },
-  {
-    label: "Estuporoso",
-    value: "1",
-  },
-];
-
 const ActOptions = [
   {
     label: "Caminando",
@@ -481,6 +470,46 @@ const ActOptions = [
     value: "1",
   },
 ];
+
+function hola() {
+  console.log("ok");
+}
+
+// ----------Estado Mental--------------------
+const EMOptions = ref([]);
+const nomestadomentalArray = ref([nomestadomental.value]);
+
+const getNomEstadoMental = async () => {
+  console.log("getNomEstadoMental");
+  await listnomestadomental();
+  nomestadomentalArray.value = nomestadomental.value;
+  EMOptions.value = nomestadomental.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterEM(val, update) {
+  if (val === "") {
+    update(() => {
+      EMOptions.value = nomestadomentalArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    EMOptions.value = nomestadomentalArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
 
 const date = ref("");
 

@@ -32,6 +32,7 @@ BASE_APPS = [
 ]
 LOCAL_APPS = [
     "apps.base",
+    "apps.users",
     "apps.centro",
     "apps.tsocial",
     "apps.psicologia",
@@ -42,22 +43,21 @@ LOCAL_APPS = [
 THIRD_APPS = [
     "corsheaders",
     "rest_framework",
-    "rest_framework.authtoken",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "djoser",
     "django_filters",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "import_export",
     "dbbackup",
-    "dj_rest_auth",
-    "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -65,9 +65,14 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 900,
 }
 
-REST_AUTH = {
-    "USE_JWT": True,
-    "JWT_AUTH_COOKIE": "jwt-auth",
+
+DJOSER = {
+    "USER_CREATE_PASSWORD_RETYPE": True,
+    "SERIALIZERS": {
+        "user": "apps.users.serializers.CustomUserSerializer",
+        "user_create": "apps.users.serializers.UserCreateSerializer",
+        "user_delete": "apps.users.serializers.CustomUserDeleteSerializer",
+    },
 }
 
 SIMPLE_JWT = {
@@ -89,6 +94,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+AUTH_USER_MODEL = "users.User"
 ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [

@@ -34,7 +34,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
       clasificacion_validismo: "",
       num_cama: 0,
       sala: "",
-      denf_paciente: 0,
+      denf_paciente: null,
     },
 
     tempPaciente: {
@@ -79,7 +79,7 @@ export const useDatosenferStore = defineStore("Datosenfer", {
         clasificacion_validismo: "",
         num_cama: 0,
         sala: "",
-        denf_paciente: 0,
+        denf_paciente: null,
       };
     },
 
@@ -137,21 +137,36 @@ export const useDatosenferStore = defineStore("Datosenfer", {
         formData.append("patologia", this.tempDatos.patologia);
         formData.append("operaciones", this.tempDatos.operaciones);
         formData.append("fecha_e", this.tempDatos.fecha_e);
-        formData.append("atencion_estomatologia", this.tempDatos.atencion_estomatologia);
+        formData.append(
+          "atencion_estomatologia",
+          this.tempDatos.atencion_estomatologia
+        );
         formData.append("fecha_a", this.tempDatos.fecha_a);
         formData.append("programa_auditivo", this.tempDatos.programa_auditivo);
         formData.append("fecha_o", this.tempDatos.fecha_o);
-        formData.append("atencion_oftalmologia", this.tempDatos.atencion_oftalmologia);
+        formData.append(
+          "atencion_oftalmologia",
+          this.tempDatos.atencion_oftalmologia
+        );
         formData.append("resumen", this.tempDatos.resumen);
         formData.append("ulcerapres", this.tempDatos.ulcerapres);
-        formData.append("sindrome_respiratorio", this.tempDatos.sindrome_respiratorio);
+        formData.append(
+          "sindrome_respiratorio",
+          this.tempDatos.sindrome_respiratorio
+        );
         formData.append("programa_tb", this.tempDatos.programa_tb);
         formData.append("morbilidad", this.tempDatos.morbilidad);
         formData.append("transfuciones", this.tempDatos.transfuciones);
         formData.append("habitos_toxicos", this.tempDatos.habitos_toxicos);
-        formData.append("alergia_medicamentos", this.tempDatos.alergia_medicamentos);
+        formData.append(
+          "alergia_medicamentos",
+          this.tempDatos.alergia_medicamentos
+        );
         formData.append("accidentes", this.tempDatos.accidentes);
-        formData.append("clasificacion_validismo", this.tempDatos.clasificacion_validismo);
+        formData.append(
+          "clasificacion_validismo",
+          this.tempDatos.clasificacion_validismo
+        );
         formData.append("sala", this.tempDatos.sala);
         formData.append("num_cama", this.tempDatos.num_cama);
         formData.append("denf_paciente", this.tempDatos.denf_paciente.value);
@@ -173,7 +188,11 @@ export const useDatosenferStore = defineStore("Datosenfer", {
           this.resetTempDatose();
         }
       } catch (error) {
-        console.log("FullError: ", error);
+        console.log(
+          "🚀 ~ file: Datosenfer-Store.js:176 ~ createDatose ~ error:",
+          error.response
+        );
+
         console.log("error: ", error.response.data);
         const menssage = error.response.data.error;
         Notify.create({

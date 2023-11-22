@@ -71,23 +71,23 @@
           </q-btn>
 
           <q-select
-          bg-color="teal-3"
-          label="Datos generales"
-          v-model="visibleColumns"
-          transition-show="scale"
-          transition-hide="scale"
-          multiple
-          outlined
-          dense
-          options-dense
-          :display-value="$q.lang.table.columns"
-          emit-value
-          map-options
-          :options="columns"
-          option-value="field"
-          options-cover
-          style="min-width: 150px"
-        />
+            bg-color="teal-3"
+            label="Datos generales"
+            v-model="visibleColumns"
+            transition-show="scale"
+            transition-hide="scale"
+            multiple
+            outlined
+            dense
+            options-dense
+            :display-value="$q.lang.table.columns"
+            emit-value
+            map-options
+            :options="columns"
+            option-value="field"
+            options-cover
+            style="min-width: 150px"
+          />
 
           <q-btn
             class="q-ml-xs"
@@ -123,24 +123,34 @@
     </q-table>
 
     <!-- TODO: Añadir - Editar -->
-    <q-dialog v-model="showDialogDG" persistent full-width >
-      <q-card class="column full-height">
+    <q-dialog v-model="showDialogDG" persistent full-width>
+      <q-card class="row full-height">
+        <q-card-section class="col items-center q-pb-none">
+          <div class="row justify-end">
+            <q-btn icon="close" flat round dense v-close-popup />
+          </div>
+        </q-card-section>
+
         <q-card-section>
           <q-form>
             <div class="row justify-around q-gutter-md">
-
               <q-space class="col-1" />
 
               <!-- TODO:  "salud_paciente" -->
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempDatos.denf_paciente"
                 label="Nombre del paciente"
-                :options="SaludOption"
-                style="width: 250px"
-                behavior="menu"
+                :options="EnfermeriaOptions"
+                @filter="filterEncuesta"
+                @popup-show="getNomPacientes"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Sala" -->
@@ -193,7 +203,7 @@
 
               <!-- TODO:  "Talla" -->
               <q-input
-              class="col-1"
+                class="col-1"
                 outlined
                 dense
                 type="text"
@@ -208,7 +218,7 @@
 
               <!-- TODO:  "Clasificación IMC" -->
               <q-input
-              class="col-2"
+                class="col-2"
                 outlined
                 dense
                 readonly
@@ -273,7 +283,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempDatos.fecha_e" color="green-5" mask="YYYY-MM-DD">
+                      <q-date
+                        v-model="tempDatos.fecha_e"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -319,7 +333,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempDatos.fecha_a" color="green-5" mask="YYYY-MM-DD">
+                      <q-date
+                        v-model="tempDatos.fecha_a"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -365,7 +383,11 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="tempDatos.fecha_o" color="green-5" mask="YYYY-MM-DD">
+                      <q-date
+                        v-model="tempDatos.fecha_o"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
@@ -489,7 +511,6 @@
                 label="Clasificación de validismo"
                 v-model="tempDatos.clasificacion_validismo"
               />
-
             </div>
             <div class="q-mt-sm row justify-center">
               <q-btn
@@ -528,27 +549,35 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDatosenferStore } from "src/stores/Datosenfer-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listDatose();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempDatose,
   listDatose,
-  listPacientes,
   createDatose,
   updateDatose,
   destroyDatose,
 } = useDatosenferStore();
 
-const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPaciente } =
-  storeToRefs(useDatosenferStore());
+const {
+  datosenfer,
+  AddDG,
+  EditDG,
+  showDialogDG,
+  loading,
+  tempDatos,
+} = storeToRefs(useDatosenferStore());
 
-  const columns = [
+const { listPacientes } = usePacientesStore();
+const { pacientes } = storeToRefs(usePacientesStore());
+
+const columns = [
   {
     name: "nombre",
     align: "center",
@@ -572,28 +601,31 @@ const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPacient
   },
 
   {
-    name: 'num_cama',
-    align: 'center',
-    label: 'No. Cama',
-    field: 'num_cama'
+    name: "num_cama",
+    align: "center",
+    label: "No. Cama",
+    field: "num_cama",
   },
   {
-    name: 'sala',
-    align: 'center',
-    label: 'Sala',
-    field: 'sala'
+    name: "sala",
+    align: "center",
+    label: "Sala",
+    field: "sala",
   },
   {
     name: "peso",
     align: "center",
     label: "Peso",
     field: "peso",
+    format: (val) => `${val} kg`,
   },
   {
     name: "talla",
     align: "center",
     label: "Talla",
     field: "talla",
+    format: (val) => `${val} m`,
+
     sortable: true,
   },
   {
@@ -604,121 +636,121 @@ const { datosenfer, AddDG, EditDG, showDialogDG, loading, tempDatos, tempPacient
     sortable: true,
   },
   {
-    name: 'app',
-    align: 'center',
-    label: 'APP',
-    field: 'app',
+    name: "app",
+    align: "center",
+    label: "APP",
+    field: "app",
   },
   {
-    name: 'patologia',
-    align: 'center',
-    label: 'Patologia',
-    field: 'patologia',
+    name: "patologia",
+    align: "center",
+    label: "Patologia",
+    field: "patologia",
   },
   {
-    name: 'operaciones',
-    align: 'center',
-    label: 'Operaciones',
-    field: 'operaciones',
+    name: "operaciones",
+    align: "center",
+    label: "Operaciones",
+    field: "operaciones",
   },
   {
-    name: 'fecha_e',
-    align: 'center',
-    label: 'Fecha',
-    field: 'fecha_e',
+    name: "fecha_e",
+    align: "center",
+    label: "Fecha",
+    field: "fecha_e",
   },
   {
-    name: 'atencion_estomatologia',
-    align: 'center',
-    label: 'Atención estomatología',
-    field: 'atencion_estomatologia'
+    name: "atencion_estomatologia",
+    align: "center",
+    label: "Atención estomatología",
+    field: "atencion_estomatologia",
   },
   {
-    name: 'fecha_a',
-    align: 'center',
-    label: 'Fecha',
-    field: 'fecha_a',
+    name: "fecha_a",
+    align: "center",
+    label: "Fecha",
+    field: "fecha_a",
   },
   {
-    name: 'programa_auditivo',
-    align: 'center',
-    label: 'Programa auditivo',
-    field: 'programa_auditivo',
+    name: "programa_auditivo",
+    align: "center",
+    label: "Programa auditivo",
+    field: "programa_auditivo",
   },
   {
-    name: 'fecha_o',
-    align: 'center',
-    label: 'Fecha',
-    field: 'fecha_o',
+    name: "fecha_o",
+    align: "center",
+    label: "Fecha",
+    field: "fecha_o",
   },
   {
-    name: 'atencion_oftalmologia',
-    align: 'center',
-    label: 'Atención oftalmología',
-    field: 'atencion_oftalmologia'
+    name: "atencion_oftalmologia",
+    align: "center",
+    label: "Atención oftalmología",
+    field: "atencion_oftalmologia",
   },
   {
-    name: 'resumen',
-    align: 'center',
-    label: 'Resumen de consultas externas',
-    field: 'resumen'
+    name: "resumen",
+    align: "center",
+    label: "Resumen de consultas externas",
+    field: "resumen",
   },
   {
-    name: 'ulcerapres',
-    align: 'center',
-    label: 'Localización de úlceras por presión',
-    field: 'ulcerapres'
+    name: "ulcerapres",
+    align: "center",
+    label: "Localización de úlceras por presión",
+    field: "ulcerapres",
   },
   {
-    name: 'sindrome_respiratorio',
-    align: 'center',
-    label: 'Síndromes respiratorios',
-    field: 'sindrome_respiratorio'
+    name: "sindrome_respiratorio",
+    align: "center",
+    label: "Síndromes respiratorios",
+    field: "sindrome_respiratorio",
   },
   {
-    name: 'programa_tb',
-    align: 'center',
-    label: 'Programa TB',
-    field: 'programa_tb'
+    name: "programa_tb",
+    align: "center",
+    label: "Programa TB",
+    field: "programa_tb",
   },
   {
-    name: 'morbilidad',
-    align: 'center',
-    label: 'Morbilidad',
-    field: 'morbilidad'
+    name: "morbilidad",
+    align: "center",
+    label: "Morbilidad",
+    field: "morbilidad",
   },
   {
-    name: 'transfuciones',
-    align: 'center',
-    label: 'Transfuciones',
-    field: 'transfuciones'
+    name: "transfuciones",
+    align: "center",
+    label: "Transfuciones",
+    field: "transfuciones",
   },
   {
-    name: 'habitos_toxicos',
-    align: 'center',
-    label: 'Habitos tóxicos',
-    field: 'habitos_toxicos'
+    name: "habitos_toxicos",
+    align: "center",
+    label: "Habitos tóxicos",
+    field: "habitos_toxicos",
   },
   {
-    name: 'alergia_medicamentos',
-    align: 'center',
-    label: 'Alergia Medicamentos',
-    field: 'alergia_medicamentos'
+    name: "alergia_medicamentos",
+    align: "center",
+    label: "Alergia Medicamentos",
+    field: "alergia_medicamentos",
   },
   {
-    name: 'accidentes',
-    align: 'center',
-    label: 'Accidentes',
-    field: 'accidentes'
+    name: "accidentes",
+    align: "center",
+    label: "Accidentes",
+    field: "accidentes",
   },
   {
-    name: 'clasificacion_validismo',
-    align: 'center',
-    label: 'Clasificacion de validismo',
-    field: 'clasificacion_validismo'
+    name: "clasificacion_validismo",
+    align: "center",
+    label: "Clasificacion de validismo",
+    field: "clasificacion_validismo",
   },
   { name: "actions", label: "Acciones", align: "center", autoWidth: true },
-]
+];
 
 const filter = ref("");
 const persistent = ref(false);
@@ -736,58 +768,47 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
-const SaludOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
-
 const visibleColumns = ref([
-  'nombre',
-  'edad',
-  'sexo',
-  'peso',
-  'clasif_imc',
-  'talla',
-  'app',
-  'patologia',
-  'operaciones',
-  'fecha_e',
-  'atencion_estomatologia',
-  'fecha_a',
-  'programa_auditivo',
-  'fecha_o',
-  'atencion_oftalmologia',
-  'resumen',
-  'ulcerapres',
-  'sindrome_respiratorio',
-  'programa_tb',
-  'morbilidad',
-  'transfuciones',
-  'habitos_toxicos',
-  'alergia_medicamentos',
-  'accidentes',
-  'clasificacion_validismo',
-  'num_cama',
-  'sala',
-  'actions',
-])
+  "nombre",
+  "edad",
+  "sexo",
+  "peso",
+  "clasif_imc",
+  "talla",
+  "app",
+  "patologia",
+  "operaciones",
+  "fecha_e",
+  "atencion_estomatologia",
+  "fecha_a",
+  "programa_auditivo",
+  "fecha_o",
+  "atencion_oftalmologia",
+  "resumen",
+  "ulcerapres",
+  "sindrome_respiratorio",
+  "programa_tb",
+  "morbilidad",
+  "transfuciones",
+  "habitos_toxicos",
+  "alergia_medicamentos",
+  "accidentes",
+  "clasificacion_validismo",
+  "num_cama",
+  "sala",
+  "actions",
+]);
 
 // Función para calcular la clasificación IMC
 function calcularClasificacionIMC(peso, talla) {
   const imc = peso / (talla * talla);
 
   if (imc < 18.5) {
-    return 'Bajo peso';
+    return "Bajo peso";
   } else if (imc >= 18.5 && imc < 25) {
-    return 'Normopeso';
+    return "Normopeso";
   } else {
-    return 'Obeso';
+    return "Obeso";
   }
 }
 
@@ -799,10 +820,44 @@ watch(
       const clasificacionIMC = calcularClasificacionIMC(peso, talla);
       tempDatos.value.clasif_imc = clasificacionIMC;
     } else {
-      tempDatos.value.clasif_imc = '';
+      tempDatos.value.clasif_imc = "";
     }
   }
 );
+
+const EnfermeriaOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomPacientes = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  EnfermeriaOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterEncuesta(val, update) {
+  if (val === "") {
+    update(() => {
+      EnfermeriaOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    EnfermeriaOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const date = ref("");
 

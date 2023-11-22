@@ -11,7 +11,7 @@ export const useIndiceStore = defineStore("Indice", {
     tempIndice: {
       id: 0,
       estado_general: "",
-      estado_mental: "",
+      estado_mental: null,
       actividad: "",
       movilidad: "",
       incontinencia: "",

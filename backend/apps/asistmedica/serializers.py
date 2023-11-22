@@ -27,22 +27,9 @@ class ControlGucemicoSerializer(serializers.ModelSerializer):
 
 
 class DatoEnfermeriaSerializer(serializers.ModelSerializer):
-    receiver_nombre = serializers.SerializerMethodField()
-    receiver_edad = serializers.SerializerMethodField()
-    receiver_sexo = serializers.SerializerMethodField()
-
     class Meta:
         model = DatoEnfermeria
         fields = "__all__"
-
-    def get_receiver_nombre(self, instance):
-        return instance.receiver.nombre if instance.receiver is not None else ""
-
-    def get_receiver_edad(self, instance):
-        return instance.receiver.edad if instance.receiver is not None else ""
-
-    def get_receiver_sexo(self, instance):
-        return instance.receiver.sexo if instance.receiver is not None else ""
 
 
 class MaterialGastableSerializer(serializers.ModelSerializer):
@@ -91,6 +78,100 @@ class IndicacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Indicacion
         fields = "__all__"
+
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "calorias": instance.calorias,
+            "fecha": instance.fecha,
+            "momento": instance.momento,
+            "sig_vitales": instance.sig_vitales,
+            "ctrl_peso": instance.ctrl_peso,
+            "dieta": instance.dieta,
+            "evitar_caidas": instance.evitar_caidas,
+            "glicemia": instance.glicemia,
+            "ind_glic": instance.ind_glic,
+            "camb_ropa": instance.camb_ropa,
+            "analgesicos": instance.analgesicos,
+            "ind_analg": instance.ind_analg,
+            "antiinflamatiorios": instance.antiinflamatiorios,
+            "ind_flamat": instance.ind_flamat,
+            "antibiotios": instance.antibiotios,
+            "ind_antib": instance.ind_antib,
+            "antidepresivos": instance.antidepresivos,
+            "ind_antid": instance.ind_antid,
+            "antihistaminicos": instance.antihistaminicos,
+            "ind_antis": instance.ind_antis,
+            "anticoagulantes": instance.anticoagulantes,
+            "ind_antic": instance.ind_antic,
+            "antihipertensivo": instance.antihipertensivo,
+            "ind_antih": instance.ind_antih,
+            "antidiabeticos": instance.antidiabeticos,
+            "ind_antidb": instance.ind_antidb,
+            "antiepilepticos": instance.antiepilepticos,
+            "ind_antiep": instance.ind_antiep,
+            "antipsicoticos": instance.antipsicoticos,
+            "ind_antips": instance.ind_antips,
+            "antiansiedad": instance.antiansiedad,
+            "ind_antian": instance.ind_antian,
+            "antiparasitario": instance.antiparasitario,
+            "ind_antiparas": instance.ind_antiparas,
+            "antivirales": instance.antivirales,
+            "ind_antiv": instance.ind_antiv,
+            "antiarritmicos": instance.antiarritmicos,
+            "ind_antia": instance.ind_antia,
+            "broncodilatadores": instance.broncodilatadores,
+            "ind_bronco": instance.ind_bronco,
+            "diureticos": instance.diureticos,
+            "ind_diur": instance.ind_diur,
+            "relajante_muscular": instance.relajante_muscular,
+            "ind_rm": instance.ind_rm,
+            "vitaminas": instance.vitaminas,
+            "ind_vit": instance.ind_vit,
+            "sonda": instance.sonda,
+            "ind_sonda": instance.ind_sonda,
+            "crisis_convul": instance.crisis_convul,
+            "restriccion": instance.restriccion,
+            "oxigenot": instance.oxigenot,
+            "otras_indic": instance.otras_indic,
+            "otros_med": instance.otros_med,
+            "vasodilatador": instance.vasodilatador,
+            "ind_vaso": instance.ind_vaso,
+            "estatinas": instance.estatinas,
+            "ind_est": instance.ind_est,
+            "acido_dicarb": instance.acido_dicarb,
+            "ind_acido": instance.ind_acido,
+            "antimicrobiano": instance.antimicrobiano,
+            "ind_antim": instance.ind_antim,
+            "ind_gener": instance.ind_gener,
+            # -------------
+            "nombre": instance.indic_paciente.nombre
+            if instance.indic_paciente is not None
+            else "",
+            "ci": instance.indic_paciente.ci
+            if instance.indic_paciente is not None
+            else "",
+            "edad": instance.indic_paciente.edad
+            if instance.indic_paciente is not None
+            else "",
+            # --------------
+            "hora_6am": instance.indic_termo.hora_6am
+            if instance.indic_termo is not None
+            else "",
+            "hora_2pm": instance.indic_termo.hora_2pm
+            if instance.indic_termo is not None
+            else "",
+            "hora_10pm": instance.indic_termo.hora_10pm
+            if instance.indic_termo is not None
+            else "",
+            # --------------
+            "num_cama": instance.indic_datoenf.num_cama
+            if instance.indic_datoenf is not None
+            else "",
+            "clasif_imc": instance.indic_datoenf.clasif_imc
+            if instance.indic_datoenf is not None
+            else "",
+        }
 
 
 class MntSerializer(serializers.ModelSerializer):

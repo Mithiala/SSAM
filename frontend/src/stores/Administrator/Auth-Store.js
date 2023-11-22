@@ -1,276 +1,554 @@
-import { defineStore } from "pinia";
-import { Notify, Dialog } from "quasar";
+import { defineStore, getActivePinia } from "pinia";
+import { Notify, Dialog, LocalStorage } from "quasar";
 import { api } from "src/boot/axios";
 
 export const useAuthStore = defineStore("Auth", {
   state: () => ({
-    token: "",
+    access: "",
+    refresh: "",
     isAuthenticated: false,
-    me: {},
+
+    me: {
+      id: 0,
+      avatar: "",
+      username: "",
+      especialidad: "",
+      centro_pertenece: 0,
+      grupo: "",
+      last_login: "",
+      is_staff: Boolean,
+      is_active: Boolean,
+    },
 
     loginForm: {
-      identity: "",
-      password: "",
-    },
-    registerForm: {
-      nombre_esp: "",
-      especialidad: "",
       username: "",
-      centro: "",
       password: "",
-      passwordConfirm: "",
-      rol: "",
-      avatar: null,
-      activo: false,
     },
 
-    usuarios: [],
-    tempUsuario: {
-      avatar: null,
-      nombre_esp: "",
-      especialidad: "",
+    users: [],
+    loading: false,
+
+    tempUser: {
+      id: 0,
+      avatar: new File([], ""),
       username: "",
-      centro_pertenece: "",
-      oldPassword: "",
+      especialidad: "",
+      centro_pertenece: 0,
       password: "",
-      passwordConfirm: "",
-      rol: "",
-      activo: false,
+      re_password: "",
+      oldPassword: "",
+      is_staff: false,
+      is_active: true,
+      grupo: "",
     },
+    changeAvatar: false,
+    changeAvatarL: false,
+    changePassword: false,
     changePass: false,
     showDialogU: false,
+    dialogAvatarLayout: false,
+    dialogPasswordLayout: false,
     EditU: false,
     AddU: false,
     ViewU: false,
   }),
 
   actions: {
+    clearTempUser() {
+      this.tempUser = {
+        id: 0,
+        avatar: new File([], ""),
+        username: "",
+        especialidad: "",
+        centro_pertenece: 0,
+        password: "",
+        re_password: "",
+        oldPassword: "",
+        is_staff: false,
+        is_active: true,
+        grupo: "",
+      };
+    },
+
     async submitLogin() {
       try {
-        const pb = new api("http://127.0.0.1:3333");
-        const authData = await pb
-          .collection("users")
-          .authWithPassword(this.loginForm.identity, this.loginForm.password);
-        this.token = pb.authStore.token;
+        const url = "api/jwt/create/";
+        const response = await api.post(url, this.loginForm);
+
+        this.access = response.data.access;
+        this.refresh = response.data.refresh;
         this.isAuthenticated = true;
-        this.me = authData.record;
-        console.log("firstData => ", authData);
+
+        // Guardar los tokens en el almacenamiento local
+        LocalStorage.set("access_token", response.data.access);
+        LocalStorage.set("refresh_token", response.data.refresh);
+
+        // Obtener el usuario autenticado
+        await this.fetchUserAuth();
+
         Notify.create({
-          icon: "las la-fire-alt",
-          position: "top-right",
-          message: `Bienvenido ${this.me.username}`,
-          color: "success",
+          icon: "las la-sign-in-alt",
+          position: "bottom",
+          message: `Bienvenido: ${this.me.username}`,
+          progress: true,
+          color: "positive",
         });
-        this.loginForm.identity = "";
+
+        this.loginForm.username = "";
         this.loginForm.password = "";
-        this.router.push("/");
       } catch (error) {
+        console.log(
+          "🚀 ~ file: Auth-Store.js:102 ~ submitLogin ~ error:",
+          error.response.data.detail
+        );
+
+        let errorMessage = error.response.data.detail;
+
         Notify.create({
           icon: "las la-exclamation-circle",
-          position: "top-right",
-          message:
-            "Usuario o Contraseña incorrectas, por favor, introduzca sus credenciales correctas.",
+          position: "bottom",
+          progress: true,
+          message: errorMessage,
           color: "negative",
         });
-        console.log(error);
+      } finally {
+        this.router.push("/");
       }
     },
 
-    async refreshAuth() {
-      //Con redirrecion si no estas logeado
+    async fetchUserAuth() {
       try {
-        const token = localStorage.getItem("api_auth");
-        if (!token) {
-          console.log(
-            "Token de autenticación no encontrado. Redirigiendo a la página de inicio de sesión..."
-          );
-          this.router.push("/login");
-          return;
+        const url = "auth/users/me/";
+        const access_token = LocalStorage.getItem("access_token");
+
+        const response = await api.get(url, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+        if (response.status === 200) {
+          await this.retrieveUser(response.data.id);
         }
-        const pb = new api("http://127.0.0.1:3333");
-        const authData = await pb.collection("users").authRefresh();
-        console.log("Auth data:", authData);
-        this.token = pb.authStore.token;
-        this.isAuthenticated = true;
-        this.me = authData.record;
       } catch (error) {
-        console.log("Error al renovar la autenticación:", error);
-        console.log("Redirigiendo a la página de inicio de sesión...");
+        console.log(
+          "🚀 ~ file: Auth-Store.js:133 ~ fetchUserAuth ~ error:",
+          error.response.data.detail
+        );
+      }
+    },
+
+    async refreshToken() {
+      try {
+        const url = "api/jwt/refresh/";
+        const refresh_token = LocalStorage.getItem("refresh_token");
+        const response = await api.post(url, {
+          refresh: refresh_token,
+        });
+        if (response.status === 200) {
+          LocalStorage.set("access_token", response.data.access);
+          LocalStorage.set("refresh_token", response.data.refresh);
+          this.access = response.data.access;
+          this.refresh = response.data.refresh;
+          this.isAuthenticated = true;
+        }
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: Auth-Store.js:157 ~ refreshToken ~ error:",
+          error.response.data.detail
+        );
+        Notify.create({
+          icon: "las la-exclamation-circle",
+          position: "bottom",
+          progress: true,
+          message: error.response.data.detail,
+          color: "negative",
+        });
+        this.isAuthenticated = false;
         this.router.push("/login");
       }
     },
 
-    async submitlogout() {
-      const pb = new api("http://127.0.0.1:3333");
-      pb.authStore.clear();
-      this.token = "";
-      this.isAuthenticated = false;
-      this.me = {};
-    },
+    async verifyToken() {
+      const storedAccess_token = LocalStorage.getItem("access_token");
+      const storedRefreshToken = LocalStorage.getItem("refresh_token");
 
-    async submitRegister() {
+      if (!storedAccess_token || !storedRefreshToken) {
+        this.isAuthenticated = false;
+        Notify.create({
+          icon: "las la-exclamation-circle",
+          position: "bottom",
+          progress: true,
+          message: "El Usuario no esta Autenticado:",
+          color: "negative",
+        });
+        this.router.push("/login");
+        return;
+      }
       try {
-        const pb = new api("http://127.0.0.1:3333");
-        const formData = new FormData();
-        formData.append("nombre_esp", this.registerForm.nombre_esp);
-        formData.append("especialidad", this.registerForm.especialidad);
-        formData.append("username", this.registerForm.username);
-        formData.append("centro", this.registerForm.centro);
-        formData.append("password", this.registerForm.password);
-        formData.append("passwordConfirm", this.registerForm.passwordConfirm);
-        formData.append("rol", this.registerForm.rol);
-        formData.append("avatar", this.registerForm.avatar);
-        formData.append("activo", this.registerForm.activo);
-        const response = await pb.collection("usuarios").create(formData);
+        const url = "api/jwt/verify/";
+        const response = await api.post(url, {
+          token: storedAccess_token,
+        });
 
-        if (response) {
-          console.log("Registro exitoso!");
-          console.log("Respuesta => ", response);
-          Notify.create({
-            color: "positive",
-            message: `Usuario ${this.registerForm.username} registrado exitosamente`,
-            position: "top",
-            icon: "check",
-          });
-          this.loginForm.identity = this.registerForm.username;
-          this.loginForm.password = this.registerForm.password;
-          this.registerForm.nombre_esp = "";
-          this.registerForm.especialidad = "";
-          this.registerForm.username = "";
-          this.registerForm.centro = "";
-          this.registerForm.password = "";
-          this.registerForm.passwordConfirm = "";
-          this.registerForm.rol = "";
-          this.registerForm.avatar = null;
-          this.registerForm.activo = false;
-          await this.submitLogin();
-          this.router.push("/");
-          this.loginForm.identity = "";
-          this.loginForm.password = "";
-          console.log("Redireccionando a la página principal...");
+        if (response.status === 200) {
+          await this.fetchUserAuth();
+          this.isAuthenticated = true;
+        } else {
+          console.log(
+            "🚀 ~ file: Auth-Store.js:194 ~ verifyToken ~ response:",
+            response
+          );
         }
       } catch (error) {
-        console.log("MI ERROR Registro: ", error);
+        console.log(
+          "🚀 ~ file: Auth-Store.js:197 ~ verifyToken ~ error:",
+          error.response.data.detail
+        );
+
+        if (error.response.status === 401) {
+          await this.refreshToken();
+          if (this.isAuthenticated) {
+            await this.fetchUserAuth();
+          }
+        } else {
+          Notify.create({
+            icon: "las la-exclamation-circle",
+            position: "bottom",
+            progress: true,
+            message: error.response.data.detail,
+            color: "negative",
+          });
+          this.router.push("/login");
+        }
+      }
+    },
+
+    async submitlogout() {
+      const pinia = getActivePinia();
+      LocalStorage.clear();
+      await this.router.push("/login");
+      pinia._s.forEach((store) => store.$reset());
+    },
+
+    // -----------------------------
+    async listUsers() {
+      try {
+        this.loading = true;
+        const url = "auth/users/";
+        const token = LocalStorage.getItem("access_token");
+        const response = await api.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        this.users = response.data.results;
+        this.loading = false;
+      } catch (error) {
+        console.log("Code: ", error.code);
+        console.log("Mensaje : ", error.response.data.detail);
+      }
+    },
+
+    async createUser() {
+      try {
+        const url = "auth/users/";
+        const token = LocalStorage.getItem("access_token");
+        const request = {
+          username: this.tempUser.username,
+          password: this.tempUser.password,
+          re_password: this.tempUser.re_password,
+        };
+        const response = await api.post(url, request, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 201) {
+          Notify.create({
+            color: "positive",
+            message: `Usuario ${response.data.username} registrado exitosamente`,
+            position: "bottom",
+            progress: true,
+            icon: "check",
+          });
+          await this.listUsers();
+          this.showDialogU = false;
+          this.clearTempUser();
+        }
+      } catch (error) {
+        console.log("Code: ", error.code);
+        console.log("responseText : ", error.request.responseText);
+
+        let errorMessage = "";
+
+        for (const field in error.response.data) {
+          if (error.response.data.hasOwnProperty(field)) {
+            errorMessage += `${field}: ${error.response.data[field].join(
+              ", "
+            )} `;
+          }
+        }
+
         Notify.create({
           color: "negative",
-          message: "Error al registrar usuario",
+          message: errorMessage,
           position: "top",
           icon: "report_problem",
         });
       }
     },
 
-    // -----------------------------
-    async getUsuario() {
+    async retrieveUser(id) {
       try {
-        const pb = new api("http://127.0.0.1:3333");
-        const records = await pb.collection("usuarios").getFullList({
-          sort: "-created",
+        const url = `auth/users/${id}/`;
+        const token = LocalStorage.getItem("access_token");
+        const response = await api.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
-        console.log("mi record : ", records);
-        this.usuarios = records;
+        this.me = response.data;
       } catch (error) {
-        console.log(error);
+        console.log("retrieveUser error.code: ", error.code);
+        console.log("retrieveUser error.detail ", error.response.data.detail);
       }
     },
-    async addUsuario() {
+
+    async updateUser(id) {
       try {
-        const pb = new api("http://127.0.0.1:3333");
-        const formData = new FormData();
-        formData.append("avatar", this.tempUsuario.avatar);
-        formData.append("nombre_esp", this.tempUsuario.nombre_esp);
-        formData.append("especialidad", this.tempUsuario.especialidad);
-        formData.append("username", this.tempUsuario.username);
-        formData.append("centro", this.tempUsuario.centro);
-        formData.append("password", this.tempUsuario.password);
-        formData.append("passwordConfirm", this.tempUsuario.passwordConfirm);
-        formData.append("rol", this.tempUsuario.rol);
-        formData.append("activo", this.tempUsuario.activo);
-        const createdRecord = await pb.collection("usuarios").create(formData);
-        if (createdRecord) {
-          console.log("Add exitoso!");
-          console.log("Respuesta => ", createdRecord);
+        const url = `auth/users/${id}/`;
+        const token = LocalStorage.getItem("access_token");
+
+        const request = {
+          username: this.tempUser.username,
+          metropropio: this.tempUser.metropropio
+            ? this.tempUser.metropropio.value
+            : null,
+          grupo: this.tempUser.grupo,
+          is_staff: this.tempUser.is_staff,
+          is_active: this.tempUser.is_active,
+        };
+
+        const response = await api.patch(url, request, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 201) {
           Notify.create({
             color: "positive",
-            message: "Agregado con exito",
-            position: "top",
+            message: "Actualizado con éxito",
+            position: "bottom",
+            progress: true,
             icon: "check",
           });
         }
-        await this.getUsers();
+        await this.listUsers();
         this.showDialogU = false;
+        this.clearTempUser();
       } catch (error) {
-        console.log("error add file", error);
+        console.log("Code: ", error);
+        console.log("responseText : ", error.request.responseText);
+
+        let errorMessage = "";
+
+        for (const field in error.response.data) {
+          if (error.response.data.hasOwnProperty(field)) {
+            errorMessage += `${field}: ${error.response.data[field].join(
+              ", "
+            )} `;
+          }
+        }
+
         Notify.create({
-          message: "Error al agregar",
-          icon: "times",
           color: "negative",
+          message: errorMessage,
+          position: "bottom",
+          progress: true,
+          icon: "report_problem",
         });
       }
     },
-    async editUsuario(id) {
+
+    async updateAvatar(id) {
       try {
-        const pb = new api("http://127.0.0.1:3333");
+        const url = `auth/users/${id}/`;
+        const token = LocalStorage.getItem("access_token");
+
         const formData = new FormData();
-        formData.append("avatar", this.tempUsuario.avatar);
-        formData.append("nombre_esp", this.tempUsuario.nombre_esp);
-        formData.append("especilaidad", this.tempUsuario.especialidad);
-        formData.append("username", this.tempUsuario.username);
-        formData.append("centro", this.tempUsuario.centro);
-        formData.append("rol", this.tempUsuario.rol);
-        formData.append("activo", this.tempUsuario.activo);
-        if (this.changePass === true) {
-          formData.append("oldPassword", this.tempUsuario.oldPassword);
-          formData.append("password", this.tempUsuario.password);
-          formData.append("passwordConfirm", this.tempUsuario.passwordConfirm);
+        if (this.tempUser.avatar.size > 0) {
+          formData.append("avatar", this.tempUser.avatar);
         }
-        const updatedRecord = await pb.collection("usuarios").update(id_esp, formData);
-        if (updatedRecord) {
-          console.log("Update exitoso!");
-          console.log("Respuesta => ", updatedRecord);
+        const response = await api.patch(url, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) {
           Notify.create({
             color: "positive",
-            message: "Actualizado con exito",
-            position: "top",
+            message: "Actualizado con éxito",
+            position: "bottom",
+            progress: true,
             icon: "check",
           });
         }
-        await this.getUsuario();
+        await this.listUsers();
         this.showDialogU = false;
+        this.changeAvatar = false;
+        this.dialogAvatarLayout = false;
+        this.clearTempUser();
       } catch (error) {
+        console.log("Code updateAvatar: ", error);
+        console.log("responseText : ", error.request.responseText);
+
+        let errorMessage = "";
+
+        for (const field in error.response.data) {
+          if (error.response.data.hasOwnProperty(field)) {
+            errorMessage += `${field}: ${error.response.data[field].join(
+              ", "
+            )} `;
+          }
+        }
+
         Notify.create({
-          message: "Error al actualizar",
-          icon: "times",
           color: "negative",
+          message: errorMessage,
+          position: "bottom",
+          progress: true,
+          icon: "report_problem",
         });
       }
     },
-    async deleteUsuario(id_esp) {
+
+    async updatePassword() {
+      try {
+        this.loading = true;
+        const url = `/auth/change-password/`;
+        const token = LocalStorage.getItem("access_token");
+
+        const request = {
+          user_id: this.tempUser.id,
+          new_password: this.tempUser.password,
+        };
+
+        const response = await api.post(url, request, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          Notify.create({
+            color: "positive",
+            message: response.data.message,
+            position: "bottom",
+            progress: true,
+            icon: "check",
+          });
+        }
+        this.changePassword = false;
+        this.loading = false;
+      } catch (error) {
+        console.log("Code: ", error.code);
+        console.log("Mensaje : ", error.response.data.detail);
+      }
+    },
+
+    async set_password() {
+      try {
+        this.loading = true;
+        const url = `/auth/users/set_password/`;
+        const token = LocalStorage.getItem("access_token");
+
+        const request = {
+          current_password: this.tempUser.oldPassword,
+          new_password: this.tempUser.password,
+        };
+
+        const response = await api.post(url, request, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 204) {
+          Notify.create({
+            color: "positive",
+            message: "Contraseña actualizada correctamente",
+            position: "bottom",
+            progress: true,
+            icon: "check",
+          });
+        }
+
+        this.loading = false;
+      } catch (error) {
+        console.log("Code: ", error.response.data);
+        let errorMessage = "";
+
+        for (const field in error.response.data) {
+          if (error.response.data.hasOwnProperty(field)) {
+            errorMessage += error.response.data[field]
+              .map((message) => `*${message}`)
+              .join("<br>");
+          }
+        }
+
+        Notify.create({
+          color: "negative",
+          message: errorMessage,
+          position: "bottom",
+          html: true,
+          progress: true,
+          icon: "report_problem",
+        });
+      }
+    },
+
+    async destroyUser(id) {
       try {
         Dialog.create({
           html: true,
-          title: '<span class="text-red">Desactivadoliminar</span>',
-          message: "Estas seguro que deseas desactivar el usuario",
+          title: '<span class="text-red">Eliminar</span>',
+          message: "¿Estás seguro de que deseas eliminar el usuario?",
           cancel: { color: "positive" },
           ok: { color: "negative" },
           persistent: true,
         }).onOk(async () => {
-          const pb = new api("http://127.0.0.1:3333");
-          await pb.collection("usuario").put(id_esp);
-          Notify.create({
-            message: "Desactivado con exito",
-            icon: "check",
-            color: "positive",
+          const url = `auth/users/${id}/`;
+          const token = LocalStorage.getItem("access_token");
+
+          const response = await api.delete(url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
-          await this.getUsuario();
+          if (response) {
+            Notify.create({
+              message: "Eliminado con éxito",
+              icon: "check",
+              color: "positive",
+              position: "bottom",
+              progress: true,
+            });
+          }
+          await this.listUsers();
         });
       } catch (error) {
         Notify.create({
-          message: "Error al descativar",
+          message: "Error al eliminar",
           icon: "times",
           color: "negative",
+          position: "bottom",
+          progress: true,
         });
       }
     },
   },
+  persist: false,
 });

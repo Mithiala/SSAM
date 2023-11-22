@@ -387,7 +387,7 @@ class Termometria(BaseModel):
         verbose_name_plural = "Termometrías"
 
     def __str__(self):
-        return f" {self.id} - {self.ter_paciente.nombre} "
+        return f" {self.id} - {self.fecha} - {self.ter_paciente.nombre} "
 
 
 class Indicacion(BaseModel):
@@ -545,7 +545,7 @@ class Indicacion(BaseModel):
         verbose_name_plural = "Indicaciones"
 
     def __str__(self):
-        return f" {self.id} - {self.indic_paciente.nombre} - {self.indic_termo.hora_6am} - {self.indic_termo.hora_2pm} - {self.indic_termo.hora_10pm} - {self.indic_datoenf.clasif_imc}"
+        return f" {self.id} - {self.fecha} - {self.indic_paciente.nombre} - {self.indic_termo.hora_6am} - {self.indic_termo.hora_2pm} - {self.indic_termo.hora_10pm} - {self.indic_datoenf.clasif_imc}"
 
 
 class Vacunacion(BaseModel):
