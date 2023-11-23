@@ -5,21 +5,15 @@ import { Notify, Dialog } from "quasar";
 export const useYesavageStore = defineStore("Yesavage", {
   state: () => ({
     yesavage: [],
-    pacientes: [],
     loading: false,
 
     tempYasevage: {
-      id: 0,
-      depmoderada: 0,
-      depsevera: 0,
-      normal: 0,
-      y_paciente: 0,
-    },
-
-    tempPaciente: {
-      nombre: "",
-      edad: 0,
-      sexo: "",
+      id: null,
+      fecha: "",
+      depmoderada: null,
+      depsevera: null,
+      normal: null,
+      y_paciente: null,
     },
 
     showDialogYP: false,
@@ -34,10 +28,11 @@ export const useYesavageStore = defineStore("Yesavage", {
     resetTempYase() {
       console.log("aqui receteo");
       this.tempYasevage = {
-        depmoderada: 0,
-        depsevera: 0,
-        normal: 0,
-        y_paciente: 0,
+        fecha: "",
+        depmoderada: null,
+        depsevera: null,
+        normal: null,
+        y_paciente: null,
       };
     },
 
@@ -62,26 +57,6 @@ export const useYesavageStore = defineStore("Yesavage", {
       }
     },
 
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
-          error
-        );
-      }
-    },
-
     //TODO: Accion para crear Registros
     async createYase() {
       try {
@@ -89,6 +64,7 @@ export const useYesavageStore = defineStore("Yesavage", {
         // const token = LocalStorage.getItem("access_token");
         const formData = new FormData();
         formData.append("depmoderada", this.tempYasevage.depmoderada);
+        formData.append("fecha", this.tempYasevage.fecha);
         formData.append("depsevera", this.tempYasevage.depsevera);
         formData.append("normal", this.tempYasevage.normal);
         formData.append("y_paciente", this.tempYasevage.y_paciente.value);
@@ -155,6 +131,7 @@ export const useYesavageStore = defineStore("Yesavage", {
 
         const request = {
           depmoderada: this.tempYasevage.depmoderada,
+          fecha: this.tempYasevage.fecha,
           depsevera: this.tempYasevage.depsevera,
           normal: this.tempYasevage.normal,
           y_paciente: this.tempYasevage.y_paciente,

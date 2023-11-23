@@ -116,62 +116,110 @@
 
               <!-- TODO:  "yasevage_paciente" -->
               <q-select
-                class="col-3"
+                class="col-5"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempYasevage.y_paciente"
                 label="Nombre del paciente"
-                :options="YaseOption"
-                style="width: 250px"
-                behavior="menu"
+                :options="YaseOptions"
+                @filter="filterYase"
+                @popup-show="getNomYase"
+                option-value="value"
+                option-label="label"
               />
 
-              <!-- TODO:  "Normal" -->
+              <!-- TODO:  "fecha evaluación" -->
               <q-input
-                class="col-3"
-                outlined
+                class="col-4"
                 dense
-                type="number"
-                label="Normal"
-                lazy-rules
-                v-model="tempYasevage.normal"
+                outlined
+                label="Fecha Evaluación"
+                v-model="tempYasevage.fecha"
+                mask="####-##-##"
                 :rules="[
                   (val) =>
-                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de evaluación',
                 ]"
-                mask="#"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempYasevage.fecha"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
+              <!-- TODO:  "Depresión Severa" -->
+              <q-select
+                class="col-4"
+                dense
+                options-dense
+                outlined
+                use-input
+                input-debounce
+                v-model="tempYasevage.y_paciente"
+                label="Depresión Severa"
+                :options="SeveraOptions"
+                @filter="filterSevera"
+                @popup-show="getNomSevera"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Depresión Moderada" -->
-              <q-input
-                class="col-3"
-                outlined
+              <q-select
+                class="col-5"
                 dense
-                type="number"
+                options-dense
+                outlined
+                use-input
+                input-debounce
+                v-model="tempYasevage.y_paciente"
                 label="Depresión Moderada"
-                lazy-rules
-                v-model="tempYasevage.depmoderada"
-                :rules="[
-                  (val) =>
-                    (val > 5 && val < 11) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
+                :options="ModeradaOptions"
+                @filter="filterModerada"
+                @popup-show="getNomModerada"
+                option-value="value"
+                option-label="label"
               />
 
-              <!-- TODO:  "Depresión Severa" -->
-              <q-input
-                class="col-3"
-                outlined
+              <!-- TODO:  "Normal" -->
+              <q-select
+                class="col-5"
                 dense
-                type="number"
-                label="Depresión Severa"
-                lazy-rules
-                v-model="tempYasevage.depsevera"
-                :rules="[
-                  (val) =>
-                    (val > 10 && val < 16) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
+                options-dense
+                outlined
+                use-input
+                input-debounce
+                v-model="tempYasevage.y_paciente"
+                label="Normal"
+                :options="NormalOptions"
+                @filter="filterNormal"
+                @popup-show="getNomNormal"
+                option-value="value"
+                option-label="label"
               />
               
             </div>
@@ -212,25 +260,41 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useYesavageStore } from "src/stores/Yesavage-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
+import { useNomenclatorStore } from "src/stores/Nomenclator-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listYase();
-  await listPacientes();
+  await listnomdepsevera();
+  await listnomdepmoderada();
+  await listnomnormal();
   // }
 });
 
 const {
   resetTempYase,
   listYase,
-  listPacientes,
   createYase,
   updateYase,
   destroyYase,
 } = useYesavageStore();
 
-const { yesavage, AddYP, EditYP, showDialogYP, loading, tempYasevage, tempPaciente } =
+const { listnomdepsevera } = useNomenclatorStore();
+const { nomdepsevera } = storeToRefs(useNomenclatorStore());
+
+const { listnomdepmoderada } = useNomenclatorStore();
+const { nomdepmoderada } = storeToRefs(useNomenclatorStore());
+
+const { listnomnormal } = useNomenclatorStore();
+const { nomnormal } = storeToRefs(useNomenclatorStore());
+
+const { yesavage, AddYP, EditYP, showDialogYP, loading, tempYasevage } =
   storeToRefs(useYesavageStore());
+
+const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
@@ -239,6 +303,12 @@ const { yesavage, AddYP, EditYP, showDialogYP, loading, tempYasevage, tempPacien
     label: "Nombre y Apellidos",
     field: "nombre",
     sortable: true,
+  },
+  {
+    name: 'fecha',
+    align: 'center',
+    label: 'Fecha Evaluación',
+    field: 'fecha',
   },
 
   {
@@ -278,16 +348,144 @@ const openAddDialog = () => {
   showDialogYP.value = true;
 };
 
-const YaseOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+// ----------Relación paciente--------------------
+const YaseOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomYase = async () => {
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  YaseOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterYase(val, update) {
+  if (val === "") {
+    update(() => {
+      YaseOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    YaseOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
+
+// ----------Depresión Severa--------------------
+const SeveraOptions = ref([]);
+const nomdepseveraArray = ref([nomdepsevera.value]);
+
+const getNomSevera = async () => {
+  console.log("getNomSevera");
+  await listnomdepsevera();
+  nomdepseveraArray.value = nomdepsevera.value;
+  SeveraOptions.value = nomdepsevera.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterSevera(val, update) {
+  if (val === "") {
+    update(() => {
+      SeveraOptions.value = nomdepseveraArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    SeveraOptions.value = nomdepseveraArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+
+// ----------Depresión Moderada--------------------
+const ModeradaOptions = ref([]);
+const nomdepmoderadaArray = ref([nomdepmoderada.value]);
+
+const getNomModerada = async () => {
+  console.log("getNomModerada");
+  await listnomdepmoderada();
+  nomdepmoderadaArray.value = nomdepmoderada.value;
+  ModeradaOptions.value = nomdepmoderada.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterModerada(val, update) {
+  if (val === "") {
+    update(() => {
+      ModeradaOptions.value = nomdepmoderadaArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    ModeradaOptions.value = nomdepmoderadaArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+
+// ----------Normal--------------------
+const NormalOptions = ref([]);
+const nomnormalArray = ref([nomnormal.value]);
+
+const getNomNormal = async () => {
+  console.log("getNomNormal");
+  await listnomdepmoderada();
+  nomnormalArray.value = nomnormal.value;
+  NormalOptions.value = nomnormal.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterNormal(val, update) {
+  if (val === "") {
+    update(() => {
+      NormalOptions.value = nomnormalArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    NormalOptions.value = nomnormalArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
 
 const date = ref("");
 

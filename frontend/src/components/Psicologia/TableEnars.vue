@@ -116,7 +116,7 @@
 
               <!-- TODO:  "salud_paciente" -->
               <q-select
-                class="col-3"
+                class="col-5"
                 dense
                 options-dense
                 outlined
@@ -133,7 +133,7 @@
 
               <!-- TODO:  "fecha evaluación" -->
               <q-input
-                class="col-2"
+                class="col-4"
                 dense
                 outlined
                 label="Fecha Evaluación"
@@ -171,70 +171,74 @@
                 </template>
               </q-input>
 
-              <!-- TODO:  "Nunca" -->
-              <q-input
-                class="col-3"
-                outlined
+              <!-- TODO:  "Siempre" -->
+              <q-select
+                class="col-4"
                 dense
-                type="number"
-                label="Nunca"
-                lazy-rules
-                v-model="tempEna.nunca"
-                :rules="[
-                  (val) =>
-                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
-              />
-
-              <!-- TODO:  "Algunas Veces" -->
-              <q-input
-                class="col-3"
+                options-dense
                 outlined
-                dense
-                type="number"
-                label="Algunas Veces"
-                lazy-rules
-                v-model="tempEna.algveces"
-                :rules="[
-                  (val) =>
-                    (val > 5 && val < 11) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
+                use-input
+                input-debounce
+                v-model="tempEna.en_paciente"
+                label="Siempre"
+                :options="SiempreOptions"
+                @filter="filterSiempre"
+                @popup-show="getNomSiempre"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Frecuentemente" -->
-              <q-input
-                class="col-3"
-                outlined
+              <q-select
+                class="col-4"
                 dense
-                type="number"
+                options-dense
+                outlined
+                use-input
+                input-debounce
+                v-model="tempEna.en_paciente"
                 label="Frecuentemente"
-                lazy-rules
-                v-model="tempEna.frecuente"
-                :rules="[
-                  (val) =>
-                    (val > 10 && val < 16) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
+                :options="FrecuenteOptions"
+                @filter="filterFrecuente"
+                @popup-show="getNomFrecuente"
+                option-value="value"
+                option-label="label"
               />
 
-              <!-- TODO:  "Fijación" -->
-              <q-input
-                class="col-3"
-                outlined
+              <!-- TODO:  "Algunas Veces" -->
+              <q-select
+                class="col-4"
                 dense
-                type="number"
-                label="Siempre"
-                lazy-rules
-                v-model="tempEna.siempre"
-                :rules="[
-                  (val) =>
-                    (val > 15 && val < 21) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
+                options-dense
+                outlined
+                use-input
+                input-debounce
+                v-model="tempEna.en_paciente"
+                label="Algunas Veces"
+                :options="AlgOptions"
+                @filter="filterAlg"
+                @popup-show="getNomAlg"
+                option-value="value"
+                option-label="label"
               />
-              
+
+              <!-- TODO:  "Nunca" -->
+              <q-select
+                class="col-4"
+                dense
+                options-dense
+                outlined
+                use-input
+                input-debounce
+                v-model="tempEna.en_paciente"
+                label="Nunca"
+                :options="NuncaOptions"
+                @filter="filterNunca"
+                @popup-show="getNomNunca"
+                option-value="value"
+                option-label="label"
+              />
+
             </div>
             <div class="q-mt-lg row q-gutter-md justify-center">
               <q-btn
@@ -274,10 +278,15 @@ import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useEnarsStore } from "src/stores/Enars-Store";
 import { usePacientesStore } from "src/stores/Pacientes-Store";
+import { useNomenclatorStore } from "src/stores/Nomenclator-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listEnars();
+  await listnomalgveces();
+  await listnomfrecuente();
+  await listnomsiempre();
+  await listnomnunca();
   // }
 });
 
@@ -289,10 +298,22 @@ const {
   destroyEnars,
 } = useEnarsStore();
 
+const { listnomalgveces } = useNomenclatorStore();
+const { nomalgveces } = storeToRefs(useNomenclatorStore());
+
+const { listnomfrecuente } = useNomenclatorStore();
+const { nomfrecuente } = storeToRefs(useNomenclatorStore());
+
+const { listnomsiempre } = useNomenclatorStore();
+const { nomsiempre } = storeToRefs(useNomenclatorStore());
+
+const { listnomnunca } = useNomenclatorStore();
+const { nomnunca } = storeToRefs(useNomenclatorStore());
+
 const { enars, AddEE, EditEE, showDialogEE, loading, tempEna} =
   storeToRefs(useEnarsStore());
 
-  const { listPacientes } = usePacientesStore();
+const { listPacientes } = usePacientesStore();
 
 const { pacientes } = storeToRefs(usePacientesStore());
 
@@ -390,6 +411,146 @@ function filterEna(val, update) {
       .map((item) => ({
         value: item.id,
         label: item.nombre,
+      }));
+  });
+}
+
+// ----------Algunas Veces--------------------
+const AlgOptions = ref([]);
+const nomalgvecesArray = ref([nomalgveces.value]);
+
+const getNomAlg = async () => {
+  console.log("getNomAlg");
+  await listnomalgveces();
+  nomalgvecesArray.value = nomalgveces.value;
+  AlgOptions.value = nomalgveces.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterAlg(val, update) {
+  if (val === "") {
+    update(() => {
+      AlgOptions.value = nomalgvecesArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    AlgOptions.value = nomalgvecesArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+
+// ----------Frecuentemente--------------------
+const FrecuenteOptions = ref([]);
+const nomfrecuenteArray = ref([nomfrecuente.value]);
+
+const getNomFrecuente = async () => {
+  console.log("getNomFrecuente");
+  await listnomfrecuente();
+  nomfrecuenteArray.value = nomfrecuente.value;
+  FrecuenteOptions.value = nomfrecuente.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterFrecuente(val, update) {
+  if (val === "") {
+    update(() => {
+      FrecuenteOptions.value = nomfrecuenteArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    FrecuenteOptions.value = nomfrecuenteArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+
+// ----------Siempre--------------------
+const SiempreOptions = ref([]);
+const nomsiempreArray = ref([nomsiempre.value]);
+
+const getNomSiempre = async () => {
+  console.log("getNomSiempre");
+  await listnomsiempre();
+  nomsiempreArray.value = nomsiempre.value;
+  SiempreOptions.value = nomsiempre.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterSiempre(val, update) {
+  if (val === "") {
+    update(() => {
+      SiempreOptions.value = nomsiempreArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    SiempreOptions.value = nomsiempreArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+
+// ----------Nunca--------------------
+const NuncaOptions = ref([]);
+const nomnuncaArray = ref([nomnunca.value]);
+
+const getNomNunca = async () => {
+  console.log("getNomNunca");
+  await listnomnunca();
+  nomnuncaArray.value = nomnunca.value;
+  NuncaOptions.value = nomnunca.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterNunca(val, update) {
+  if (val === "") {
+    update(() => {
+      NuncaOptions.value = nomnuncaArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    NuncaOptions.value = nomnuncaArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
       }));
   });
 }

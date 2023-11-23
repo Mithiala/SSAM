@@ -31,6 +31,45 @@ class DatoEnfermeriaSerializer(serializers.ModelSerializer):
         model = DatoEnfermeria
         fields = "__all__"
 
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "num_cama": instance.num_cama,
+            "sala": instance.sala,
+            "peso": instance.peso,
+            "talla": instance.talla,
+            "clasif_imc": instance.clasif_imc,
+            "app": instance.app,
+            "patologia": instance.patologia,
+            "operaciones": instance.operaciones,
+            "fecha_e": instance.fecha_e,
+            "atencion_estomatologia": instance.atencion_estomatologia,
+            "fecha_a": instance.fecha_a,
+            "programa_auditivo": instance.programa_auditivo,
+            "fecha_o": instance.fecha_o,
+            "atencion_oftalmologia": instance.atencion_oftalmologia,
+            "resumen": instance.resumen,
+            "ulcerapres": instance.ulcerapres,
+            "sindrome_respiratorio": instance.sindrome_respiratorio,
+            "programa_tb": instance.programa_tb,
+            "morbilidad": instance.morbilidad,
+            "transfuciones": instance.transfuciones,
+            "habitos_toxicos": instance.habitos_toxicos,
+            "alergia_medicamentos": instance.alergia_medicamentos,
+            "accidentes": instance.accidentes,
+            "clasificacion_validismo": instance.clasificacion_validismo,
+            # -------------
+            "nombre": instance.denf_paciente.nombre
+            if instance.denf_paciente is not None
+            else "",
+            "edad": instance.denf_paciente.edad
+            if instance.denf_paciente is not None
+            else "",
+            "sexo": instance.denf_paciente.sexo
+            if instance.denf_paciente is not None
+            else "",
+        }
+
 
 class MaterialGastableSerializer(serializers.ModelSerializer):
     class Meta:
