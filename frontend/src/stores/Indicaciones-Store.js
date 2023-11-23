@@ -5,7 +5,6 @@ import { Notify, Dialog } from "quasar";
 export const useIndicacinesStore = defineStore("Indicaciones", {
   state: () => ({
     indicaciones: [],
-    pacientes: [],
     loading: false,
 
     tempIndi: {
@@ -72,14 +71,9 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
       antimicrobiano: "",
       ind_antim: "",
       ind_gener: "",
-      indic_paciente: 0,
-      indic_termo: 0,
-      indic_datoenf: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
+      indic_paciente: null,
+      indic_termo: null,
+      indic_datoenf: null,
     },
 
     showDialogIM: false,
@@ -156,9 +150,9 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
         antimicrobiano: "",
         ind_antim: "",
         ind_gener: "",
-        indic_paciente: 0,
-        indic_termo: 0,
-        indic_datoenf: 0,
+        indic_paciente: null,
+        indic_termo: null,
+        indic_datoenf: null,
       };
     },
 
@@ -178,26 +172,6 @@ export const useIndicacinesStore = defineStore("Indicaciones", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Indicaciones-Store.js:99 ~ listIndic ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/asistmedica/indice/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

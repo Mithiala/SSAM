@@ -111,19 +111,24 @@
 
               <!-- TODO:  "paciente_vacuna" -->
               <q-select
-                class="col-3"
+                class="col-5"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempVacuna.vac_paciente"
                 label="Nombre del paciente"
-                :options="VacOption"
-                style="width: 250px"
-                behavior="menu"
-              />
+                :options="IndOptions"
+                @filter="filterInd"
+                @popup-show="getNomInd"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO: "Tipo de vacunación" -->
               <q-select
-                class="col-4"
+                class="col-5"
                 dense
                 outlined
                 v-model="tempVacuna.tipo"
@@ -134,7 +139,7 @@
 
               <!-- TODO: "Lote" -->
               <q-input
-                class="col-4"
+                class="col-5"
                 dense
                 outlined
                 label="Lote"
@@ -143,7 +148,7 @@
 
               <!-- TODO: "Fecha de vacunación" -->
               <q-input
-                class="col-2"
+                class="col-5"
                 dense
                 outlined
                 label="Fecha de vacunación"
@@ -219,31 +224,33 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useVaccinesStore } from "src/stores/Vaccines-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listVac();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempVac,
   listVac,
-  listPacientes,
   createVac,
   updateVac,
   destroyVac,
 } = useVaccinesStore();
 
-const { vaccines, AddDG, EditDG, showDialogDG, loading, tempVacuna, tempPaciente } =
+const { vaccines, AddDG, EditDG, showDialogDG, loading, tempVacuna } =
   storeToRefs(useVaccinesStore());
+
+const { listPacientes } = usePacientesStore();
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -302,16 +309,40 @@ const TipoOptions = [
   "Otras",
 ];
 
-const VacOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+// ----------Relacion paciente--------------------
+const IndOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomInd = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  IndOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterInd(val, update) {
+  if (val === "") {
+    update(() => {
+      IndOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    IndOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const date = ref("");
 

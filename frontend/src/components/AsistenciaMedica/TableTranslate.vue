@@ -201,8 +201,13 @@
     </q-table>
 
     <!-- TODO: Añadir - Editar -->
-    <q-dialog v-model="showDialogDG" persistent full-width >
-      <q-card class="column full-height">
+    <q-dialog v-model="showDialogDG" persistent full-width>
+      <q-card class="row full-height">
+        <q-card-section class="col items-center q-pb-none">
+          <div class="row justify-end">
+            <q-btn icon="close" flat round dense v-close-popup />
+          </div>
+        </q-card-section>
         <q-card-section>
           <q-form>
             <div class="row justify-around q-gutter-md">
@@ -211,13 +216,18 @@
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempTraslado.tras_paciente"
                 label="Nombre del paciente"
-                :options="TrasOption"
-                style="width: 250px"
-                behavior="menu"
-              />
+                :options="IndOptions"
+                @filter="filterInd"
+                @popup-show="getNomInd"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO: "Traslado Policlínico III" -->
               <q-checkbox
@@ -725,31 +735,39 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useTrasladoegresobajaStore } from "src/stores/Trasladoegresobaja-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listTrasladoEB();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempTrasladoEB,
   listTrasladoEB,
-  listPacientes,
   createTrasladoEB,
   updateTrasladoEB,
   destroyTrasladoEB,
 } = useTrasladoegresobajaStore();
 
-const { trasladoegresobaja, AddDG, EditDG, showDialogDG, loading, tempTraslado, tempPaciente } =
-  storeToRefs(useTrasladoegresobajaStore());
+const { 
+  trasladoegresobaja, 
+  AddDG, 
+  EditDG, 
+  showDialogDG, 
+  loading, 
+  tempTraslado 
+} = storeToRefs(useTrasladoegresobajaStore());
+
+const { listPacientes } = usePacientesStore();
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -905,16 +923,40 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
-const TrasOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+// ----------Relacion paciente--------------------
+const IndOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomInd = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  IndOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterInd(val, update) {
+  if (val === "") {
+    update(() => {
+      IndOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    IndOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const visibleColumns = ref([
 'nombre',

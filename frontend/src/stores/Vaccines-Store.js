@@ -5,7 +5,6 @@ import { Notify, Dialog } from "quasar";
 export const useVaccinesStore = defineStore("Vaccines", {
   state: () => ({
     vaccines: [],
-    pacientes: [],
     loading: false,
 
     tempVacuna: {
@@ -13,12 +12,7 @@ export const useVaccinesStore = defineStore("Vaccines", {
       tipo: "",
       lote: "",
       fecha: "",
-      vac_paciente: 0,
-    },
-
-    tempPaciente: {
-      nombre: "",
-      edad: 0,
+      vac_paciente: null,
     },
 
     showDialogDG: false,
@@ -36,7 +30,7 @@ export const useVaccinesStore = defineStore("Vaccines", {
         tipo: "",
         lote: "",
         fecha: "",
-        vac_paciente: 0,
+        vac_paciente: null,
       };
     },
 
@@ -56,26 +50,6 @@ export const useVaccinesStore = defineStore("Vaccines", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Vaccines-Store.js:99 ~ listVac ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

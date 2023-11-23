@@ -214,8 +214,13 @@
     </q-table>
 
     <!-- TODO: Añadir - Editar -->
-    <q-dialog v-model="showDialogIM" persistent full-width >
-      <q-card class="column medium">
+    <q-dialog v-model="showDialogIM" persistent full-width>
+      <q-card class="row full-height">
+        <q-card-section class="col items-center q-pb-none">
+          <div class="row justify-end">
+            <q-btn icon="close" flat round dense v-close-popup />
+          </div>
+        </q-card-section>
         <q-card-section>
           <q-form>
             <div class="row justify-around q-gutter-md">
@@ -224,37 +229,86 @@
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempIndi.indic_paciente"
                 label="Nombre del paciente"
-                :options="PacOption"
-                style="width: 250px"
-                behavior="menu"
-              />
+                :options="IndOptions"
+                @filter="filterInd"
+                @popup-show="getNomInd"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO:  "temperatura" -->
               <q-select
-                class="col-3"
+                class="col-2"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempIndi.indic_termo"
-                label="Temperatura"
-                :options="TerOption"
-                style="width: 250px"
-                behavior="menu"
-              />
+                label="Temperatura-6am"
+                :options="TemOptions"
+                @filter="filterTem"
+                @popup-show="getNomTem"
+                option-value="value"
+                option-label="label"
+                />
+
+                <!-- TODO:  "temperatura" -->
+              <q-select
+                class="col-2"
+                dense
+                options-dense
+                outlined
+                use-input
+                input-debounce
+                v-model="tempIndi.indic_termo"
+                label="Temperatura-2pm"
+                :options="TemOptions"
+                @filter="filterTem"
+                @popup-show="getNomTem"
+                option-value="value"
+                option-label="label"
+                />
+
+                <!-- TODO:  "temperatura" -->
+              <q-select
+                class="col-2"
+                dense
+                options-dense
+                outlined
+                use-input
+                input-debounce
+                v-model="tempIndi.indic_termo"
+                label="Temperatura-10pm"
+                :options="TemOptions"
+                @filter="filterTem"
+                @popup-show="getNomTem"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO:  "paciente_ayuda tecnica" -->
               <q-select
-                class="col-3"
+                class="col-2"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempIndi.indic_datoenf"
                 label="IMC"
-                :options="EnfOption"
-                style="width: 250px"
-                behavior="menu"
-              />
+                :options="DatosOptions"
+                @filter="filterDatos"
+                @popup-show="getNomDatos"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO:  "Fecha" -->
               <q-input
@@ -975,7 +1029,7 @@
 
               <!-- TODO:  "Indicaciones generales" -->
               <q-input
-                class="col-8"
+                class="col-11"
                 dense
                 outlined
                 type="textarea"
@@ -1021,25 +1075,35 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useIndicacinesStore } from "src/stores/Indicaciones-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
+import { useTermometriaStore } from "src/stores/Termometria-Store";
+import { useDatosenferStore } from "src/stores/Datosenfer-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listIndic();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempIndic,
   listIndic,
-  listPacientes,
   createIndic,
   updateIndic,
   destroyIndic,
 } = useIndicacinesStore();
 
-const { indicaciones, AddIM, EditIM, showDialogIM, loading, tempIndi, tempPaciente } =
+const { indicaciones, AddIM, EditIM, showDialogIM, loading, tempIndi } =
   storeToRefs(useIndicacinesStore());
+
+const { listPacientes } = usePacientesStore();
+const { pacientes } = storeToRefs(usePacientesStore());
+
+const { listTer } = useTermometriaStore();
+const { termometria } = storeToRefs(useTermometriaStore());
+
+const { listDatose } = useDatosenferStore();
+const { datosenfer } = storeToRefs(useDatosenferStore());
 
   const columns = [
   {
@@ -1669,39 +1733,118 @@ const EstOptions = [
   "ATORVASTATINA 20MG TAB",
 ];
 
-const PacOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+// ----------Relacion paciente--------------------
+const IndOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
 
-const TerOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+const getNomInd = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  IndOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
 
-const EnfOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+function filterInd(val, update) {
+  if (val === "") {
+    update(() => {
+      IndOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    IndOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
+// ----------Relacion temperatura--------------------
+const TemOptions = ref([]);
+const termometriaArray = ref(termometria.value);
+
+const getNomTem = async () => {
+  console.log("hi");
+  await listTer();
+  termometriaArray.value = termometria.value;
+  TemOptions.value = termometria.value.map((item) => ({
+    value: item.id,
+    label: item.hora_6am,
+    label: item.hora_2pm,
+    label: item.hora_10pm,
+  }));
+};
+
+function filterTem(val, update) {
+  if (val === "") {
+    update(() => {
+      TemOptions.value = termometriaArray.value.map((item) => ({
+        value: item.id,
+        label: item.hora_6am,
+        label: item.hora_2pm,
+        label: item.hora_10pm,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    TemOptions.value = termometriaArray.value
+      .filter((item) => item.hora_6am.toLowerCase().indexOf(needle) > -1)
+      .filter((item) => item.hora_2pm.toLowerCase().indexOf(needle) > -1)
+      .filter((item) => item.hora_10pm.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.hora_6am,
+        label: item.hora_2pm,
+        label: item.hora_10pm,
+      }));
+  });
+}
+
+// ----------Datos--------------------
+const DatosOptions = ref([]);
+const datosenferArray = ref(datosenfer.value);
+
+const getNomDatos = async () => {
+  console.log("hi");
+  await listDatose();
+  datosenferArray.value = datosenfer.value;
+  DatosOptions.value = datosenfer.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterDatos(val, update) {
+  if (val === "") {
+    update(() => {
+      DatosOptions.value = datosenferArray.value.map((item) => ({
+        value: item.id,
+        label: item.clasif_imc,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    DatosOptions.value = datosenferArray.value
+      .filter((item) => item.clasif_imc.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.clasif_imc,
+      }));
+  });
+}
 const visibleColumns = ref([
       'num_cama',
       'clasif_imc',

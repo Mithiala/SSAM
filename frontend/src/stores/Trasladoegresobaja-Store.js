@@ -5,7 +5,6 @@ import { Notify, Dialog } from "quasar";
 export const useTrasladoegresobajaStore = defineStore("Trasladoegresobaja", {
   state: () => ({
     trasladoegresobaja: [],
-    pacientes: [],
     loading: false,
 
     tempTraslado: {
@@ -32,11 +31,7 @@ export const useTrasladoegresobajaStore = defineStore("Trasladoegresobaja", {
         fallecido: false,
         motivo_fallecido: "",
         fecha_fallecido: "",
-        tras_paciente: 0,
-    },
-
-    tempPaciente: {
-      nombre: "",
+        tras_paciente: null,
     },
 
     showDialogDG: false,
@@ -73,7 +68,7 @@ export const useTrasladoegresobajaStore = defineStore("Trasladoegresobaja", {
         fallecido: false,
         motivo_fallecido: "",
         fecha_fallecido: "",
-        tras_paciente: 0,
+        tras_paciente: null,
       };
     },
 
@@ -93,26 +88,6 @@ export const useTrasladoegresobajaStore = defineStore("Trasladoegresobaja", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Trasladoegresobaja-Store.js:99 ~ listTrasladoEB ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }
