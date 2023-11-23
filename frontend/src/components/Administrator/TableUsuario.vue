@@ -7,7 +7,7 @@
       color="green"
       :rows="usuarios"
       :columns="columns"
-      row-key="id_user"
+      row-key="id"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -29,7 +29,7 @@
             dense
             color="accent"
             icon="block"
-            @click="declineSolicitud(props.row.id_ped)"
+            @click="declineSolicitud(props.row.id)"
           />
         </q-td>
       </template>
@@ -38,8 +38,6 @@
 </template>
 
 <script setup>
-import { PDFDocument, StandardFonts } from "pdf-lib";
-import { utils, writeFileXLSX } from "xlsx";
 import { useQuasar } from 'quasar'
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
@@ -99,18 +97,6 @@ const {  } =
     align: 'center',
     label: 'Centro al que pertenece',
     field: 'centro_pertenece',
-  },
-  {
-    name: 'password',
-    align: 'center',
-    label: 'Password',
-    field: 'password',
-  },
-  {
-    name: 'passwordConfirm',
-    align: 'center',
-    label: 'Confirmar password',
-    field: 'passwordConfirm',
   },
   {
     name: 'rol',

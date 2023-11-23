@@ -10,22 +10,27 @@
           Sistema de Salud para Adulto Mayor
         </q-toolbar-title>
         <q-separator vertical inset />
-        <div id="listaNotificaciones">
-          <q-btn dense
-            stretch
-            unelevated
-            padding="5px"
-            icon="notifications"
-            @click="mostrarNotificaciones">
-            <q-badge
-            floating
-            color="green"
-            rounded
-            v-if="notificaciones.length > 0"
-            {{ notificaciones.length }}
-            />
-          </q-btn>
-        </div>
+        <!--NOTE: Botón de Notificaciones-->
+        <q-btn round dense flat color="white" icon="notifications">
+          <q-badge color="red" text-color="white" floating transparent>
+            {{ count }}
+          </q-badge>
+          <q-menu>
+            <q-card flat class="my-card q-pa-none">
+              <NotificationsWindows />
+            </q-card>
+            <q-card flat square class="row">
+              <q-btn
+                :disable="count === 0"
+                class="text-secondary col"
+                label="Limpiar"
+                flat
+                dense
+                @click="CleanNotice()"
+              />
+            </q-card>
+          </q-menu>
+        </q-btn>
 
         <div>
           <q-btn
@@ -283,6 +288,10 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "src/stores/Administrator/Auth-Store";
+import { useNoticeStore } from "src/stores/Administrator/Notice-Store";
+import NotificationsWindows from "src/components/Administrator/NotificationsWindows.vue";
 
 const openInfomedMail = () => {
   window.open('https://webmail.sld.cu/', '_blank')
@@ -308,5 +317,11 @@ const enviarNotificaciones = () => {
         timeout: 0, // Mantener la notificación abierta hasta que se cierre manualmente
       });
     };
+
+const { submitlogout } = useAuthStore();
+const { me, tempUser } = storeToRefs(useAuthStore());
+
+const { listNotice, CleanNotice } = useNoticeStore();
+const { count } = storeToRefs(useNoticeStore());
 
 </script>
