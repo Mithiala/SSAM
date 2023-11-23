@@ -5,7 +5,6 @@ import { Notify, Dialog } from "quasar";
 export const useCtrlglucemicoStore = defineStore("Ctrlglucemico", {
   state: () => ({
     ctrlglucemico: [],
-    pacientes: [],
     loading: false,
 
     tempGlucemico: {
@@ -14,13 +13,7 @@ export const useCtrlglucemicoStore = defineStore("Ctrlglucemico", {
       turno: "",
       resultado: "",
       observaciones: "",
-      gluc_paciente: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
-      edad: 0,
+      gluc_paciente: null,
     },
 
     showDialogGL: false,
@@ -39,7 +32,7 @@ export const useCtrlglucemicoStore = defineStore("Ctrlglucemico", {
         turno: "",
         resultado: "",
         observaciones: "",
-        gluc_paciente: 0,
+        gluc_paciente: null,
 
       };
     },
@@ -60,26 +53,6 @@ export const useCtrlglucemicoStore = defineStore("Ctrlglucemico", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Ctrlglucemico-Store.js:99 ~ listGlu ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

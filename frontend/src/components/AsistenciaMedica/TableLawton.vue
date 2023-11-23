@@ -134,17 +134,22 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
-              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <!-- TODO:  "paciente_lawton" -->
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempLw.law_paciente"
                 label="Nombre del paciente"
-                :options="LawOption"
-                style="width: 250px"
-                behavior="menu"
-              />
+                :options="IndOptions"
+                @filter="filterInd"
+                @popup-show="getNomInd"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO:  "Uso del teléfono" -->
               <q-select
@@ -360,31 +365,34 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useLawtonStore } from "src/stores/Lawton-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listLaw();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempLaw,
   listLaw,
-  listPacientes,
   createLaw,
   updateLaw,
   destroyLaw,
 } = useLawtonStore();
 
-const { lawton, AddLW, EditLW, showDialogLW, loading, tempLw, tempPaciente } =
+const { lawton, AddLW, EditLW, showDialogLW, loading, tempLw } =
   storeToRefs(useLawtonStore());
+
+const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -515,16 +523,40 @@ const visibleColumns = ref([
   'fecha_value',
 ])
 
-const LawOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+// ----------Relacion paciente--------------------
+const IndOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomInd = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  IndOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterInd(val, update) {
+  if (val === "") {
+    update(() => {
+      IndOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    IndOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const date = ref("");
 

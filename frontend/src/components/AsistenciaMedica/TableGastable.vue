@@ -114,16 +114,21 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
-              <!-- TODO:  "paciente_ayuda tecnica" -->
-          <q-select
+              <!-- TODO:  "paciente_material gastable" -->
+              <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempGast.mg_paciente"
                 label="Nombre del paciente"
-                :options="MatOption"
-                style="width: 250px"
-                behavior="menu"
+                :options="MatOptions"
+                @filter="filterMat"
+                @popup-show="getNomMat"
+                option-value="value"
+                option-label="label"
               />
 
               <q-space class="col-1" />
@@ -181,8 +186,6 @@
                 style="width: 250px"
                 behavior="menu"
               />
-
-              <q-space class="col-2" />
 
               <!-- TODO:  "Material utilizado" -->
               <q-input
@@ -254,18 +257,17 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useCtrlmatgastableStore } from "src/stores/Ctrlmatgastable-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listMatg();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempMatg,
   listMatg,
-  listPacientes,
   createMatg,
   updateMatg,
   destroyMatg,
@@ -274,12 +276,15 @@ const {
 const { ctrlmatgastable, AddMG, EditMG, showDialogMG, loadingMG, tempGast, tempPaciente } =
   storeToRefs(useCtrlmatgastableStore());
 
+const { listPacientes } = usePacientesStore();
+const { pacientes } = storeToRefs(usePacientesStore());
+
 
   const columnsss = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -355,16 +360,39 @@ const ViaOptions = [
   "Inhalatoria",
 ]
 
-const MatOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+const MatOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomMat = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  MatOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterMat(val, update) {
+  if (val === "") {
+    update(() => {
+      MatOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    MatOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const date = ref("");
 

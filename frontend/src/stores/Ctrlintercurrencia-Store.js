@@ -5,7 +5,6 @@ import { Notify, Dialog } from "quasar";
 export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
   state: () => ({
     ctrlintercurrencia: [],
-    pacientes: [],
     loading: false,
 
     tempInter: {
@@ -13,12 +12,7 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
       tratamiento: "",
       fecha_inicio: "",
       fecha_termina: "",
-      inter_paciente: 0,
-    },
-
-    tempPaciente: {
-      nombre: "",
-      edad: 0,
+      inter_paciente: null,
     },
 
     showDialogIN: false,
@@ -36,7 +30,7 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
         tratamiento: "",
         fecha_inicio: "",
         fecha_termina: "",
-        inter_paciente: 0,
+        inter_paciente: null,
       };
     },
 
@@ -56,26 +50,6 @@ export const useCtrlintercurrenciaStore = defineStore("Ctrlintercurrencia", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Ctrlintercurrencia-Store.js:99 ~ listInt ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

@@ -5,7 +5,6 @@ import { Notify, Dialog } from "quasar";
 export const useDatosenferStore = defineStore("Datosenfer", {
   state: () => ({
     datosenfer: [],
-    pacientes: [],
     loading: false,
 
     tempDatos: {
@@ -35,12 +34,6 @@ export const useDatosenferStore = defineStore("Datosenfer", {
       num_cama: 0,
       sala: "",
       denf_paciente: null,
-    },
-
-    tempPaciente: {
-      nombre: "",
-      edad: 0,
-      sexo: "",
     },
 
     showDialogDG: false,
@@ -99,26 +92,6 @@ export const useDatosenferStore = defineStore("Datosenfer", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Datosenfer-Store.js:99 ~ listDatose ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

@@ -179,7 +179,7 @@
                 outlined
                 use-input
                 input-debounce="0"
-                v-model="tempSalud.sm_paciente"
+                v-model="tempSalud.orientemporal"
                 label="Orientación Temporal"
                 :options="OTOptions"
                 @filter="filterOT"
@@ -196,7 +196,7 @@
                 outlined
                 use-input
                 input-debounce="0"
-                v-model="tempSalud.sm_paciente"
+                v-model="tempSalud.orientespacial"
                 label="Orientación Espacial"
                 :options="OEOptions"
                 @filter="filterEM"
@@ -213,7 +213,7 @@
                 outlined
                 use-input
                 input-debounce="0"
-                v-model="tempSalud.sm_paciente"
+                v-model="tempSalud.fijacion"
                 label="Fijación"
                 :options="FijacionOptions"
                 @filter="filterFijacion"
@@ -230,7 +230,7 @@
                 outlined
                 use-input
                 input-debounce="0"
-                v-model="tempSalud.sm_paciente"
+                v-model="tempSalud.memoria"
                 label="Memoria"
                 :options="MemoriaOptions"
                 @filter="filterMemoria"
@@ -247,7 +247,7 @@
                 outlined
                 use-input
                 input-debounce="0"
-                v-model="tempSalud.sm_paciente"
+                v-model="tempSalud.atencalculo"
                 label="Atención y Cálculo"
                 :options="AtencionOptions"
                 @filter="filterAtencion"
@@ -264,7 +264,7 @@
                 outlined
                 use-input
                 input-debounce="0"
-                v-model="tempSalud.sm_paciente"
+                v-model="tempSalud.lenguaje"
                 label="Lenguaje"
                 :options="LengOptions"
                 @filter="filterLeng"
@@ -281,7 +281,7 @@
                 outlined
                 use-input
                 input-debounce="0"
-                v-model="tempSalud.sm_paciente"
+                v-model="tempSalud.normal"
                 label="Normal"
                 :options="NormalOptions"
                 @filter="filterNormal"
@@ -293,7 +293,7 @@
             </div>
             <div class="q-mt-lg row q-gutter-md justify-center">
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Actualizar"
                 color="light-blue-8"
@@ -301,7 +301,7 @@
                 @click="updateSaludm(tempSalud.id)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Añadir"
                 color="light-blue-8"
@@ -309,7 +309,7 @@
                 @click="createSaludm(tempSalud)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 color="purple-9"
                 label="Salir"
                 @click="showDialogSM = false"

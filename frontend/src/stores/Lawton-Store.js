@@ -5,7 +5,6 @@ import { Notify, Dialog } from "quasar";
 export const useLawtonStore = defineStore("Lawton", {
   state: () => ({
     lawton: [],
-    pacientes: [],
     loading: false,
 
     tempLw: {
@@ -19,12 +18,7 @@ export const useLawtonStore = defineStore("Lawton", {
       manejofin: "",
       usomed: "",
       fecha_value: "",
-      law_paciente: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
+      law_paciente: null,
     },
 
     showDialogLW: false,
@@ -48,7 +42,7 @@ export const useLawtonStore = defineStore("Lawton", {
         manejofin: "",
         usomed: "",
         fecha_value: "",
-        law_paciente: 0,
+        law_paciente: null,
       };
     },
 
@@ -68,26 +62,6 @@ export const useLawtonStore = defineStore("Lawton", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Lawton-Store.js:99 ~ listLaw ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

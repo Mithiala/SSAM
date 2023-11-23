@@ -16,7 +16,7 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
       continencia: "",
       comer: "",
       fecha_kats: "",
-      kat_paciente: 0,
+      kat_paciente: null,
     },
 
     showDialogDG: false,
@@ -38,7 +38,7 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
         continencia: "",
         comer: "",
         fecha_kats: "",
-        kat_paciente: 0,
+        kat_paciente: null,
       };
     },
 
@@ -58,26 +58,6 @@ export const useEnfvalueStore = defineStore("Enfvalue", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Enfvalue-Store.js:99 ~ listValues ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

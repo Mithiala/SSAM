@@ -134,7 +134,6 @@
         <q-card-section>
           <q-form>
             <div class="row justify-around q-gutter-md">
-              <q-space class="col-1" />
 
               <!-- TODO:  "salud_paciente" -->
               <q-select
@@ -302,9 +301,11 @@
                 </template>
               </q-input>
 
+              <q-space class="col-6" />
+
               <!-- TODO:  "Atención estomatológica" -->
               <q-input
-                class="col-6"
+                class="col-12"
                 type="textarea"
                 dense
                 outlined
@@ -352,9 +353,11 @@
                 </template>
               </q-input>
 
+              <q-space class="col-6" />
+
               <!-- TODO:  "Programa auditivo" -->
               <q-input
-                class="col-6"
+                class="col-12"
                 type="textarea"
                 dense
                 outlined
@@ -402,9 +405,11 @@
                 </template>
               </q-input>
 
+              <q-space class="col-6" />
+
               <!-- TODO:  "Atención oftalmológica" -->
               <q-input
-                class="col-6"
+                class="col-12"
                 type="textarea"
                 dense
                 outlined
@@ -414,7 +419,7 @@
 
               <!-- TODO:  "Resumen de consultas externas" -->
               <q-input
-                class="col-11"
+                class="col-12"
                 type="textarea"
                 dense
                 outlined
@@ -581,7 +586,7 @@ const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },

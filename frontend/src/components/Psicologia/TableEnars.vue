@@ -179,7 +179,7 @@
                 outlined
                 use-input
                 input-debounce
-                v-model="tempEna.en_paciente"
+                v-model="tempEna.siempre"
                 label="Siempre"
                 :options="SiempreOptions"
                 @filter="filterSiempre"
@@ -196,7 +196,7 @@
                 outlined
                 use-input
                 input-debounce
-                v-model="tempEna.en_paciente"
+                v-model="tempEna.frecuente"
                 label="Frecuentemente"
                 :options="FrecuenteOptions"
                 @filter="filterFrecuente"
@@ -213,7 +213,7 @@
                 outlined
                 use-input
                 input-debounce
-                v-model="tempEna.en_paciente"
+                v-model="tempEna.algveces"
                 label="Algunas Veces"
                 :options="AlgOptions"
                 @filter="filterAlg"
@@ -230,7 +230,7 @@
                 outlined
                 use-input
                 input-debounce
-                v-model="tempEna.en_paciente"
+                v-model="tempEna.nunca"
                 label="Nunca"
                 :options="NuncaOptions"
                 @filter="filterNunca"
@@ -242,7 +242,7 @@
             </div>
             <div class="q-mt-lg row q-gutter-md justify-center">
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Actualizar"
                 color="light-blue-8"
@@ -250,7 +250,7 @@
                 @click="updateEnars(tempEna.id)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Añadir"
                 color="light-blue-8"
@@ -258,7 +258,7 @@
                 @click="createEnars(tempEna)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 color="purple-9"
                 label="Salir"
                 @click="showDialogEE = false"

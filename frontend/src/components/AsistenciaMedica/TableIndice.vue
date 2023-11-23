@@ -108,37 +108,42 @@
         <q-card-section>
           <q-form>
             <div class="row justify-around q-gutter-md">
-              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <!-- TODO:  "paciente_intercurrencia" -->
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempIndice.ind_paciente"
                 label="Nombre del paciente"
-                :options="IndOption"
-                style="width: 250px"
-                behavior="menu"
+                :options="IndOptions"
+                @filter="filterInd"
+                @popup-show="getNomInd"
+                option-value="value"
+                option-label="label"
               />
-
               <!-- TODO:  "Estado general" -->
               <q-select
-                class="col-3"
+                class="col-2"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce="0"
                 v-model="tempIndice.estado_general"
                 label="Estado General"
-                :options="GenOption"
-                style="width: 250px"
-                behavior="menu"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) || 'Por favor ingrese el dato',
-                ]"
+                :options="EGOptions"
+                @filter="filterEG"
+                @popup-show="getNomEstadoGeneral"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Estado mental" -->
               <q-select
-                class="col-3"
+                class="col-2"
                 dense
                 options-dense
                 outlined
@@ -151,58 +156,57 @@
                 @popup-show="getNomEstadoMental"
                 option-value="value"
                 option-label="label"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) || 'Por favor ingrese el dato',
-                ]"
               />
               <!-- TODO:  "Actividad" -->
               <q-select
-                class="col-3"
+                class="col-2"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce="0"
                 v-model="tempIndice.actividad"
                 label="Actividad"
                 :options="ActOptions"
-                style="width: 200px"
-                behavior="menu"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) || 'Por favor ingrese el dato',
-                ]"
-              />
+                @filter="filterAct"
+                @popup-show="getNomActividad"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO:  "Movilidad" -->
               <q-select
-                class="col-3"
+                class="col-2"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce="0"
                 v-model="tempIndice.movilidad"
                 label="Movilidad"
                 :options="MovOptions"
-                style="width: 200px"
-                behavior="menu"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) || 'Por favor ingrese el dato',
-                ]"
-              />
+                @filter="filterMov"
+                @popup-show="getNomMovilidad"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO:  "Incontinencia" -->
               <q-select
-                class="col-3"
+                class="col-2"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce="0"
                 v-model="tempIndice.incontinencia"
                 label="Incontinencia"
-                :options="IncontOptions"
-                style="width: 200px"
-                behavior="menu"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) || 'Por favor ingrese el dato',
-                ]"
-              />
+                :options="IncOptions"
+                @filter="filterInc"
+                @popup-show="getNomInc"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO:  "Fecha" -->
               <q-input
@@ -282,16 +286,33 @@ import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useIndiceStore } from "src/stores/Indice-Store";
 import { useNomenclatorStore } from "src/stores/Nomenclator-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listIndices();
   await listnomestadomental();
+  await listnomestadogeneral();
+  await listnomactividad();
+  await listnommovilidad();
+  await listnomincontinencia();
   // }
 });
 
 const { listnomestadomental } = useNomenclatorStore();
 const { nomestadomental } = storeToRefs(useNomenclatorStore());
+
+const { listnomestadogeneral } = useNomenclatorStore();
+const { nomestadogeneral } = storeToRefs(useNomenclatorStore());
+
+const { listnomactividad } = useNomenclatorStore();
+const { nomactividad } = storeToRefs(useNomenclatorStore());
+
+const { listnommovilidad } = useNomenclatorStore();
+const { nommovilidad } = storeToRefs(useNomenclatorStore());
+
+const { listnomincontinencia } = useNomenclatorStore();
+const { nomincontinencia } = storeToRefs(useNomenclatorStore());
 
 const {
   resetTempIndices,
@@ -310,13 +331,15 @@ const {
   tempIndice,
 } = storeToRefs(useIndiceStore());
 
-const resultadoIndice = useIndiceStore();
+const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
 
 const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -382,95 +405,39 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
-const IndOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+// ----------Relacion paciente--------------------
+const IndOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
 
-const IncontOptions = [
-  {
-    label: "Ninguna",
-    value: "4",
-  },
-  {
-    label: "Ocacional",
-    value: "3",
-  },
-  {
-    label: "Urinaria",
-    value: "2",
-  },
-  {
-    label: "Doble Incontinencia",
-    value: "1",
-  },
-];
+const getNomInd = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  IndOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
 
-const MovOptions = [
-  {
-    label: "Total",
-    value: "4",
-  },
-  {
-    label: "Disminuido",
-    value: "3",
-  },
-  {
-    label: "Muy Limitado",
-    value: "2",
-  },
-  {
-    label: "Inmovil",
-    value: "1",
-  },
-];
-
-const GenOption = [
-  {
-    label: "Bueno",
-    value: "4",
-  },
-  {
-    label: "Débil",
-    value: "3",
-  },
-  {
-    label: "Malo",
-    value: "2",
-  },
-  {
-    label: "Muy Malo",
-    value: "1",
-  },
-];
-
-const ActOptions = [
-  {
-    label: "Caminando",
-    value: "4",
-  },
-  {
-    label: "Sentado",
-    value: "3",
-  },
-  {
-    label: "Con ayuda",
-    value: "2",
-  },
-  {
-    label: "En cama",
-    value: "1",
-  },
-];
-
-function hola() {
-  console.log("ok");
+function filterInd(val, update) {
+  if (val === "") {
+    update(() => {
+      IndOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    IndOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
 }
 
 // ----------Estado Mental--------------------
@@ -500,6 +467,150 @@ function filterEM(val, update) {
   update(() => {
     const needle = val.toLowerCase();
     EMOptions.value = nomestadomentalArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
+
+// ----------Estado General--------------------
+const EGOptions = ref([]);
+const nomestadogeneralArray = ref([nomestadogeneral.value]);
+
+const getNomEstadoGeneral = async () => {
+  console.log("getNomEstadoGeneral");
+  await listnomestadomental();
+  nomestadogeneralArray.value = nomestadogeneral.value;
+  EGOptions.value = nomestadogeneral.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterEG(val, update) {
+  if (val === "") {
+    update(() => {
+      EGOptions.value = nomestadogeneralArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    EGOptions.value = nomestadogeneralArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
+
+// ----------Actividad--------------------
+const ActOptions = ref([]);
+const nomactividadArray = ref([nomactividad.value]);
+
+const getNomActividad = async () => {
+  console.log("getNomActividad");
+  await listnomactividad();
+  nomactividadArray.value = nomactividad.value;
+  ActOptions.value = nomactividad.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterAct(val, update) {
+  if (val === "") {
+    update(() => {
+      ActOptions.value = nomactividadArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    ActOptions.value = nomactividadArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
+
+// ----------Movilidad--------------------
+const MovOptions = ref([]);
+const nommovilidadArray = ref([nommovilidad.value]);
+
+const getNomMovilidad = async () => {
+  console.log("getNomMovilidad");
+  await listnommovilidad();
+  nommovilidadArray.value = nommovilidad.value;
+  MovOptions.value = nommovilidad.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterMov(val, update) {
+  if (val === "") {
+    update(() => {
+      MovOptions.value = nommovilidadArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    MovOptions.value = nommovilidadArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
+
+// ----------Incontinencia--------------------
+const IncOptions = ref([]);
+const nomincontinenciaArray = ref([nomincontinencia.value]);
+
+const getNomInc = async () => {
+  console.log("getNomInc");
+  await listnommovilidad();
+  nomincontinenciaArray.value = nomincontinencia.value;
+  IncOptions.value = nomincontinencia.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterInc(val, update) {
+  if (val === "") {
+    update(() => {
+      IncOptions.value = nomincontinenciaArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    IncOptions.value = nomincontinenciaArray.value
       .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
       .map((item) => ({
         value: item.id,

@@ -114,16 +114,21 @@
       <q-form>
         <div class="row justify-around q-gutter-md">
 
-          <!-- TODO:  "paciente_ayuda tecnica" -->
+          <!-- TODO:  "paciente_intercurrencia" -->
           <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempInter.inter_paciente"
                 label="Nombre del paciente"
-                :options="InterOption"
-                style="width: 250px"
-                behavior="menu"
+                :options="InterOptions"
+                @filter="filterInter"
+                @popup-show="getNomInter"
+                option-value="value"
+                option-label="label"
               />
 
           <!-- TODO:  "Tratamiento" -->
@@ -135,8 +140,6 @@
             label="Tratamiento"
             v-model="tempInter.tratamiento"
           />
-
-          <q-space class="col-1" />
 
           <!-- TODO:  "Fecha de inicio" -->
           <q-input
@@ -256,31 +259,33 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useCtrlintercurrenciaStore } from "src/stores/Ctrlintercurrencia-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listInt();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempInt,
   listInt,
-  listPacientes,
   createInt,
   updateInt,
   destroyInt,
 } = useCtrlintercurrenciaStore();
 
-const { ctrlintercurrencia, AddIN, EditIN, showDialogIN, loadingIN, tempInter, tempPaciente } =
+const { ctrlintercurrencia, AddIN, EditIN, showDialogIN, loadingIN, tempInter } =
   storeToRefs(useCtrlintercurrenciaStore());
+
+const { listPacientes } = usePacientesStore();
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columnss = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -330,16 +335,39 @@ const openAddDialogIN = () => {
   showDialogIN.value = true;
 };
 
-const InterOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+const InterOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomInter = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  InterOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterInter(val, update) {
+  if (val === "") {
+    update(() => {
+      InterOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    InterOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const date = ref("");
 

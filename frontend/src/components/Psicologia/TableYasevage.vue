@@ -179,7 +179,7 @@
                 outlined
                 use-input
                 input-debounce
-                v-model="tempYasevage.y_paciente"
+                v-model="tempYasevage.depsevera"
                 label="Depresión Severa"
                 :options="SeveraOptions"
                 @filter="filterSevera"
@@ -196,7 +196,7 @@
                 outlined
                 use-input
                 input-debounce
-                v-model="tempYasevage.y_paciente"
+                v-model="tempYasevage.depmoderada"
                 label="Depresión Moderada"
                 :options="ModeradaOptions"
                 @filter="filterModerada"
@@ -213,7 +213,7 @@
                 outlined
                 use-input
                 input-debounce
-                v-model="tempYasevage.y_paciente"
+                v-model="tempYasevage.normal"
                 label="Normal"
                 :options="NormalOptions"
                 @filter="filterNormal"
@@ -225,7 +225,7 @@
             </div>
             <div class="q-mt-lg row q-gutter-md justify-center">
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Actualizar"
                 color="light-blue-8"
@@ -233,7 +233,7 @@
                 @click="updateYase(tempYasevage.id)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 type="submit"
                 label="Añadir"
                 color="light-blue-8"
@@ -241,7 +241,7 @@
                 @click="createYase(tempYasevage)"
               />
               <q-btn
-                class="col-2 q-mx-sm"
+                class="col-3 q-mx-sm"
                 color="purple-9"
                 label="Salir"
                 @click="showDialogYP = false"

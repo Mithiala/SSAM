@@ -5,7 +5,6 @@ import { Notify, Dialog } from "quasar";
 export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
   state: () => ({
     ctrlmatgastable: [],
-    pacientes: [],
     loading: false,
 
     tempGast: {
@@ -14,12 +13,7 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
       mat_util: "",
       med_util: "",
       via_admin: "",
-      mg_paciente: 0,
-    },
-
-    tempPaciente: {
-      nombre: "",
-      edad: 0,
+      mg_paciente: null,
     },
 
     showDialogMG: false,
@@ -38,7 +32,7 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
         mat_util: "",
         med_util: "",
         via_admin: "",
-        mg_paciente: 0,
+        mg_paciente: null,
       };
     },
 
@@ -58,26 +52,6 @@ export const useCtrlmatgastableStore = defineStore("Ctrlmatgastable", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Ctrlmatgastable-Store.js:99 ~ listMatg ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

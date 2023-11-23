@@ -114,17 +114,22 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
-              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <!-- TODO:  "paciente_kats" -->
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempValue.kat_paciente"
                 label="Nombre del paciente"
-                :options="KatOption"
-                style="width: 250px"
-                behavior="menu"
-              />
+                :options="IndOptions"
+                @filter="filterInd"
+                @popup-show="getNomInd"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO:  "Bañarse" -->
               <q-select
@@ -307,31 +312,34 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useEnfvalueStore } from "src/stores/Enfvalue-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listValues();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempValues,
   listValues,
-  listPacientes,
   createValues,
   updateValues,
   destroyValues,
 } = useEnfvalueStore();
 
-const { enfvalue, AddDG, EditDG, showDialogDG, loading, tempValue, tempPaciente } =
+const { enfvalue, AddDG, EditDG, showDialogDG, loading, tempValue } =
   storeToRefs(useEnfvalueStore());
+
+const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -427,16 +435,40 @@ const ComerOptions = [
   "Independiente",
 ];
 
-const KatOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+// ----------Relacion paciente--------------------
+const IndOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomInd = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  IndOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterInd(val, update) {
+  if (val === "") {
+    update(() => {
+      IndOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    IndOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const date = ref("");
 

@@ -114,25 +114,28 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
-              <q-space class="col-1" />
-
-              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <!-- TODO:  "paciente_glucemico" -->
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempGlucemico.gluc_paciente"
                 label="Nombre del paciente"
-                :options="GluOption"
-                style="width: 250px"
-                behavior="menu"
+                :options="GlucemicoOptions"
+                @filter="filterGlucemico"
+                @popup-show="getNomGlucemico"
+                option-value="value"
+                option-label="label"
               />
 
               <q-space class="col-1" />
 
               <!-- TODO:  "Fecha" -->
               <q-input
-                class="col-2"
+                class="col-3"
                 dense
                 outlined
                 label="Fecha"
@@ -183,8 +186,6 @@
                 style="width: 250px"
                 behavior="menu"
               />
-
-              <q-space class="col-1" />
 
               <!-- TODO:  "Resultado" -->
               <q-input
@@ -244,31 +245,33 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useCtrlglucemicoStore } from "src/stores/Ctrlglucemico-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listGlu();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempGlu,
   listGlu,
-  listPacientes,
   createGlu,
   updateGlu,
   destroyGlu,
 } = useCtrlglucemicoStore();
 
-const { ctrlglucemico, AddGL, EditGL, showDialogGL, loading, tempGlucemico, tempPaciente } =
+const { ctrlglucemico, AddGL, EditGL, showDialogGL, loading, tempGlucemico } =
   storeToRefs(useCtrlglucemicoStore());
+
+const { listPacientes } = usePacientesStore();
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -329,16 +332,39 @@ const TurnoOptions = [
   "7:00 pm a 7:00 am",
 ]
 
-const GluOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+const GlucemicoOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomGlucemico = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  GlucemicoOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterGlucemico(val, update) {
+  if (val === "") {
+    update(() => {
+      GlucemicoOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    GlucemicoOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const date = ref("");
 
