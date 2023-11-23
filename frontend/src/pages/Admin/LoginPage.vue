@@ -3,13 +3,13 @@
     <q-card class="login-card" flat>
       <q-card-section class="login-card-section">
         <q-card-section>
-          <q-avatar size="80px" class="shadow-10">
-            <img src="src/assets/online.png" />
+          <q-avatar size="120px" class="shadow-10">
+            <img src="src/assets/ssam.jpg" />
           </q-avatar>
         </q-card-section>
         <q-form>
           <div class="text-h5 text-center q-pa-md">
-            Bienvenido a Plataform Online
+            Sistema de Salud Adulto Mayor
           </div>
           <div style="display: flex; flex-direction: row">
             <q-input
@@ -36,13 +36,6 @@
               @keypress.enter.prevent="submitLogin()"
             />
           </div>
-          <q-checkbox
-            v-model="rememberMe"
-            label="Recordarme"
-            dense
-            color="deep-purple-10"
-            class="remember-me"
-          />
           <q-btn
             type="submit"
             color="deep-purple-10"
@@ -51,21 +44,8 @@
           />
         </q-form>
         <div class="links-section">
-          <q-btn
-            @click="forgotPassword"
-            label="¿Olvidaste tu contraseña?"
-            flat
-            text-color="deep-purple-10"
-          />
-          <div class="register-link">
-            ¿No tienes cuenta?
-            <q-btn
-              label="Regístrate aquí"
-              color="deep-purple-10"
-              dense
-              to="register"
-            />
-          </div>
+          
+          
         </div>
       </q-card-section>
     </q-card>
@@ -81,7 +61,6 @@ const { submitLogin } = useAuthStore();
 const { loginForm } = storeToRefs(useAuthStore());
 
 let isPwd = ref(false);
-const rememberMe = ref(false);
 </script>
 
 <style scoped lang="scss">
