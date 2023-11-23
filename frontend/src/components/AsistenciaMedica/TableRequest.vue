@@ -240,7 +240,6 @@ const {
   resetTempMed,
   listMed,
   createMed,
-  retrieveMed,
   updateMed,
   destroyMed,
 } = useSolicitudMedicamentoStore();

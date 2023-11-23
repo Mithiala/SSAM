@@ -80,17 +80,6 @@
         </div>
       </template>
 
-      <!-- TODO:  "Método para image" -->
-      <template v-slot:body-cell-image="props">
-        <q-td :props="props">
-          <q-avatar size="xl">
-            <template v-if="props.row.image">
-              <q-img :src="baseurl + props.row.image.url" />
-            </template>
-          </q-avatar>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -120,17 +109,22 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
-              <!-- TODO:  "paciente_ayuda tecnica" -->
+              <!-- TODO:  "paciente_mnt" -->
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempMntprog.mnt_paciente"
                 label="Nombre del paciente"
-                :options="MntOption"
-                style="width: 250px"
-                behavior="menu"
-              />
+                :options="IndOptions"
+                @filter="filterInd"
+                @popup-show="getNomInd"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO:  "fecha" -->
               <q-input
@@ -240,31 +234,33 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useMntStore } from "src/stores/Mnt-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listMntp();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempMntp,
   listMntp,
-  listPacientes,
   createMntp,
   updateMntp,
   destroyMntp,
 } = useMntStore();
 
-const { mnt, AddDG, EditDG, showDialogDG, loading, tempMntprog, tempPaciente } =
+const { mnt, AddDG, EditDG, showDialogDG, loading, tempMntprog } =
   storeToRefs(useMntStore());
+
+const { listPacientes } = usePacientesStore();
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -320,16 +316,40 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
-const MntOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+// ----------Relacion paciente--------------------
+const IndOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomInd = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  IndOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterInd(val, update) {
+  if (val === "") {
+    update(() => {
+      IndOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    IndOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const date = ref("");
 

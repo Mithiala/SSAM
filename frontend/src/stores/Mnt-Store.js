@@ -5,7 +5,6 @@ import { Notify, Dialog } from "quasar";
 export const useMntStore = defineStore("Mnt", {
   state: () => ({
     mnt: [],
-    pacientes: [],
     loading: false,
 
     tempMntprog: {
@@ -14,13 +13,7 @@ export const useMntStore = defineStore("Mnt", {
       diagnostico: "",
       frecuencia: "",
       fecha_mnt: "",
-      mnt_paciente: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
-      edad: 0,
+      mnt_paciente: null,
     },
 
     showDialogDG: false,
@@ -39,7 +32,7 @@ export const useMntStore = defineStore("Mnt", {
         diagnostico: "",
         frecuencia: "",
         fecha_mnt: "",
-        mnt_paciente: 0,
+        mnt_paciente: null,
       };
     },
 
@@ -59,26 +52,6 @@ export const useMntStore = defineStore("Mnt", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Mnt-Store.js:99 ~ listMntp ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

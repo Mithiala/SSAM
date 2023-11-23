@@ -10,6 +10,7 @@ export const useSindromeStore = defineStore("Sindrome", {
     tempSindrome: {
       id: 0,
       cant_ira: 0,
+      fecha: "",
       cant_neumonias: 0,
       cant_covid: 0,
       cant_eda: 0,
@@ -17,7 +18,7 @@ export const useSindromeStore = defineStore("Sindrome", {
       cant_micosis: 0,
       cant_hta: 0,
       cant_diabetes: 0,
-      otras: 0,
+      otras: "",
     },
 
     showDialogDG: false,
@@ -34,13 +35,14 @@ export const useSindromeStore = defineStore("Sindrome", {
       this.tempSindrome = {
         cant_ira: 0,
         cant_neumonias: 0,
+        fecha: "",
         cant_covid: 0,
         cant_eda: 0,
         cant_escabiosis: 0,
         cant_micosis: 0,
         cant_hta: 0,
         cant_diabetes: 0,
-        otras: 0,
+        otras: "",
       };
     },
 
@@ -72,6 +74,7 @@ export const useSindromeStore = defineStore("Sindrome", {
         // const token = LocalStorage.getItem("access_token");
         const formData = new FormData();
         formData.append("cant_ira", this.tempSindrome.cant_ira);
+        formData.append("fecha", this.tempSindrome.fecha);
         formData.append("cant_neumonias", this.tempSindrome.cant_neumonias);
         formData.append("cant_covid", this.tempSindrome.cant_covid);
         formData.append("cant_eda", this.tempSindrome.cant_eda);
@@ -151,6 +154,7 @@ export const useSindromeStore = defineStore("Sindrome", {
           cant_hta: this.tempSindrome.cant_hta,
           cant_diabetes: this.tempSindrome.cant_diabetes,
           otras: this.tempSindrome.otras,
+          fecha: this.tempSindrome.fecha,
         };
 
         const response = await api.patch(

@@ -109,6 +109,46 @@
           <q-form>
             <div class="row justify-around q-gutter-md">
 
+              <!-- TODO:  "Fecha" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha"
+                v-model="tempSindrome.fecha"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempSindrome.fecha"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+
               <!-- TODO: "Diabetes Mellitus" -->
               <q-input
                 class="col-2"
@@ -242,15 +282,10 @@
                 class="col-2"
                 dense
                 outlined
-                type="number"
+                type="text"
                 label="Otras enfermedades"
                 lazy-rules
                 v-model="tempSindrome.otras"
-                :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Por favor ingrese el dato',
-                ]"
               />
 
             </div>
@@ -302,7 +337,6 @@ const {
   resetTempSindromes,
   listSindromes,
   createSindromes,
-  retrieveSindromes,
   updateSindromes,
   destroySindromes,
 } = useSindromeStore();
@@ -311,6 +345,12 @@ const { sindrome, AddDG, EditDG, showDialogDG, loading, tempSindrome } =
   storeToRefs(useSindromeStore());
 
   const columns = [
+  {
+    name: "fecha",
+    align: "center",
+    label: "Fecha",
+    field: "fecha",
+  },
   {
     name: "cant_ira",
     align: "center",

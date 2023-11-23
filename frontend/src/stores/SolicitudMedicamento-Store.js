@@ -13,7 +13,6 @@ export const useSolicitudMedicamentoStore = defineStore("SolicitudMedicamento", 
       unidad_medida: "",
       cantidad: 0,
       fecha_pedido: "",
-      sp_disp: 0,
     },
 
     showDialogPD: false,
@@ -32,7 +31,6 @@ export const useSolicitudMedicamentoStore = defineStore("SolicitudMedicamento", 
         unidad_medida: "",
         cantidad: 0,
         fecha_pedido: "",
-        sp_disp: 0,
       };
     },
 
@@ -67,7 +65,6 @@ export const useSolicitudMedicamentoStore = defineStore("SolicitudMedicamento", 
         formData.append("unidad_medida", this.tempSolicitud.unidad_medida);
         formData.append("cantidad", this.tempSolicitud.cantidad);
         formData.append("fecha_pedido", this.tempSolicitud.fecha_pedido);
-        formData.append("sp_disp", this.tempSolicitud.sp_disp.value);
         const response = await api.post(url, formData, {
           // headers: {
           //   Authorization: `Bearer ${token}`,

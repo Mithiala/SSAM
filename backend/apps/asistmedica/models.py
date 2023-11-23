@@ -594,6 +594,7 @@ class Sindrome(BaseModel):
     cant_diabetes = models.PositiveSmallIntegerField(
         "Cantidad con diabetes", blank=True, null=True
     )
+    fecha = models.DateField("Fecha", blank=True, null=True)
     otras = models.TextField("Otras", blank=True, null=True)
 
     class Meta:

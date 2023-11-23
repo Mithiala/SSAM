@@ -113,13 +113,18 @@
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempTermo.ter_paciente"
                 label="Nombre del paciente"
-                :options="TerOption"
-                style="width: 250px"
-                behavior="menu"
-              />
+                :options="IndOptions"
+                @filter="filterInd"
+                @popup-show="getNomInd"
+                option-value="value"
+                option-label="label"
+                />
 
               <!-- TODO: "Hora 6:00am" -->
               <q-input
@@ -239,31 +244,34 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useTermometriaStore } from "src/stores/Termometria-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listTer();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempTer,
   listTer,
-  listPacientes,
   createTer,
   updateTer,
   destroyTer,
 } = useTermometriaStore();
 
-const { termometria, AddDG, EditDG, showDialogDG, loading, tempTermo, tempPaciente } =
+const { termometria, AddDG, EditDG, showDialogDG, loading, tempTermo } =
   storeToRefs(useTermometriaStore());
+
+const { listPacientes } = usePacientesStore();
+const { pacientes } = storeToRefs(usePacientesStore());
+
 
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
   },
@@ -317,16 +325,40 @@ const openAddDialog = () => {
   showDialogDG.value = true;
 };
 
-const TerOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+// ----------Relacion paciente--------------------
+const IndOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomInd = async () => {
+  console.log("hi");
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  IndOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterInd(val, update) {
+  if (val === "") {
+    update(() => {
+      IndOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    IndOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const date = ref("");
 

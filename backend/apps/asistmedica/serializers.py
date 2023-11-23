@@ -129,7 +129,7 @@ class LawtonValueSerializer(serializers.ModelSerializer):
             "lavar": instance.lavar,
             "transporte": instance.transporte,
             "manejofin": instance.manejofin,
-            "usomed": instance.lausomedvar,
+            "usomed": instance.usomed,
             "fecha_value": instance.fecha_value,
             # -------------
             "nombre": instance.law_paciente.nombre

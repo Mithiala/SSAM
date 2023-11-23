@@ -5,7 +5,6 @@ import { Notify, Dialog } from "quasar";
 export const useTermometriaStore = defineStore("Termometria", {
   state: () => ({
     termometria: [],
-    pacientes: [],
     loading: false,
 
     tempTermo: {
@@ -15,12 +14,7 @@ export const useTermometriaStore = defineStore("Termometria", {
       hora_10pm: "",
       fecha: "",
       observaciones: "",
-      ter_paciente: 0,
-    },
-
-    tempPaciente: {
-      image: "",
-      nombre: "",
+      ter_paciente: null,
     },
 
     showDialogDG: false,
@@ -40,7 +34,7 @@ export const useTermometriaStore = defineStore("Termometria", {
         hora_10pm: "",
         fecha: "",
         observaciones: "",
-        ter_paciente: 0,
+        ter_paciente: null,
       };
     },
 
@@ -60,26 +54,6 @@ export const useTermometriaStore = defineStore("Termometria", {
       } catch (error) {
         console.log(
           "🚀 ~ file: Termometria-Store.js:99 ~ listTer ~ error:",
-          error
-        );
-      }
-    },
-
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
           error
         );
       }

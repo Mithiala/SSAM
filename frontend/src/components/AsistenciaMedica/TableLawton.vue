@@ -385,7 +385,6 @@ const { lawton, AddLW, EditLW, showDialogLW, loading, tempLw } =
   storeToRefs(useLawtonStore());
 
 const { listPacientes } = usePacientesStore();
-
 const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
