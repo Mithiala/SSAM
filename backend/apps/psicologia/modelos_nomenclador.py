@@ -128,7 +128,7 @@ class NomDepSevera(BaseModel):
     class Meta:
         db_table = "nomdepsevera"
         verbose_name = "Nomenclador Depresión Severa"
-        verbose_name_plural = "Nomencladores Depsiones Deveras"
+        verbose_name_plural = "Nomencladores Depresiones Severas"
 
     def __str__(self):
         return f" {self.evaluacion} - {self.puntuacion} "

@@ -29,6 +29,13 @@ class EnarsSerializer(serializers.ModelSerializer):
             "id": instance.id,
             "resultado": instance.resultado,
             "fecha": instance.fecha,
+            "orientemporal": instance.orientemporal,
+            "orientespacial": instance.orientespacial,
+            "fijacion": instance.fijacion,
+            "atencalculo": instance.atencalculo,
+            "memoria": instance.memoria,
+            "lenguaje": instance.lenguaje,
+            "normal": instance.normal,
             "nombre": instance.en_paciente.nombre
             if instance.en_paciente is not None
             else "",

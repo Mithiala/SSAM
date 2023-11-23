@@ -85,40 +85,40 @@ class SaludMental(BaseModel):
         verbose_name = "Salud Mental"
         verbose_name_plural = "Salud Mentales"
 
-        # Calcula la suma total de los puntajes
-        # def save(self, **kwargs):
-        #    self.resultado = (
-        #        self.calcular_resultado()
-        #    )  # Llama al método calcular_resultado() usando self
+    def save(self, **kwargs):
+        self.resultado = (
+            self.calcular_resultado()
+        )  # Llama al método calcular_resultado() usando self
+        super().save(**kwargs)
 
-        # super().save(**kwargs)
+    def calcular_resultado(self):
+        """Calcula el resultado general de la salud mental."""
+        puntuacion_orientemporal = self.orientemporal.puntuacion
+        puntuacion_orientespacial = self.orientespacial.puntuacion
+        puntuacion_fijacion = self.fijacion.puntuacion
+        puntuacion_atencalculo = self.atencalculo.puntuacion
+        puntuacion_memoria = self.memoria.puntuacion
+        puntuacion_lenguaje = self.lenguaje.puntuacion
+        puntuacion_normal = self.normal.puntuacion
 
-    # def calcular_resultado(self):
-    # """Calcula el resultado general de la salud mental."""
-    # puntuacion_orientemporal = self.orientemporal.puntuacion
-    # puntuacion_orientespacial = self.orientespacial.puntuacion
-    # puntuacion_fijacion = self.fijacion.puntuacion
-    # puntuacion_atencalculo = self.atencalculo.puntuacion
-    # puntuacion_memoria = self.memoria.puntuacion
-    # puntuacion_lenguaje = self.lenguaje.puntuacion
-    # puntuacion_normal = self.normal.puntuacion
+        # Calculamos el resultado general
+        suma_total = (
+            puntuacion_orientemporal
+            + puntuacion_orientespacial
+            + puntuacion_fijacion
+            + puntuacion_atencalculo
+            + puntuacion_memoria
+            + puntuacion_lenguaje
+            + puntuacion_normal
+        )
 
-    # Calculamos el resultado general
-    # suma_total = (
-    #   puntuacion_orientemporal
-    #   + puntuacion_orientespacial
-    #   + puntuacion_fijacion
-    #   + puntuacion_atencalculo
-    #   + puntuacion_memoria
-    #   + puntuacion_lenguaje
-    #   + puntuacion_normal
-    # )
+        # Comprueba si la suma total indica un déficit cognitivo
+        if suma_total >= 6:
+            sugerencia = "Es cognitivo"
+        else:
+            sugerencia = "No es cognitivo"
 
-    # Comprueba si la suma total indica un déficit cognitivo
-    # if suma_total >= 6:
-    #    sugerencia = "Sugiere déficit cognitivo"
-    # else:
-    #    sugerencia = "No sugiere déficit cognitivo"
+        return sugerencia
 
     def __str__(self):
         return f" {self.id} - {self.sm_paciente.nombre} "
@@ -160,6 +160,29 @@ class Yasevage(BaseModel):
         db_table = "yasevage"
         verbose_name = "Yasevage"
         verbose_name_plural = "Yasevages"
+
+    def save(self, **kwargs):
+        self.resultado = self.calcular_resultado()
+        super().save(**kwargs)
+
+    def calcular_resultado(self):
+        """Calcula el resultado de la escala YESAVAGE para la depresión."""
+        suma_puntuaciones = (
+            self.depmoderada.puntuacion
+            + self.depsevera.puntuacion
+            + self.nodepresion.puntuacion
+        )
+
+        if 0 <= suma_puntuaciones <= 5:
+            resultado = "Normal"
+        elif 6 <= suma_puntuaciones <= 10:
+            resultado = "Moderada"
+        elif 11 <= suma_puntuaciones <= 15:
+            resultado = "Severa"
+        else:
+            resultado = "Es inválido"
+
+        return resultado
 
     def __str__(self):
         return f" {self.id} - {self.y_paciente.nombre} "
@@ -208,6 +231,32 @@ class Enars(BaseModel):
         db_table = "enar"
         verbose_name = "Enars"
         verbose_name_plural = "Enars"
+
+    def save(self, **kwargs):
+        self.resultado = self.calcular_resultado()
+        super().save(**kwargs)
+
+    def calcular_resultado(self):
+        """Calcula el resultado de la escala ENARS para el riesgo de suicidio."""
+        suma_puntuaciones = (
+            self.nunca.puntuacion
+            + self.algveces.puntuacion
+            + self.frecuente.puntuacion
+            + self.siempre.puntuacion
+        )
+
+        if 0 <= suma_puntuaciones <= 5:
+            resultado = "Nunca"
+        elif 6 <= suma_puntuaciones <= 10:
+            resultado = "Algunas veces"
+        elif 11 <= suma_puntuaciones <= 15:
+            resultado = "Frecuentemente"
+        elif 16 <= suma_puntuaciones <= 20:
+            resultado = "Siempre"
+        else:
+            resultado = "Es inválido"
+
+        return resultado
 
     def __str__(self):
         return f" {self.id} - {self.en_paciente.nombre} "

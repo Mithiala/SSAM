@@ -13,7 +13,6 @@
       :rows="salud"
       :columns="columns"
       row-key="id"
-      :visible-columns="visibleColumns"
       :loading="loading"
       :filter="filter"
       :rows-per-page-options="[10, 20, 30]"
@@ -75,25 +74,6 @@
             </q-tooltip>
           </q-btn>
 
-          <q-select
-          bg-color="blue-3"
-          label="Defectología"
-          v-model="visibleColumns"
-          transition-show="scale"
-          transition-hide="scale"
-          multiple
-          outlined
-          dense
-          options-dense
-          :display-value="$q.lang.table.columns"
-          emit-value
-          map-options
-          :options="columns"
-          option-value="field"
-          options-cover
-          style="min-width: 150px"
-        />
-
           <q-btn
             class="q-ml-xs"
             flat
@@ -134,8 +114,6 @@
           <q-form class="">
             <div class="row justify-around q-gutter-md">
 
-              <q-space class="col-1" />
-
               <!-- TODO:  "salud_paciente" -->
               <q-select
                 class="col-3"
@@ -152,10 +130,50 @@
                 option-value="value"
                 option-label="label"
               />
+              
+              <!-- TODO:  "fecha evaluación" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha Evaluación"
+                v-model="tempSalud.fecha"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de evaluación',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempSalud.fecha"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
 
               <!-- TODO:  "Orientación Temporal" -->
               <q-select
-                class="col-3"
+                class="col-2"
                 dense
                 options-dense
                 outlined
@@ -172,7 +190,7 @@
 
               <!-- TODO:  "Orientación Espacial" -->
               <q-select
-                class="col-3"
+                class="col-2"
                 dense
                 options-dense
                 outlined
@@ -188,85 +206,88 @@
               />
 
               <!-- TODO:  "Fijación" -->
-              <q-input
+              <q-select
                 class="col-2"
-                outlined
                 dense
-                type="number"
+                options-dense
+                outlined
+                use-input
+                input-debounce="0"
+                v-model="tempSalud.sm_paciente"
                 label="Fijación"
-                lazy-rules
-                v-model="tempSalud.fijacion"
-                :rules="[
-                  (val) =>
-                    (val > 0 && val < 5) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
-              />
-
-              <q-space class="col-1" />
-
-              <!-- TODO:  "Fijación" -->
-              <q-input
-                class="col-2"
-                outlined
-                dense
-                type="number"
-                label="Atención y Cálculo"
-                lazy-rules
-                v-model="tempSalud.atcalculo"
-                :rules="[
-                  (val) =>
-                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
+                :options="FijacionOptions"
+                @filter="filterFijacion"
+                @popup-show="getNomFijacion"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Memoria" -->
-              <q-input
+              <q-select
                 class="col-2"
-                outlined
                 dense
-                type="number"
+                options-dense
+                outlined
+                use-input
+                input-debounce="0"
+                v-model="tempSalud.sm_paciente"
                 label="Memoria"
-                lazy-rules
-                v-model="tempSalud.memoria"
-                :rules="[
-                  (val) =>
-                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
+                :options="MemoriaOptions"
+                @filter="filterMemoria"
+                @popup-show="getNomMemoria"
+                option-value="value"
+                option-label="label"
+              />
+
+              <!-- TODO:  "Atención y Cálculo" -->
+              <q-select
+                class="col-2"
+                dense
+                options-dense
+                outlined
+                use-input
+                input-debounce="0"
+                v-model="tempSalud.sm_paciente"
+                label="Atención y Cálculo"
+                :options="AtencionOptions"
+                @filter="filterAtencion"
+                @popup-show="getNomAtencion"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Lenguaje" -->
-              <q-input
+              <q-select
                 class="col-2"
-                outlined
                 dense
-                type="number"
+                options-dense
+                outlined
+                use-input
+                input-debounce="0"
+                v-model="tempSalud.sm_paciente"
                 label="Lenguaje"
-                lazy-rules
-                v-model="tempSalud.lenguaje"
-                :rules="[
-                  (val) =>
-                    (val > 0 && val < 5) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
+                :options="LengOptions"
+                @filter="filterLeng"
+                @popup-show="getNomLeng"
+                option-value="value"
+                option-label="label"
               />
 
               <!-- TODO:  "Normal" -->
-              <q-input
+              <q-select
                 class="col-2"
-                outlined
                 dense
-                type="number"
+                options-dense
+                outlined
+                use-input
+                input-debounce="0"
+                v-model="tempSalud.sm_paciente"
                 label="Normal"
-                lazy-rules
-                v-model="tempSalud.normal"
-                :rules="[
-                  (val) =>
-                    (val > 0 && val < 6) || 'Por favor ingrese la evaluación correcta',
-                ]"
-                mask="#"
+                :options="NormalOptions"
+                @filter="filterNormal"
+                @popup-show="getNomNormal"
+                option-value="value"
+                option-label="label"
               />
 
             </div>
@@ -313,20 +334,36 @@ import { useNomenclatorStore } from "src/stores/Nomenclator-Store";
 onMounted(async () => {
   // if (isAuthenticated) {
   await listSaludm();
-  await listnomestadomental();
+  await listnomfijacionl();
   await listnomorientemporal();
   await listnomorientespacial();
+  await listnommemoria();
+  await listnomatencalculo();
+  await listnomlenguaje();
+  await listnomnormal();
   // }
 });
 
-const { listnomestadomental } = useNomenclatorStore();
-const { nomestadomental } = storeToRefs(useNomenclatorStore());
+const { listnomfijacionl } = useNomenclatorStore();
+const { nomfijacion } = storeToRefs(useNomenclatorStore());
 
 const { listnomorientemporal } = useNomenclatorStore();
 const { nomorientemporal } = storeToRefs(useNomenclatorStore());
 
 const { listnomorientespacial } = useNomenclatorStore();
 const { nomorientespacial } = storeToRefs(useNomenclatorStore());
+
+const { listnommemoria } = useNomenclatorStore();
+const { nommemoria } = storeToRefs(useNomenclatorStore());
+
+const { listnomatencalculo } = useNomenclatorStore();
+const { nomatencalculo } = storeToRefs(useNomenclatorStore());
+
+const { listnomlenguaje } = useNomenclatorStore();
+const { nomlenguaje } = storeToRefs(useNomenclatorStore());
+
+const { listnomnormal } = useNomenclatorStore();
+const { nomnormal } = storeToRefs(useNomenclatorStore());
 
 const {
   resetTempSaludm,
@@ -354,7 +391,7 @@ const { pacientes } = storeToRefs(usePacientesStore());
   {
     name: 'fecha',
     align: 'center',
-    label: 'Fecha evaluación',
+    label: 'Fecha Evaluación',
     field: 'fecha',
   },
 
@@ -377,10 +414,10 @@ const { pacientes } = storeToRefs(usePacientesStore());
     field: 'fijacion'
   },
   {
-    name: 'atcalculo',
+    name: 'atencalculo',
     align: 'center',
     label: 'Atención y Cálculo',
-    field: 'atcalculo'
+    field: 'atencalculo'
   },
   {
     name: 'memoria',
@@ -425,6 +462,7 @@ const openAddDialog = () => {
   showDialogSM.value = true;
 };
 
+// ----------Relación paciente--------------------
 const SaludOptions = ref([]);
 const pacientesArray = ref(pacientes.value);
 
@@ -499,7 +537,7 @@ const OEOptions = ref([]);
 const nomorientespacialArray = ref([nomorientespacial.value]);
 
 const getNomOrientacionEspacial = async () => {
-  console.log("getNomOrientacionTemporal");
+  console.log("getNomOrientacionEspacial");
   await listnomorientespacial();
   nomorientespacialArray.value = nomorientespacial.value;
   OEOptions.value = nomorientespacial.value.map((item) => ({
@@ -530,20 +568,185 @@ function filterEM(val, update) {
 }
 // ------------------------------
 
-const visibleColumns = ref([
-  'nombre',
-  'edad',
-  'sexo',
-  'orientemporal',
-  'orientespacial',
-  'fijacion',
-  'atcalculo',
-  'memoria',
-  'lenguaje',
-  'normal',
-  'resultado',
-  'actions',
-])
+// ----------Fijación--------------------
+const FijacionOptions = ref([]);
+const nomfijacionArray = ref([nomfijacion.value]);
+
+const getNomFijacion = async () => {
+  console.log("getNomFijacion");
+  await listnomfijacionl();
+  nomfijacionlArray.value = nomfijacion.value;
+  FijacionOptions.value = nomfijacion.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterFijacion(val, update) {
+  if (val === "") {
+    update(() => {
+      FijacionOptions.value = nomfijacionArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    FijacionOptions.value = nomfijacionArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
+
+// ----------Memoria--------------------
+const MemoriaOptions = ref([]);
+const nommemoriaArray = ref([nommemoria.value]);
+
+const getNomMemoria = async () => {
+  console.log("getNomMemoria");
+  await listnommemoria();
+  nommemorialArray.value = nommemoria.value;
+  MemoriaOptions.value = nommemoria.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterMemoria(val, update) {
+  if (val === "") {
+    update(() => {
+      MemoriaOptions.value = nommemoriaArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    MemoriaOptions.value = nommemoriaArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
+
+// ----------Atención y Cálculo--------------------
+const AtencionOptions = ref([]);
+const nomatencalculoArray = ref([nomatencalculo.value]);
+
+const getNomAtencion = async () => {
+  console.log("getNomAtencion");
+  await listnomatencalculo();
+  nomatencalculoArray.value = nomatencalculo.value;
+  AtencionOptions.value = nomatencalculo.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterAtencion(val, update) {
+  if (val === "") {
+    update(() => {
+      AtencionOptions.value = nomatencalculoArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    AtencionOptions.value = nomatencalculoArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
+
+// ----------Lenguaje--------------------
+const LengOptions = ref([]);
+const nomlenguajeArray = ref([nomlenguaje.value]);
+
+const getNomLeng = async () => {
+  console.log("getNomLeng");
+  await listnomlenguaje();
+  nomlenguajeArray.value = nomlenguaje.value;
+  LengOptions.value = nomlenguaje.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterLeng(val, update) {
+  if (val === "") {
+    update(() => {
+      LengOptions.value = nomlenguajeArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    LengOptions.value = nomlenguajeArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
+
+// ----------Normal--------------------
+const NormalOptions = ref([]);
+const nomnormalArray = ref([nomnormal.value]);
+
+const getNomNormal = async () => {
+  console.log("getNomNormal");
+  await listnomnormal();
+  nomnormalArray.value = nomnormal.value;
+  NormalOptions.value = nomnormal.value.map((item) => ({
+    value: item.id,
+    label: item.evaluacion,
+  }));
+};
+
+function filterNormal(val, update) {
+  if (val === "") {
+    update(() => {
+      NormalOptions.value = nomnormalArray.value.map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    NormalOptions.value = nomnormalArray.value
+      .filter((item) => item.evaluacion.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.evaluacion,
+      }));
+  });
+}
+// ------------------------------
 
 const date = ref("");
 

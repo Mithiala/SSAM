@@ -5,22 +5,16 @@ import { Notify, Dialog } from "quasar";
 export const useEnarsStore = defineStore("Enars", {
   state: () => ({
     enars: [],
-    pacientes: [],
     loading: false,
 
     tempEna: {
-      id: 0,
-      algveces: 0,
-      frecuente: 0,
-      siempre: 0,
-      nunca: 0,
-      en_paciente: 0,
-    },
-
-    tempPaciente: {
-      nombre: "",
-      edad: 0,
-      sexo: "",
+      id: null,
+      fecha: "",
+      algveces: null,
+      frecuente: null,
+      siempre: null,
+      nunca: null,
+      en_paciente: null,
     },
 
     showDialogEE: false,
@@ -35,11 +29,12 @@ export const useEnarsStore = defineStore("Enars", {
     resetTempEnars() {
       console.log("aqui receteo");
       this.tempEna = {
-        algveces: 0,
-        frecuente: 0,
-        siempre: 0,
-        nunca: 0,
-        en_paciente: 0,
+        fecha: "",
+        algveces: null,
+        frecuente: null,
+        siempre: null,
+        nunca: null,
+        en_paciente: null,
       };
     },
 
@@ -64,26 +59,6 @@ export const useEnarsStore = defineStore("Enars", {
       }
     },
 
-    async listPacientes() {
-      this.loading = true;
-      try {
-        const url = "/tsocial/pacientes/";
-        // const token = LocalStorage.getItem("access_token");
-        const response = await api.get(url, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-        this.pacientes = response.data.results;
-        this.loading = false;
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: Pacientes-Store.js:99 ~ listPaciente ~ error:",
-          error
-        );
-      }
-    },
-
     //TODO: Accion para crear Registros
     async createEnars() {
       try {
@@ -91,6 +66,7 @@ export const useEnarsStore = defineStore("Enars", {
         // const token = LocalStorage.getItem("access_token");
         const formData = new FormData();
         formData.append("algveces", this.tempEna.algveces);
+        formData.append("fecha", this.tempEna.fecha);
         formData.append("frecuente", this.tempEna.frecuente);
         formData.append("siempre", this.tempEna.siempre);
         formData.append("nunca", this.tempEna.nunca);
@@ -158,6 +134,7 @@ export const useEnarsStore = defineStore("Enars", {
 
         const request = {
           algveces: this.tempEna.enars,
+          fecha: this.tempEna.fecha,
           frecuente: this.tempEna.frecuente,
           siempre: this.tempEna.siempre,
           nunca: this.tempEna.nunca,

@@ -118,13 +118,58 @@
               <q-select
                 class="col-3"
                 dense
+                options-dense
                 outlined
+                use-input
+                input-debounce
                 v-model="tempEna.en_paciente"
                 label="Nombre del paciente"
-                :options="EnarsOption"
-                style="width: 250px"
-                behavior="menu"
+                :options="EnaOptions"
+                @filter="filterEna"
+                @popup-show="getNomEna"
+                option-value="value"
+                option-label="label"
               />
+
+              <!-- TODO:  "fecha evaluación" -->
+              <q-input
+                class="col-2"
+                dense
+                outlined
+                label="Fecha Evaluación"
+                v-model="tempEna.fecha"
+                mask="####-##-##"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) ||
+                    'Por favor ingrese la fecha de evaluación',
+                ]"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        v-model="tempEna.fecha"
+                        color="green-5"
+                        mask="YYYY-MM-DD"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="green"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
 
               <!-- TODO:  "Nunca" -->
               <q-input
@@ -228,33 +273,42 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useEnarsStore } from "src/stores/Enars-Store";
+import { usePacientesStore } from "src/stores/Pacientes-Store";
 
 onMounted(async () => {
   // if (isAuthenticated) {
   await listEnars();
-  await listPacientes();
   // }
 });
 
 const {
   resetTempEnars,
   listEnars,
-  listPacientes,
   createEnars,
   updateEnars,
   destroyEnars,
 } = useEnarsStore();
 
-const { enars, AddEE, EditEE, showDialogEE, loading, tempEna, tempPaciente } =
+const { enars, AddEE, EditEE, showDialogEE, loading, tempEna} =
   storeToRefs(useEnarsStore());
+
+  const { listPacientes } = usePacientesStore();
+
+const { pacientes } = storeToRefs(usePacientesStore());
 
   const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre y Apellidos",
+    label: "Nombre del paciente",
     field: "nombre",
     sortable: true,
+  },
+  {
+    name: 'fecha',
+    align: 'center',
+    label: 'Fecha Evaluación',
+    field: 'fecha',
   },
 
   {
@@ -306,16 +360,39 @@ const openAddDialog = () => {
   showDialogEE.value = true;
 };
 
-const EnarsOption = [
-  {
-    label: "Andrés Cueva Heredia",
-    value: "1",
-  },
-  {
-    label: "Francisaca Navia Cuadrado",
-    value: "2",
-  },
-];
+// ----------Relación paciente--------------------
+const EnaOptions = ref([]);
+const pacientesArray = ref(pacientes.value);
+
+const getNomEna = async () => {
+  await listPacientes();
+  pacientesArray.value = pacientes.value;
+  EnaOptions.value = pacientes.value.map((item) => ({
+    value: item.id,
+    label: item.nombre,
+  }));
+};
+
+function filterEna(val, update) {
+  if (val === "") {
+    update(() => {
+      EnaOptions.value = pacientesArray.value.map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    EnaOptions.value = pacientesArray.value
+      .filter((item) => item.nombre.toLowerCase().indexOf(needle) > -1)
+      .map((item) => ({
+        value: item.id,
+        label: item.nombre,
+      }));
+  });
+}
 
 const date = ref("");
 

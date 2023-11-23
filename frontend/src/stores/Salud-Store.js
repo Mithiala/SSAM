@@ -9,13 +9,15 @@ export const useSaludStore = defineStore("Salud", {
 
     tempSalud: {
       id: null,
+      fecha: "",
       orientemporal: null,
       orientespacial: null,
       fijacion: null,
-      atcalculo: null,
+      atencalculo: null,
       memoria: null,
       lenguaje: null,
       normal: null,
+      resultado: "",
       sm_paciente: null,
     },
 
@@ -32,12 +34,14 @@ export const useSaludStore = defineStore("Salud", {
       console.log("aqui receteo");
       this.tempSalud = {
         orientemporal: null,
+        fecha: "",
         orientespacial: null,
         fijacion: null,
-        atcalculo: null,
+        atencalculo: null,
         memoria: null,
         lenguaje: null,
         normal: null,
+        resultado: "",
         sm_paciente: null,
       };
     },
@@ -70,12 +74,14 @@ export const useSaludStore = defineStore("Salud", {
         // const token = LocalStorage.getItem("access_token");
         const formData = new FormData();
         formData.append("orientemporal", this.tempSalud.orientemporal);
+        formData.append("fecha", this.tempSalud.fecha);
         formData.append("orientespacial", this.tempSalud.orientespacial);
         formData.append("fijacion", this.tempSalud.fijacion);
-        formData.append("atcalculo", this.tempSalud.atcalculo);
+        formData.append("atencalculo", this.tempSalud.atencalculo);
         formData.append("memoria", this.tempSalud.memoria);
         formData.append("lenguaje", this.tempSalud.lenguaje);
         formData.append("normal", this.tempSalud.normal);
+        formData.append("resultado", this.tempSalud.resultado);
         formData.append("sm_paciente", this.tempSalud.sm_paciente.value);
         const response = await api.post(url, formData, {
           // headers: {
@@ -140,12 +146,14 @@ export const useSaludStore = defineStore("Salud", {
 
         const request = {
           orientemporal: this.tempSalud.orientemporal,
+          fecha: this.tempSalud,fecha,
           orientespacial: this.tempSalud.orientespacial,
           fijacion: this.tempSalud.fijacion,
-          atcalculo: this.tempSalud.atcalculo,
+          atencalculo: this.tempSalud.atencalculo,
           memoria: this.tempSalud.memoria,
           lenguaje: this.tempSalud.lenguaje,
           normal: this.tempSalud.normal,
+          resultado: this.tempSalud.resultado,
           sm_paciente: this.tempSalud.sm_paciente,
         };
 
