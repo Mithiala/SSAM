@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from ..tsocial.models import Paciente
 from .models import (
     ControlGucemico,
     DatoEnfermeria,
@@ -11,7 +10,6 @@ from .models import (
     LawtonValue,
     MaterialGastable,
     Mnt,
-    Paciente,
     Sindrome,
     SolicitudPedido,
     Termometria,
@@ -24,6 +22,22 @@ class ControlGucemicoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ControlGucemico
         fields = "__all__"
+
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "fecha_gluc": instance.fecha_gluc,
+            "turno": instance.turno,
+            "resultado": instance.resultado,
+            "observaciones": instance.observaciones,
+            # -------------
+            "nombre": instance.gluc_paciente.nombre
+            if instance.gluc_paciente is not None
+            else "",
+            "edad": instance.gluc_paciente.edad
+            if instance.gluc_paciente is not None
+            else "",
+        }
 
 
 class DatoEnfermeriaSerializer(serializers.ModelSerializer):
@@ -76,6 +90,23 @@ class MaterialGastableSerializer(serializers.ModelSerializer):
         model = MaterialGastable
         fields = "__all__"
 
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "fecha_mat": instance.fecha_mat,
+            "turno": instance.turno,
+            "mat_util": instance.mat_util,
+            "med_util": instance.med_util,
+            "via_admin": instance.via_admin,
+            # -------------
+            "nombre": instance.mg_paciente.nombre
+            if instance.mg_paciente is not None
+            else "",
+            "edad": instance.mg_paciente.edad
+            if instance.mg_paciente is not None
+            else "",
+        }
+
 
 class IndiceValueSerializer(serializers.ModelSerializer):
     class Meta:
@@ -88,11 +119,45 @@ class LawtonValueSerializer(serializers.ModelSerializer):
         model = LawtonValue
         fields = "__all__"
 
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "usotelef": instance.usotelef,
+            "compras": instance.compras,
+            "prepalim": instance.prepalim,
+            "manejocasa": instance.manejocasa,
+            "lavar": instance.lavar,
+            "transporte": instance.transporte,
+            "manejofin": instance.manejofin,
+            "usomed": instance.lausomedvar,
+            "fecha_value": instance.fecha_value,
+            # -------------
+            "nombre": instance.law_paciente.nombre
+            if instance.law_paciente is not None
+            else "",
+        }
+
 
 class KatsValueSerializer(serializers.ModelSerializer):
     class Meta:
         model = KatsValue
         fields = "__all__"
+
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "banarse": instance.banarse,
+            "vestirse": instance.vestirse,
+            "servicio": instance.servicio,
+            "levantarse": instance.levantarse,
+            "continencia": instance.continencia,
+            "comer": instance.comer,
+            "fecha_kats": instance.fecha_kats,
+            # -------------
+            "nombre": instance.kat_paciente.nombre
+            if instance.kat_paciente is not None
+            else "",
+        }
 
 
 class IntercurrenciaSerializer(serializers.ModelSerializer):
@@ -100,17 +165,57 @@ class IntercurrenciaSerializer(serializers.ModelSerializer):
         model = Intercurrencia
         fields = "__all__"
 
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "tratamiento": instance.tratamiento,
+            "fecha_inicio": instance.fecha_inicio,
+            "fecha_termina": instance.fecha_termina,
+            # -------------
+            "nombre": instance.inter_paciente.nombre
+            if instance.inter_paciente is not None
+            else "",
+            "edad": instance.inter_paciente.edad
+            if instance.inter_paciente is not None
+            else "",
+        }
+
 
 class TrasladoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Traslado
         fields = "__all__"
 
-
-class TrasladoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Indicacion
-        fields = "__all__"
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "traslado_poli": instance.traslado_poli,
+            "motivo_traslado_poli": instance.motivo_traslado_poli,
+            "fecha_traslado_poli": instance.fecha_traslado_poli,
+            "ingreso_hosp": instance.ingreso_hosp,
+            "motivo_ingreso_hosp": instance.motivo_ingreso_hosp,
+            "fecha_ingreso_hosp": instance.fecha_ingreso_hosp,
+            "fecha_egreso": instance.fecha_egreso,
+            "diagnostico": instance.diagnostico,
+            "ingreso_psiquiatria": instance.ingreso_psiquiatria,
+            "motivo_ingreso_psiquiatria": instance.motivo_ingreso_psiquiatria,
+            "fecha_ingreso_psiquiatria": instance.fecha_ingreso_psiquiatria,
+            "fecha_egreso_psiquiatria": instance.fecha_egreso_psiquiatria,
+            "diagnostico_psiquiatria": instance.diagnostico_psiquiatria,
+            "ingreso_subagudo": instance.ingreso_subagudo,
+            "motivo_ingreso_subagudo": instance.motivo_ingreso_subagudo,
+            "fecha_ingreso_subagudo": instance.fecha_ingreso_subagudo,
+            "baja": instance.baja,
+            "motivo_baja": instance.motivo_baja,
+            "fecha_baja": instance.fecha_baja,
+            "fallecido": instance.fallecido,
+            "motivo_fallecido": instance.motivo_fallecido,
+            "fecha_fallecido": instance.fecha_fallecido,
+            # -------------
+            "nombre": instance.tras_paciente.nombre
+            if instance.tras_paciente is not None
+            else "",
+        }
 
 
 class IndicacionSerializer(serializers.ModelSerializer):
@@ -218,17 +323,62 @@ class MntSerializer(serializers.ModelSerializer):
         model = Mnt
         fields = "__all__"
 
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "tratamiento": instance.tratamiento,
+            "diagnostico": instance.diagnostico,
+            "frecuencia": instance.frecuencia,
+            "fecha_mnt": instance.fecha_mnt,
+            # -------------
+            "nombre": instance.mnt_paciente.nombre
+            if instance.mnt_paciente is not None
+            else "",
+            "edad": instance.mnt_paciente.edad
+            if instance.mnt_paciente is not None
+            else "",
+        }
+
 
 class TermometriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Termometria
         fields = "__all__"
 
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "hora_6am": instance.hora_6am,
+            "hora_2pm": instance.hora_2pm,
+            "hora_10pm": instance.hora_10pm,
+            "fecha": instance.fecha,
+            "observaciones": instance.observaciones,
+            # -------------
+            "nombre": instance.ter_paciente.nombre
+            if instance.ter_paciente is not None
+            else "",
+        }
+
 
 class VacunacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vacunacion
         fields = "__all__"
+
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "tipo": instance.tipo,
+            "lote": instance.lote,
+            "fecha": instance.fecha,
+            # -------------
+            "nombre": instance.vac_paciente.nombre
+            if instance.vac_paciente is not None
+            else "",
+            "edad": instance.vac_paciente.edad
+            if instance.vac_paciente is not None
+            else "",
+        }
 
 
 class SindromeSerializer(serializers.ModelSerializer):
