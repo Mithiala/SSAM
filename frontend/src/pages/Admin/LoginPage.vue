@@ -4,7 +4,7 @@
       <q-card-section class="login-card-section">
         <q-card-section>
           <q-avatar size="120px" class="shadow-10">
-            <img src="src/assets/ssam.jpg" />
+            <img src="image/ssam.jpg" />
           </q-avatar>
         </q-card-section>
         <q-form>
@@ -38,7 +38,7 @@
           </div>
           <q-btn
             type="submit"
-            color="deep-purple-10"
+            color="green-10"
             label="Iniciar sesión"
             @click="submitLogin()"
           />
@@ -78,7 +78,7 @@ let isPwd = ref(false);
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: linear-gradient(to bottom right, #471607, #9d0be6);
+  background-image: linear-gradient(to bottom right, rgb(187, 230, 185), rgb(60, 234, 127));
 }
 
 .login-card {
@@ -89,8 +89,8 @@ let isPwd = ref(false);
   width: 45%;
   height: auto;
   max-height: 460px;
-  background-color: #ffffff;
-  border: 1px solid #ffffff;
+  background-color: rgb(254, 254, 254);
+  border: 1px solid #fffefe;
   border-radius: 20px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease-in-out;
@@ -112,7 +112,7 @@ let isPwd = ref(false);
   font-size: 2rem;
   margin-bottom: 2rem;
   text-align: center;
-  color: #4b0bb3;
+  color: #0bb351;
 }
 
 form {
@@ -121,6 +121,7 @@ form {
   align-items: center;
   justify-content: center;
   width: 100%;
+  color: #062814;
 }
 
 .input {

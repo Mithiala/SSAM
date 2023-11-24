@@ -4,7 +4,7 @@
       <q-toolbar>
         <q-toolbar-title>
           <q-avatar>
-            <img fit="fill" src="src/assets/farmacia.png" >
+            <img fit="fill" src="image/farmacia.png" >
           </q-avatar>
           Sistema de Salud para Adulto Mayor
         </q-toolbar-title>
@@ -68,10 +68,10 @@
 
           <div class="column items-center">
             <q-avatar size="72px">
-              <img src="https://cdn.quasar.dev/img/avatar4.jpg">
+              <img src="image/login.jpg">
             </q-avatar>
 
-            <div class="text-subtitle1 q-mt-md q-mb-xs">John Doe</div>
+            <div class="text-subtitle1 q-mt-md q-mb-xs">Usuario</div>
 
             <q-btn
               color="teal-10"

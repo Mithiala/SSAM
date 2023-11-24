@@ -45,10 +45,10 @@
 
           <div class="column items-center">
             <q-avatar size="72px">
-              <img src="https://cdn.quasar.dev/img/avatar4.jpg">
+              <img src="image/login.jpg">
             </q-avatar>
 
-            <div class="text-subtitle1 q-mt-md q-mb-xs">John Doe</div>
+            <div class="text-subtitle1 q-mt-md q-mb-xs">Admin</div>
 
             <q-btn
               color="teal-10"

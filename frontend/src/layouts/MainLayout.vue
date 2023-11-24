@@ -4,7 +4,7 @@
       <q-toolbar rounded class="bg-teal-10 text-white">
         <q-toolbar-title>
           <q-avatar>
-            <img fit="fill" src="src/assets/ssam.jpg" />
+            <img fit="fill" src="image/ssam.jpg" />
           </q-avatar>
           Sistema de Salud para Adulto Mayor en Hogares de Ancianos
         </q-toolbar-title>
@@ -80,7 +80,7 @@
                   exact
                 >
                   <q-avatar>
-                    <q-img src="src/assets/trabajo social.png" />
+                    <q-img src="image/trabajo social.png" />
                   </q-avatar>
                   <q-item-section> Trabajo Social </q-item-section>
                 </q-item>
@@ -92,7 +92,7 @@
                   exact
                 >
                   <q-avatar>
-                    <q-img src="src/assets/psicologia.png" />
+                    <q-img src="image/psicologia.png" />
                   </q-avatar>
                   <q-item-section> Psicología </q-item-section>
                 </q-item>
@@ -104,7 +104,7 @@
                   exact
                 >
                   <q-avatar>
-                    <q-img src="src/assets/asistencia medica.png" />
+                    <q-img src="image/asistencia medica.png" />
                   </q-avatar>
                   <q-item-section> Asistencia Médica </q-item-section>
                 </q-item>
@@ -116,7 +116,7 @@
                   exact
                 >
                   <q-avatar>
-                    <q-img src="src/assets/farmacia.png" />
+                    <q-img src="image/farmacia.png" />
                   </q-avatar>
                   <q-item-section> Farmacia </q-item-section>
                 </q-item>
