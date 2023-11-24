@@ -6,12 +6,12 @@
       Administración de Registros
     </h6>
 
-    <TableUsuaro />
+    <TableUsuario />
   </q-page>
 </template>
 
 <script setup>
-import TableUsuaro from "src/components/tablecrud/TableUsuaro.vue";
+import TableUsuario from "src/components/Administrador/TableUsuario.vue";
 import { onBeforeMount } from "vue";
 import { useAuthStore } from "src/stores/Auth-Store";
 const { verifyToken } = useAuthStore();
