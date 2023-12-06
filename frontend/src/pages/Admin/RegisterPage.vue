@@ -1,22 +1,14 @@
 <template>
   <q-page padding>
-    <h6
-      class="text-primary text-h5 text-bold text-center q-pa-none q-ma-none q-animate--scale"
-    >
-      Administración de Registros
-    </h6>
-
+    <div class="q-gutter-md row justify-center">
+      <h5 class="col-6 text-center text-weight-medium">
+        Registro de usuario
+      </h5>
+      </div>
     <TableUsuario />
   </q-page>
 </template>
 
 <script setup>
-import TableUsuario from "src/components/Administrador/TableUsuario.vue";
-import { onBeforeMount } from "vue";
-import { useAuthStore } from "src/stores/Auth-Store";
-const { verifyToken } = useAuthStore();
-
-onBeforeMount(async () => {
-  await verifyToken();
-});
+//import TableUsuario from "src/components/Admin/TableUsuario.vue"
 </script>
